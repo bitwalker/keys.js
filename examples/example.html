@@ -4,11 +4,32 @@
 </head>
 <body>
     <div class="wrapper">
-        <input type="text" placeholder="Test input.." />
+        <input type="text" id="test" placeholder="Test input.." />
     </div>
     <script type="text/javascript" src="../src/keys.js"></script>
     <script type="text/javascript">
-        
+    	var toggled = false;
+    	var Combo = Keys.Combo;
+    	var Key   = Keys.Key;
+
+    	var bindings = new Keys.Bindings();
+    	bindings.add('displayAlert', new Combo(Key.A, [ Key.CTRL, Key.SHIFT ]));
+    	bindings.add('toggleFlag', new Combo(Key.C, [ Key.SHIFT, Key.META ]));
+
+    	bindings.registerHandler('displayAlert', function() { alert('Hello!'); });
+
+    	var toggleOn = function() { toggled = true; console.log(toggled); };
+    	var toggleOff = function() { toggled = false; console.log(toggled); };
+    	bindings.registerToggle('toggleFlag', toggleOn, toggleOff);
+
+    	// Highlight the input field while the meta combo for 'toggleFlag' is held
+    	bindings.add('highlightInput', new Combo(Key.SHIFT, Key.META));
+    	bindings.registerHandler('highlightInput', 'keydown', function() {
+    		document.getElementById('test').style['background-color'] = 'yellow';
+    	});
+    	bindings.registerHandler('highlightInput', 'keyup', function() {
+    		document.getElementById('test').style['background-color'] = 'white';
+    	});
     </script>
 </body>
 </html>
