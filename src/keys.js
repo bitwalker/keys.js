@@ -8,25 +8,30 @@
     }
     if (typeof define === 'function') {
         // CommonJS AMD
-        define('keys', null, function() {
+        define('Keys', null, function() {
             return builder(root);
         });
     }
     else {
         // Vanilla environments (browser)
-        root.keys = builder(root);
+        root.Keys = builder(root);
     }
 })(this, function (root, exports, undefined) {
 
     exports = exports || {};
 
-    // Shim console.log for debugging
-    var console = console || {};
+    /**
+     *  POLYFILLS
+     */
+
+    var console = root.console || {};
     if (typeof console.log !== 'function') {
         console.log = Function.prototype.valueOf();
     }
+    if (typeof console.warn !== 'function') {
+        console.warn = console.log || Function.prototype.valueOf();
+    }
 
-    // Shim critical array methods
     if (!Array.prototype.forEach) {
         Array.prototype.forEach = function (collection, iterator, context) {
             if (!collection)
@@ -101,7 +106,12 @@
         };
     }
 
-    // Search for the first element that matches a predicate within the collection
+    /**
+     * Search for the first element that matches a predicate within the collection
+     * @param  {array} c - the collection to search
+     * @param  {function} predicate - the predicate function to match with
+     * @return {object} The first matching element or null if not found
+     */
     function find (c, predicate) {
         for (var i = 0; i < c.length; i++) {
             if (predicate(c[i]))
@@ -110,7 +120,30 @@
         return null;
     }
 
-    var Keys = {
+    /**
+     * Constructs a new instance of Key from a name and a keycode
+     * @class Key
+     * @classdesc Key represents the mapping between a physical key's name and it's machine code.
+     *            It contains static references to all known keys, e.x. `Key.A` - and allows you
+     *            to map a name or key code to one of those static instances.
+     * @param {string} name - The name of the key
+     * @param {number} code - The key code for the key
+     */
+    function Key(name, code) {
+        this.name = name;
+        this.code = code;
+    }
+
+
+    /**
+     * The raw map of key names to key codes. Used internally for some operations.
+     * @memberOf Key
+     * @name keymap
+     * @type {object}
+     * @static
+     */
+    Key.internals = {};
+    Key.internals.keymap = {
         'A': 65,
         'B': 66,
         'C': 67,
@@ -211,118 +244,203 @@
         '" \'': 222,
         ',': 188,
         '.': 190,
-        '/': 191,
-        /**
-         *  Get the name for the keycode provided
-         */
-        getName: function(which) {
-            if (typeof which !== 'number')
-                throw new Error('Combo.getName: `which` must be a keycode (number) ' + which);
+        '/': 191
+    };
 
-            for (var key in this) {
-                var keycode = this[key];
-                if ((typeof keycode === 'number') && which === keycode) {
-                    return key;
-                }
-            }
+    // Transform the internal keymap to actual static Key instances
+    for (var name in Key.internals.keymap) {
+        Key[name] = new Key(name, Key.internals.keymap[name]);
+    }
 
-            return 'Unknown';
-        },
-        /**
-         *  Get the keycode for the name provided
-         */
-        getCode: function(key) {
-            if (typeof key !== 'string')
-                throw new Error('Combo.getCode: `key` must be a string ' + key);
-            return this[key];
-        },
-        /** 
-         *  Determine if the provided key was pressed
-         *  @param {number|string} key - The expected key (can be either a keycode or the letter)
-         *  @param {number} which - The keyCode (from e.which) of the currently pressed key
-         */
-        isKeyPressed: function(key, which) {
-            if (typeof which !== 'number')
-                throw new Error('Combo.isKeyPressed: `which` must be a keycode (number) ' + arguments);
+    /**
+     * Retreive a Key instance associated with the provided name
+     *
+     * @memberOf Key
+     * @static
+     * @param  {string} name - The name of the key as can be found in the keymap
+     * @return {Key}
+     */
+    Key.fromName = function(name) {
+        var result = Key[name];
+        if (result && result instanceof Key) {
+            return result;
+        }
+        else return null;
+    };
 
-            var self = this;
-            if (typeof key === 'string') {
-                return which === this.getCode(key);
-            } else if (typeof key === 'number') {
-                return which === key;
-            } else if (key instanceof Array) {
-                // Map each key to it's keyCode, and check for the presence of `which`
-                return key.map(function(k) {
-                    if (typeof k === 'string') return self.getCode(k);
-                    else return k;
-                }).indexOf(which) > -1;
-            } else {
-                // Not a number or string? Not a valid keycode
+    /**
+     * Retrieve a Key instance associated with the provided key code
+     * @param  {number} code - The key code as can be found in the keymap
+     * @return {Key}
+     */
+    Key.fromCode = function(code) {
+        for (var name in Key.internals.keymap) {
+            if (Key.internals.keymap[name] === code)
+                return Key[name];
+        }
+        return null;
+    };
+
+    /**
+     * Determine if the provided key code was pressed
+     *
+     * @memberOf Key
+     * @instance
+     * @param  {number} code - The key code from e.which
+     * @return {boolean}
+     */
+    Key.prototype.isPressed = function(code) {
+        return this.code === code;
+    };
+
+    /**
+     * Return true if the current Key is a meta key
+     *
+     * @memberOf Key
+     * @return {boolean} true if the Key is one of the meta keys
+     */
+    Key.prototype.isMeta = function() {
+        switch (this.code) {
+            case Key.CTRL:
+            case Key.SHIFT:
+            case Key.ALT:
+            case Key.META:
+            case Key.META_RIGHT:
+                return true;
+            default:
                 return false;
-            }
-        },
-        // Return true if the provided key is a meta key
-        isMetaKey: function(which) {
-            if (typeof which !== 'number')
-                throw new Error('Combo.isMetaKey: `which` must be a keycode (number) ' + which);
-
-            switch (which) {
-                case this.CTRL:
-                case this.SHIFT:
-                case this.ALT:
-                case this.META:
-                case this.META_RIGHT:
-                    return true;
-                default:
-                    return false;
-            }
         }
     };
 
-    exports.Keys = Keys;
+    /**
+     * Determine if two instances of Key are equal to each other.
+     * @param  {Key} key
+     * @return {boolean}
+     */
+    Key.prototype.eq = function(key) {
+        return this.code === key.code && this.name === key.name;
+    };
 
-    function Combo(keyCode, meta) {
+    exports.Key = Key;
+
+
+    /**
+     * Creates a new Combo from a key code and array of meta key codes
+     * 
+     * @class
+     * @classdesc Combo represents the physical combination of a single key and any meta keys
+     *            that ultimately are used to trigger a keybinding. It is at the Combo level
+     *            that we match a configured keybinding with the current set of pressed keys.
+     *
+     * @example
+     *  var combo = new Combo(Key.A, [ Key.CTRL, Key.SHIFT ]);
+     * 
+     * @namespace Combo
+     * @constructor
+     * @param {Key} key - The primary Key for this Combo.
+     * @param {array} meta - An array of meta Keys required for this Combo to be activated.
+     */
+    function Combo(key, meta) {
+        var keys = null;
         if (arguments.length === 2 && meta instanceof Array) {
-            if (typeof keyCode === 'string')
-                this.keyCode = Keys.getCode(keyCode);
-            else
-                this.keyCode = keyCode;
-            this.ctrl  = meta.indexOf('ctrl') > -1  || meta.indexOf(Keys.CTRL) > -1;
-            this.shift = meta.indexOf('shift') > -1 || meta.indexOf(Keys.SHIFT) > -1;
-            this.alt   = meta.indexOf('alt') > -1   || meta.indexOf(Keys.ALT) > -1;
-            this.meta  = meta.indexOf('meta') > -1  || meta.indexOf(Keys.META) > -1 || meta.indexOf(Keys.META_RIGHT) > -1;
-        } else if (arguments.length === 1) {
-            if (typeof keyCode === 'string')
-                this.keyCode = Keys.getCode(keyCode);
-            else
-                this.keyCode = keyCode;
-            this.ctrl  = this.keyCode === Keys.CTRL;
-            this.shift = this.keyCode === Keys.SHIFT;
-            this.alt   = this.keyCode === Keys.ALT;
-            this.meta  = this.keyCode === Keys.META || this.keyCode === Keys.META_RIGHT;
-        } else {
-            throw new Error('Combo: Invalid number of arguments provided');
+            keys = meta;
+        }
+        else if (arguments.length >= 2) {
+            keys = Array.prototype.slice.call(arguments, 1);
+        }
+        else if (arguments.length === 1) {
+            this.key   = key;
+            this.ctrl  = key.eq(Key.CTRL);
+            this.shift = key.eq(Key.SHIFT);
+            this.alt   = key.eq(Key.ALT);
+            this.meta  = key.eq(Key.META) || key.eq(Key.META_RIGHT);
+            return this;
+        }
+        else {
+            throw new Error('Combo: Invalid number of arguments provided.');
+        }
+
+        // From here on down, assume an array of keys was provided for meta
+        this.key   = key;
+        this.ctrl  = hasKey(keys, Key.CTRL);
+        this.shift = hasKey(keys, Key.SHIFT);
+        this.alt   = hasKey(keys, Key.ALT);
+        this.meta  = hasKey(keys, Key.META) || hasKey(keys, Key.META_RIGHT);
+
+        // Warn the user if they have created a Combo using invalid combinations of keys
+        var invalid = find(keys, function(k) {
+            switch (k.code) {
+                case Key.CTRL.code:
+                case Key.SHIFT.code:
+                case Key.ALT.code:
+                case Key.META.code:
+                case Key.META_RIGHT.code:
+                    return false;
+                default:
+                    return true;
+            }
+        });
+
+        if (invalid) {
+            console.warn('Warning: You have attempted to create a Combo using multiple non-meta Keys. This is not currently supported.');
+        }
+
+        function hasKey(collection, k) {
+            return find(collection, function(x) { return k.eq(x); }) !== null;
         }
     }
-    /** Pretty print the combo */
+    /**
+     * Pretty print the Combo
+     *
+     * @memberOf Combo
+     * @instance
+     * @return {string} A string representation of the Combo
+     */
     Combo.prototype.toString = function() {
         var meta = (this.ctrl  ? 'CTRL+'  : '') +
                    (this.alt   ? 'ALT+'   : '') +
                    (this.shift ? 'SHIFT+' : '') +
                    (this.meta  ? 'META+'  : '');
-        return meta + (Keys.getName(this.keyCode) || '');
+        return meta + (key && key.name ? key.name : '');
     };
-    /** Encode Combo as JSON */
+    /**
+     * Serialize the Combo for persistance or transport.
+     *
+     * @memberOf Combo
+     * @instance
+     * @return {string} The Combo as a JSON string
+     */
     Combo.prototype.serialize = function() {
+        // TODO: Convert to JSON even if JSON object is not provided.
+        if (typeof JSON === 'undefined')
+            throw new Error('Your browser does not currently support JSON serialization.');
         return JSON.stringify(this);
     };
-    /** Decode Combo from JSON string */
+    /** 
+     * Deserialize a Combo object from a JSON string.
+     *
+     * @memberOf Combo
+     * @static
+     * @param  {string} serialized - A serialized Combo object (JSON string)
+     * @return {object} - The deserialized Combo as a regular object
+     */
     Combo.deserialize = function(serialized) {
+        // TODO: Convert from JSON even if JSON object is not provided.
+        if (typeof JSON === 'undefined')
+            throw new Error('Your browser does not currently support JSON deserialization.');
+        // Keep in mind that when deserializing, the object no longer is an instance of Combo,
+        // one still has to create a new Combo instance from the data encapsulated here.
         return JSON.parse(serialized);
     };
-    /** Clone this Combo as a new one, optionally ignoring the key */
-    Combo.prototype.clone = function(ignoreKey) {
-        var combo   = new Combo(this.keyCode);
+    /** 
+     * Deep clone this Combo instance.
+     *
+     * @memberOf Combo
+     * @instance
+     * @return {Combo}
+     */
+    Combo.prototype.clone = function() {
+        var combo   = new Combo(this.key);
         combo.ctrl  = this.ctrl;
         combo.alt   = this.alt;
         combo.shift = this.shift;
@@ -330,22 +448,37 @@
         return combo;
     };
     /**
-     *  Create a Combo from an arbitrary object, useful for shorthand notation, or when deserializing Bindings
-     *  so that the Binding's combo is of type Combo.
+     *  Create a Combo from an arbitrary object, primarily meant to be used in
+     *  conjunction with Combo.deserialize to properly reify a serialized Combo
+     *  object.
+     *
+     *  @memberOf Combo
+     *  @static
+     *  @param {object} obj - The anonymous object to create a Combo instance from.
+     *  @return {Combo}
      */
     Combo.fromObject = function(obj) {
-        if (!obj || typeof obj.keyCode !== 'number')
+        if (!obj || !obj.key)
             throw new Error('Combo.fromObject: Cannot create Combo from provided object');
-        var combo = new Combo(obj.keyCode);
+        // key param must be an instance of Key
+        var key     = new Key(obj.key.name, obj.key.code);
+        var combo   = new Combo(key);
         combo.ctrl  = obj.ctrl  || false;
         combo.alt   = obj.alt   || false;
         combo.shift = obj.shift || false;
         combo.meta  = obj.meta  || false;
         return combo;
     };
-    // Given a keypress event, convert to a Combo
+    /**
+     * Given a keypress event, create a Combo that represents the set of pressed keys
+     *
+     * @memberOf Combo
+     * @static
+     * @param  {Event} e - The keypress event (could be keyup, keydown, or keypress)
+     * @return {Combo}
+     */
     Combo.fromEvent = function(e) {
-        var combo = new Combo(e.which);
+        var combo = new Combo(Key.fromCode(e.which));
         combo.shift = combo.shift || e.shiftKey;
         combo.alt   = combo.alt   || e.altKey;
         combo.meta  = combo.meta  || e.metaKey;
@@ -353,12 +486,19 @@
         return combo;
     };
     /**
-     *  Reverse of toString, you should get the original combo if you call Combo.fromString(combo.toString())
+     *  Reverse of toString, you should get the original combo if you call Combo.fromString(combo.toString()).
+     *  Useful for converting text inputs with Combo.toString() populated values back into actual Combo
+     *  objects.
+     *  
+     *  @memberOf Combo
+     *  @static
+     *  @param {string} str - A string which represents a valid Combo
+     *  @return {Combo}
      */
     Combo.fromString = function(str) {
         var parts     = str.split('+');
         if (parts.length >= 1) {
-            var combo     = new Combo(Keys.getCode(parts[parts.length - 1]));
+            var combo     = new Combo(Key.fromName(parts[parts.length - 1]));
             combo.ctrl    = parts.indexOf('CTRL') > -1;
             combo.alt     = parts.indexOf('ALT') > -1;
             combo.shift   = parts.indexOf('SHIFT') > -1;
@@ -367,171 +507,296 @@
         } else throw Error('Combo.fromString: Invalid string');
     };
     /**
-     *  Determine if the provided combo was pressed
+     *  Determine if the this Combo was pressed given another Combo representing a keypress event.
+     *
+     *  @memberOf Combo
+     *  @instance
      *  @param {boolean} ignoreKey - Set to true if you only want to match on meta keys
+     *  @return {boolean}
      */
     Combo.prototype.isMatch = function (combo, ignoreKey) {
         if (!combo)
             throw new Error('Combo.isMatch called without a combo to match against.');
 
-        // If the key itself is the same, we just have to ensure the expected meta key is pressed
-        if (!ignoreKey && (this.keyCode !== combo.keyCode)) return false;
-        if (this.shift   && !combo.shift)   return false;
-        if (this.alt     && !combo.alt)     return false;
-        if (this.ctrl    && !combo.ctrl)    return false;
-        if (this.meta    && !combo.meta)    return false;
-        else return true;
+        if (this.key.isMeta()) {
+            if ((this.shift || this.key.eq(Key.SHIFT)) && !combo.shift)
+                return false;
+            if ((this.alt   || this.key.eq(Key.ALT))   && !combo.alt)
+                return false;
+            if ((this.ctrl  || this.key.eq(Key.CTRL))  && !combo.ctrl)
+                return false;
+            if ((this.meta  || this.key.eq(Key.META) || this.key.eq(Key.META_RIGHT)) && !combo.meta)
+                return false;
+        }
+        else {
+            if (!ignoreKey && !this.key.eq(combo.key)) return false;
+            if (this.shift && !combo.shift) return false;
+            if (this.alt   && !combo.alt)   return false;
+            if (this.ctrl  && !combo.ctrl)  return false;
+            if (this.meta  && !combo.meta)  return false;
+        }
+
+        return true;
     };
-    /** Check if a Combo requires the presence of the provided key */
+    /** 
+     * Check if a Combo requires the presence of the provided key.
+     * 
+     * @memberOf Combo
+     * @instance
+     * @param {number} which - The key code we want to know is required or not
+     * @return {boolean}
+     */
     Combo.prototype.requires = function(which) {
         if (typeof which !== 'number')
             throw new Error('Combo.requires: `which` must be a keycode (number)');
 
-        if (this.keyCode === which) return true;
-        else if (this.ctrl  && keyCode === Keys.CTRL)  return true;
-        else if (this.shift && keyCode === Keys.SHIFT) return true;
-        else if (this.alt   && keyCode === Keys.ALT)   return true;
-        else if (this.meta  && (keyCode === Keys.META || keyCode === Keys.META_RIGHT))
+        if (this.key.code === which) return true;
+        else if (this.ctrl  && this.key.eq(Key.CTRL))  return true;
+        else if (this.shift && this.key.eq(Key.SHIFT)) return true;
+        else if (this.alt   && this.key.eq(Key.ALT))   return true;
+        else if (this.meta  && (this.key.eq(Key.META) || key.eq(Key.META_RIGHT)))
             return true;
         else return false;
     };
+    /**
+     * Check if this Combo contains any meta keys.
+     *
+     * @memberOf Combo
+     * @instance
+     * @return {boolean}
+     */
     Combo.prototype.containsMetaKeys = function() {
-        return this.ctrl || this.shift || this.alt || this.meta;
+        return this.ctrl || this.shift || this.alt || this.meta || this.key.isMeta();
     };
 
     exports.Combo = Combo;
 
-    exports.Keybindings = (function() {
+    /**
+     * Creates a new instance of the Bindings manager
+     * 
+     * @class
+     * @classdesc Bindings is responsible for managing the mapping of behavior to Combos. In addition,
+     *            it is responsible for listening in on keyup/keydown events document-wide, and if a
+     *            Combo is matched, execute any associated handlers while also preventing the default
+     *            behavior. It allows for persistance or transport by serializing the bindings currently
+     *            managed, **but not the handlers**. Deserializing an instance of Bindings requires you
+     *            to re-register all handlers.
+     * @example
+     *   // Toggle variable
+     *   var toggled = false;
+     *
+     *   // Initialize manager
+     *   var bindings = new Bindings();
+     *
+     *   bindings.add('displayAlert', new Combo(Key.A, [ Key.CTRL, Key.SHIFT ]));
+     *   bindings.add('toggleFlag', new Combo(Key.F, [ Key.CTRL, Key.META ]));
+     *
+     *   // Map behavior to the displayAlert
+     *   bindings.registerHandler('displayAlert', function() { alert('Hello!'); });
+     *
+     *   // Map behavior to the toggleFlag binding
+     *   var toggleOn  = function() { toggled = true; };
+     *   var toggleOff = function() { toggled = false; };
+     *   bindings.registerToggle('toggleFlag', toggleOn, toggleOff);
+     *
+     *   See `examples/example.html` for a live demonstration of these concepts.
+     *
+     * @namespace Bindings
+     * @constructor
+     */
+    function Bindings() {
+        var self = this;
+        root.document.addEventListener('keydown', handleKeydown, true);
+        root.document.addEventListener('keyup',   handleKeyup,   true);
 
-        function Keybindings() {
-            var self = this;
-            root.document.addEventListener('keydown', function(e) { handleKeydown(e, self); }, true);
-            root.document.addEventListener('keyup', function(e) { handleKeyup(e, self); }, true);
+        this.bindings = [];
+        this.handlers = [];
 
-            this.bindings = [];
-            this.handlers = [];
-        }
-
-        Keybindings.prototype.get = function(name) {
-            return find(this.bindings, function(b) { return b.name === name; });
-        };
-
-        Keybindings.prototype.add = function(name, combo) {
-            if (!name || !combo)
-                throw new Error('Keybindings.add: Invalid arguments provided');
-            if (!(combo instanceof Combo))
-                throw new Error('Keybindings.add: `combo` must be an instance of Combo');
-
-            // If the binding name already exists, overwrite it
-            var binding = find(this.bindings, function(b) { return b.name === name; });
-            if (binding) {
-                binding.combo = combo;
-            } else {
-                this.bindings.push({
-                    name:  name,
-                    combo: combo
-                });
-            }
-        };
-
-        Keybindings.prototype.registerHandler = function(bindingName, eventType, handler) {
-            // Permit eventType to be omitted and defaulted to keydown
-            if (arguments.length === 2 && typeof eventType === 'function') {
-                handler = eventType;
-                eventType = 'keydown';
-            }
-
-            if (!bindingName || !eventType || !handler || typeof handler !== 'function')
-                throw new Error('Keybindings.registerHandler: Invalid arguments provided');
-
-            this.handlers.push({
-                name:      bindingName,
-                eventType: eventType,
-                handler:   handler
-            });
-        };
-
-        Keybindings.prototype.registerToggle = function(bindingName, toggleOn, toggleOff) {
-            if (arguments.length !== 3) {
-                throw new Error('Keybindings.registerToggle: You must provide all three arguments to this function.');
-            }
-
-            this.handlers.push({
-                name: bindingName,
-                eventType: 'keydown',
-                handler: toggleOn
-            });
-            this.handlers.push({
-                name: bindingName,
-                eventType: 'keyup',
-                handler: toggleOff
-            });
-        };
-
-        Keybindings.prototype.serialize = function() {
-            return JSON.stringify(this);
-        };
-
-        Keybindings.prototype.deserialize = function(serialized) {
-            var parsed = JSON.parse(serialized);
-            if (!parsed || !parsed.bindings || parsed instanceof Array)
-                throw new Error('Keybindings.deserialize: Unable to deserialize keybindings');
-            // Deserialize bindings
-            var mapped = parsed.bindings.map(function(b) {
-                b.combo = Combo.fromObject(b.combo);
-                return b;
-            });
-            this.bindings = mapped;
-        };
-
-        function handlesEvent(handler, bindings, combo) {
-            var binding = null;
-            for (var i = 0; i < bindings.length; i++) {
-                if (bindings[i].name === handler.name) {
-                    binding = bindings[i];
-                    break;
-                }
-            }
-
-            if (!binding) return false;
-            else {
-                var isMetaBinding = handler.name.indexOf('$$META') > -1;
-                // If this is a meta binding, ignore the keycode
-                return isMetaBinding ? binding.combo.isMatch(combo, true) : binding.combo.isMatch(combo);
-            }
-        }
-
-        function handleKeydown(e, instance) {
+        function handleKeydown(e) {
             e.stopImmediatePropagation();
 
             var combo = Combo.fromEvent(e);
-            instance.handlers
-                .filter(function(h) {
-                    return h.eventType === 'keydown' && handlesEvent(h, instance.bindings, combo);
-                })
-                .forEach(function(h) {
-                    h.handler();
-                });
+            // Execute any matching handlers
+            self.getHandlersForCombo(combo)
+                .filter(function(h) { return h.eventType === 'keydown'; })
+                .forEach(function(h) { h.handler(); });
 
             return false;
         }
 
-        function handleKeyup(e, instance) {
+        function handleKeyup(e) {
             e.stopImmediatePropagation();
 
             var combo = Combo.fromEvent(e);
-            instance.handlers
-                .filter(function(h) {
-                    return h.eventType === 'keyup' && handlesEvent(h, instance.bindings, combo);
-                })
-                .forEach(function(h) {
-                    h.handler();
-                });
+            // Execute any matching handlers
+            self.getHandlersForCombo(combo)
+                .filter(function(h) { return h.eventType === 'keyup'; })
+                .forEach(function(h) { h.handler(); });
 
             return false;
         }
+    }
 
-        return Keybindings;
+    /**
+     * Fetches a binding by it's name.
+     *
+     * @memberOf Bindings
+     * @instance
+     * @param  {string} name - Name of the binding
+     * @return {object} The binding, if found, otherwise null
+     */
+    Bindings.prototype.get = function(name) {
+        return find(this.bindings, function(b) { return b.name === name; });
+    };
 
-    })();
-})(jQuery, window);
+    /**
+     * Adds a new binding.
+     *
+     * @memberOf Bindings
+     * @instance
+     * @param  {string} name - The name of the binding.
+     * @param  {Combo} combo - The Combo which triggers this binding.
+     */
+    Bindings.prototype.add = function(name, combo) {
+        if (!name || !combo)
+            throw new Error('Keybindings.add: Invalid arguments provided');
+        if (!(combo instanceof Combo))
+            throw new Error('Keybindings.add: `combo` must be an instance of Combo');
+
+        // If the binding name already exists, overwrite it
+        var binding = find(this.bindings, function(b) { return b.name === name; });
+        if (binding) {
+            binding.combo = combo;
+        } else {
+            this.bindings.push({
+                name:  name,
+                combo: combo
+            });
+        }
+    };
+
+    /**
+     * Register a handler for when a Combo is executed.
+     *
+     * @memberOf Bindings
+     * @instance
+     * @param  {string} bindingName - The name of the binding to watch
+     * @param  {string} eventType - Either keyup or keydown, depending on needs. Defaults to keydown.
+     * @param  {function} handler - The function to call when the Combo is executed.
+     */
+    Bindings.prototype.registerHandler = function(bindingName, eventType, handler) {
+        // Permit eventType to be omitted and defaulted to keydown
+        if (arguments.length === 2 && typeof eventType === 'function') {
+            handler = eventType;
+            eventType = 'keydown';
+        }
+
+        if (!bindingName || !eventType || !handler || typeof handler !== 'function')
+            throw new Error('Keybindings.registerHandler: Invalid arguments provided');
+
+        this.handlers.push({
+            name:      bindingName,
+            eventType: eventType,
+            handler:   handler
+        });
+    };
+
+    /**
+     * Register a toggle for when a Combo is executed.
+     *
+     * @memberOf Bindings
+     * @instance
+     * @param  {string} bindingName - The name of the binding to watch
+     * @param  {function} toggleOn  - The function to execute when toggling on
+     * @param  {function} toggleOff - The function to execute when toggling off
+     */
+    Bindings.prototype.registerToggle = function(bindingName, toggleOn, toggleOff) {
+        if (arguments.length !== 3) {
+            throw new Error('Keybindings.registerToggle: You must provide all three arguments to this function.');
+        }
+
+        this.handlers.push({
+            name: bindingName,
+            eventType: 'keydown',
+            // Wrap the toggle handlers in a closure that allows us 
+            // to track the current state of the toggle, and call
+            // the appropriate toggle handler. Assumes 'off' state
+            // by default.
+            handler: (function() {
+                var on = false;
+                return function() {
+                    var args = Array.prototype.slice.call(arguments);
+                    if (on) {
+                        on = false;
+                        toggleOff.apply(null, args);
+                    } else {
+                        on = true;
+                        toggleOn.apply(null, args);
+                    }
+                };
+            })()
+        });
+    };
+
+    /**
+     * Serialize the current set of bindings (not the handlers)
+     *
+     * @memberOf Bindings
+     * @instance
+     * @return {string} - The Bindings instance as a JSON encoded string
+     */
+    Bindings.prototype.serialize = function() {
+        // TODO: Serialize bindings even if JSON object is not provided
+        if (typeof JSON === 'undefined')
+            throw new Error('Your browser does not support JSON serialization.');
+        return JSON.stringify(this);
+    };
+
+    /**
+     * Deserialize a set of bindings into the current Bindings instance
+     *
+     * @memberOf Bindings
+     * @instance
+     * @param  {string} serialized - The JSON object to deserialize
+     */
+    Bindings.prototype.deserialize = function(serialized) {
+        // TODO: Serialize bindings even if JSON object is not provided
+        if (typeof JSON === 'undefined')
+            throw new Error('Your browser does not support JSON serialization.');
+
+        var parsed = JSON.parse(serialized);
+        if (!parsed || !parsed.bindings || parsed instanceof Array)
+            throw new Error('Keybindings.deserialize: Unable to deserialize keybindings');
+        // Deserialize bindings
+        var mapped = parsed.bindings.map(function(b) {
+            b.combo = Combo.fromObject(b.combo);
+            return b;
+        });
+        this.bindings = mapped;
+    };
+
+    /**
+     * Gets the set of handlers for the given Combo
+     *
+     * @memberOf Bindings
+     * @instance
+     * @param {Combo} combo - The Combo to match handlers to.
+     * @param {boolean} includeMeta - Include meta-only variations of the provided Combo
+     */
+    Bindings.prototype.getHandlersForCombo = function(combo, includeMeta) {
+        var self   = this;
+        var matching = this.bindings.filter(function(binding) {
+            return includeMeta ? binding.combo.isMatch(combo, true) : binding.combo.isMatch(combo);
+        });
+        return this.handlers.filter(function(handler) {
+            return find(matching, function(b) {
+                return b.name === handler.name || b.name === handler.name.replace('$$META', '');
+            });
+        });
+    };
+
+    exports.Bindings = Bindings;
+
+    return exports;
+
+});
