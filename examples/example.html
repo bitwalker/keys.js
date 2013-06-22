@@ -8,22 +8,27 @@
     </div>
     <script type="text/javascript" src="../src/keys.js"></script>
     <script type="text/javascript">
+        // Toggle Flag
     	var toggled = false;
-    	var Combo = Keys.Combo;
-    	var Key   = Keys.Key;
 
-    	var bindings = new Keys.Bindings();
-    	bindings.add('displayAlert', new Combo(Key.A, [ Key.CTRL, Key.SHIFT ]));
-    	bindings.add('toggleFlag', new Combo(Key.C, [ Key.SHIFT, Key.META ]));
+        // Initialize application-wide bindings manager
+    	var bindings = new Bindings();
 
+        // Add keybindings
+    	bindings.add('displayAlert',   new Combo(Key.A, [ Key.CTRL, Key.SHIFT ]));
+    	bindings.add('toggleFlag',     new Combo(Key.C, [ Key.SHIFT, Key.META ]));
+        bindings.add('highlightInput', new Combo(Key.SHIFT, Key.META));
+
+        // Register displayAlert handler
     	bindings.registerHandler('displayAlert', function() { alert('Hello!'); });
 
+        // Register toggleFlag toggle
     	var toggleOn = function() { toggled = true; console.log(toggled); };
     	var toggleOff = function() { toggled = false; console.log(toggled); };
     	bindings.registerToggle('toggleFlag', toggleOn, toggleOff);
 
-    	// Highlight the input field while the meta combo for 'toggleFlag' is held
-    	bindings.add('highlightInput', new Combo(Key.SHIFT, Key.META));
+        // Register a pair of handlers on keyup/keydown to highlight a field
+        // while the associated Combo is activated (held down)
     	bindings.registerHandler('highlightInput', 'keydown', function() {
     		document.getElementById('test').style['background-color'] = 'yellow';
     	});
