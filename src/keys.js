@@ -27,7 +27,7 @@
      * @global
      * @static
      */
-    exports.debug = true;
+    exports.debug = false;
 
     /**
      *  Polyfills and Logging
