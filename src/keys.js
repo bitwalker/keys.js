@@ -30,9 +30,24 @@
     exports.debug = false;
 
     /**
+     * Determine if all of the provided object arguments are defined. Useful for argument
+     * validation within functions.
+     * 
+     * @param {object} objects* - A variadic number of object arguments to check
+     * @return {boolean}
+     */
+    function areDefined() {
+        var objects = Array.prototype.slice.call(arguments);
+        for (var i = 0; i < objects.length; i++) {
+            if (typeof objects[i] === 'undefined')
+                return false;
+        }
+        return true;
+    }
+
+    /**
      *  Polyfills and Logging
      */
-
     if (!Function.prototype.bind) {
         Function.prototype.bind = function(context) {
             var self = this;
@@ -217,7 +232,6 @@
         // in the internal keymap, make sure we add it
         Key.internals.keymap[name] = Key.internals.keymap[name] || code;
     }
-
 
     /**
      * The raw map of key names to key codes. Used internally for some operations.
