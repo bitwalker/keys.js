@@ -432,12 +432,7 @@
             keys = Array.prototype.slice.call(arguments, 1);
         }
         else if (arguments.length === 1) {
-            this.key   = key;
-            this.ctrl  = key.eq(Key.CTRL);
-            this.shift = key.eq(Key.SHIFT);
-            this.alt   = key.eq(Key.ALT);
-            this.meta  = key.eq(Key.META) || key.eq(Key.META_RIGHT);
-            return this;
+            throw new Error('Combo: At least one meta key is required for a Combo');
         }
         else {
             throw new Error('Combo: Invalid number of arguments provided.');
@@ -460,7 +455,6 @@
             throw new Error('Combo: Attempted to create a Combo with multiple non-meta Keys. This is not supported.');
         }
 
-        // From here on down, assume an array of keys was provided for meta
         this.key   = key;
         this.ctrl  = hasKey(keys, Key.CTRL)  || key.eq(Key.CTRL);
         this.shift = hasKey(keys, Key.SHIFT) || key.eq(Key.SHIFT);
