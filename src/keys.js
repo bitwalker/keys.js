@@ -190,6 +190,10 @@
     function Key(name, code) {
         this.name = name;
         this.code = code;
+
+        // If a new Key is instantiated with a name that isn't
+        // in the internal keymap, make sure we add it
+        Key.internals.keymap[name] = Key.internals.keymap[name] || code;
     }
 
 
