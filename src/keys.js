@@ -152,6 +152,28 @@
     };
 
     /**
+     * Produces an array of arrays which are the result of zipping together the
+     * elements of `this` and the array arguments. If any of the array arguments are
+     * longer than `this`, their remaining elements will be skipped. If any of the array
+     * arguments are shorter than `this`, their missing elements will be replaced with null.
+     *
+     * @memberOf  Array
+     * @instance
+     * @param {array} arrays* - A variadic number of arrays to be zipmapped
+     */
+    Array.prototype.zipmap = function() {
+        var arrays = Array.prototype.slice.call(arguments);
+        return this.map(function(element, i) {
+            var others = [];
+            for (var j = 0; j < arrays.length; j++) {
+                var el = arrays[j] && arrays[j][i];
+                others.push(el !== null && typeof el !== 'undefined' ? el : null);
+            }
+            return [element].concat(others);
+        });
+    };
+
+    /**
      * Determine if a string ends with the provided string.
      *
      * @memberof String
