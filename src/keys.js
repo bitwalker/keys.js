@@ -507,9 +507,10 @@
         // TODO: Convert from JSON even if JSON object is not provided.
         if (typeof JSON === 'undefined')
             throw new Error('Your browser does not currently support JSON deserialization.');
-        // Keep in mind that when deserializing, the object no longer is an instance of Combo,
-        // one still has to create a new Combo instance from the data encapsulated here.
-        return JSON.parse(serialized);
+        // Deserialize
+        var parsed = JSON.parse(serialized);
+        // Create an actual Combo instance from the deserialized form
+        return Combo.fromObject(parsed);
     };
     /** 
      * Deep clone this Combo instance.
@@ -528,8 +529,8 @@
     };
     /**
      *  Create a Combo from an arbitrary object, primarily meant to be used in
-     *  conjunction with Combo.deserialize to properly reify a serialized Combo
-     *  object.
+     *  conjunction with Bindings.deserialize to properly reify a serialized Combo
+     *  object. Called directly from Combo.deserialize for this reason as well.
      *
      *  @memberOf Combo
      *  @static
