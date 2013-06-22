@@ -24,7 +24,7 @@ This class manages information about a combination of physical keys on the keybo
 
 You can create Combos easily using one of the following variations:
 
-```
+```javascript
 // Single meta key
 var combo = new Combo(Key.A, Key.CTRL);
 // Multiple meta keys, constructor called as a variadic function
@@ -39,7 +39,7 @@ This class manages the mapping of behavior to Combos. It intercepts keydown/keyu
 
 Bindings offers a simple API for taking Combos and binding behavior to them. First, you use `add` to create a keybinding:
 
-```
+```javascript
 var bindings = new Bindings();
 bindings.add('displayAlert', new Combo(Key.A, [ Key.CTRL, Key.SHIFT ]));
 bindings.add('toggle', new Combo(Key.A, [ Key.CTRL, Key.META ]));
@@ -47,13 +47,13 @@ bindings.add('toggle', new Combo(Key.A, [ Key.CTRL, Key.META ]));
 
 After you've added your keybindings, you can register a handler using `registerHandler`. You can register multiple handlers for a single event, they will all be executed.
 
-```
+```javascript
 bindings.registerHandler('displayAlert', function() { alert('Hello!'); });
 ```
 
 If you have toggle-like behavior you'd like to implement, you are in luck! Register your toggle using `registerToggle`:
 
-```
+```javascript
 var toggleOn = function() { console.log('Lights on!'); };
 var toggleOff = function() { console.log('Lights off!'); };
 bindings.registerToggle('toggle', toggleOn, toggleOff);
@@ -65,7 +65,7 @@ bindings.registerToggle('toggle', toggleOn, toggleOff);
 
 ## Full Example
 
-```
+```javascript
 <html>
 <body>
     <div class="wrapper">
