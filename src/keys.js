@@ -545,12 +545,13 @@
      * @return {Combo}
      */
     Combo.prototype.clone = function() {
-        var combo   = new Combo(this.key);
-        combo.ctrl  = this.ctrl;
-        combo.alt   = this.alt;
-        combo.shift = this.shift;
-        combo.meta  = this.meta;
-        return combo;
+        return Combo.fromObject({
+            key:   this.key,
+            ctrl:  this.ctrl,
+            alt:   this.alt,
+            shift: this.shift,
+            meta:  this.meta
+        });
     };
     /**
      *  Create a Combo from an arbitrary object, primarily meant to be used in
