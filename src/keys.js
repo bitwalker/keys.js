@@ -350,6 +350,15 @@
     }
 
     /**
+     * A static collection of all the meta key instances
+     *
+     * @memberOf Key
+     * @type {Array}
+     * @static
+     */
+    Key.metaKeys = [ Key.CTRL, Key.ALT, Key.SHIFT, Key.META ];
+
+    /**
      * Retreive a Key instance associated with the provided name
      *
      * @memberOf Key
