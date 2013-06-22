@@ -717,14 +717,20 @@
         return true;
     };
     /**
-     * Check if this Combo contains any meta keys.
+     * Get this Combo's meta keys as an array of Key instances
      *
      * @memberOf Combo
      * @instance
-     * @return {boolean}
+     * @return {array} An array of Key
      */
-    Combo.prototype.containsMetaKeys = function() {
-        return this.ctrl || this.shift || this.alt || this.meta || this.key.isMeta();
+    Combo.prototype.metaKeys = function() {
+        var flags = [
+            this.ctrl  || this.key.eq(Key.CTRL),
+            this.alt   || this.key.eq(Key.ALT),
+            this.shift || this.key.eq(Key.SHIFT),
+            this.meta  || this.key.eq(Key.META) || this.key.eq(Key.META_RIGHT)
+        ];
+        return constructMetaParams(flags);
     };
 
     exports.Combo = Combo;
