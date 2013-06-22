@@ -685,33 +685,42 @@
         else return true;
     };
     /**
-     *  Determine if the this Combo was pressed given another Combo representing a keypress event.
+     *  A looser version of equality checking. Whereas `eq` checks for strict value equality,
+     *  `isMatch` checks for equality of intent. Does the user really care if the Combo is not
+     *  strictly equal even if the same keys are pressed? No. `isMatch` is used when matching
+     *  the Combo generated from a keypress event to Combos stored as keybindings, which might
+     *  be equal in intent, but not equal in the strictest sense.
      *
      *  @memberOf Combo
      *  @instance
-     *  @param {boolean} ignoreKey - Set to true if you only want to match on meta keys
      *  @return {boolean}
      */
-    Combo.prototype.isMatch = function (combo, ignoreKey) {
-        if (!combo)
-            throw new Error('Combo.isMatch called without a combo to match against.');
+    Combo.prototype.isMatch = function (combo) {
+        if (!combo && !(combo instanceof Combo))
+            throw new Error('Combo.isMatch called with an invalid Combo object.');
 
+        /** 
+         * This is the difference in logic between eq and isMatch:
+         * If we have a Combo: SHIFT+ALT, eq would return false
+         * when comparing it to the Combo ALT+SHIFT, due to the primary
+         * key being different, when from the users perspective those
+         * are identical combinations. 
+         * 
+         * isMatch will infer the intent behind a meta-based combination
+         * instead of blindly failing the comparison.
+         */
         if (this.key.isMeta()) {
-            if ((this.shift || this.key.eq(Key.SHIFT)) && !combo.shift)
+            if ((this.shift || this.key.eq(Key.SHIFT)) !== combo.shift)
                 return false;
-            if ((this.alt   || this.key.eq(Key.ALT))   && !combo.alt)
+            if ((this.alt   || this.key.eq(Key.ALT))   !== combo.alt)
                 return false;
-            if ((this.ctrl  || this.key.eq(Key.CTRL))  && !combo.ctrl)
+            if ((this.ctrl  || this.key.eq(Key.CTRL))  !== combo.ctrl)
                 return false;
-            if ((this.meta  || this.key.eq(Key.META) || this.key.eq(Key.META_RIGHT)) && !combo.meta)
+            if ((this.meta  || this.key.eq(Key.META) || this.key.eq(Key.META_RIGHT)) !== combo.meta)
                 return false;
         }
         else {
-            if (!ignoreKey && !this.key.eq(combo.key)) return false;
-            if (this.shift && !combo.shift) return false;
-            if (this.alt   && !combo.alt)   return false;
-            if (this.ctrl  && !combo.ctrl)  return false;
-            if (this.meta  && !combo.meta)  return false;
+            return this.eq(combo);
         }
 
         return true;
