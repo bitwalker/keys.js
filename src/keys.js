@@ -4,33 +4,61 @@
 (function (root, builder, undefined) {
     if (typeof exports === 'object') {
         // CommonJS Native
-        exports = builder(root, exports);
+        exports = builder(exports);
     }
     if (typeof define === 'function') {
         // CommonJS AMD
-        define('Keys', null, function() {
+        define(function() {
             return builder(root);
         });
     }
     else {
         // Vanilla environments (browser)
-        root.Keys = builder(root);
+        root = builder(root);
     }
-})(this, function (root, exports, undefined) {
+})(this, function (exports, undefined) {
+    'use strict';
 
     exports = exports || {};
 
     /**
-     *  POLYFILLS
+     * Debugging flag. Set to true for verbose logging.
+     *
+     * @global
+     * @static
+     */
+    exports.debug = true;
+
+    /**
+     *  Polyfills and Logging
      */
 
-    var console = root.console || {};
-    if (typeof console.log !== 'function') {
-        console.log = Function.prototype.valueOf();
+    if (!Function.prototype.bind) {
+        Function.prototype.bind = function(context) {
+            var self = this;
+            return function() {
+                var args = Array.prototype.slice.call(arguments);
+                return self.apply(context, args);
+            };
+        };
     }
-    if (typeof console.warn !== 'function') {
-        console.warn = console.log || Function.prototype.valueOf();
-    }
+
+    var log = (function() {
+        var _log = console ? console.log.bind(console) : Function.prototype.valueOf();
+        return function() {
+            if (exports.debug) {
+                var args = Array.prototype.slice.call(arguments);
+                _log.apply(null, args);
+            }
+        };
+    })();
+    var warn = (function() {
+        var _warn = console ? console.warn.bind(console) : Function.prototype.valueOf();
+        return function() {
+            var args  = Array.prototype.slice.call(arguments);
+            _warn.apply(null, args);
+        };
+    })();
 
     if (!Array.prototype.forEach) {
         Array.prototype.forEach = function (collection, iterator, context) {
@@ -75,7 +103,6 @@
     }
     if (!Array.prototype.indexOf) {
         Array.prototype.indexOf = function (searchElement /*, fromIndex */ ) {
-            "use strict";
             if (this === null) {
                 throw new TypeError();
             }
@@ -105,6 +132,37 @@
             return -1;
         };
     }
+
+    /**
+     * Allows you to tap into the current set of elements without affecting them
+     * in any way, additionally allowing you to chain calls together with this
+     * in the middle for debugging
+     *
+     * @memberof Array
+     * @instance
+     * @param {function} fn - The function to call for each element the tap encounters
+     * @param {boolean} debugOnly - If true, will only execute the tap fn if debug === true, defaults to false (always on)
+     */
+    Array.prototype.tap = function(fn, debugOnly) {
+        if (!debugOnly || exports.debug) {
+            // Clone the original array to prevent tampering, and send each element to the tap
+            this.slice().forEach(function(element) { fn.call(null, element); });
+        }
+        return this;
+    };
+
+    /**
+     * Determine if a string ends with the provided string.
+     *
+     * @memberof String
+     * @instance
+     * @param {string} str - The string to match
+     */
+    String.prototype.endsWith = function(str) {
+        if (this.length - str.length === this.lastIndexOf(str))
+            return true;
+        else return false;
+    };
 
     /**
      * Search for the first element that matches a predicate within the collection
@@ -301,11 +359,11 @@
      */
     Key.prototype.isMeta = function() {
         switch (this.code) {
-            case Key.CTRL:
-            case Key.SHIFT:
-            case Key.ALT:
-            case Key.META:
-            case Key.META_RIGHT:
+            case Key.CTRL.code:
+            case Key.SHIFT.code:
+            case Key.ALT.code:
+            case Key.META.code:
+            case Key.META_RIGHT.code:
                 return true;
             default:
                 return false;
@@ -362,10 +420,11 @@
 
         // From here on down, assume an array of keys was provided for meta
         this.key   = key;
-        this.ctrl  = hasKey(keys, Key.CTRL);
-        this.shift = hasKey(keys, Key.SHIFT);
-        this.alt   = hasKey(keys, Key.ALT);
-        this.meta  = hasKey(keys, Key.META) || hasKey(keys, Key.META_RIGHT);
+        this.ctrl  = hasKey(keys, Key.CTRL)  || key.eq(Key.CTRL);
+        this.shift = hasKey(keys, Key.SHIFT) || key.eq(Key.SHIFT);
+        this.alt   = hasKey(keys, Key.ALT)   || key.eq(Key.ALT);
+        this.meta  = hasKey(keys, Key.META)  || hasKey(keys, Key.META_RIGHT);
+        this.meta  = this.meta || (key.eq(Key.META) || key.eq(Key.META_RIGHT));
 
         // Warn the user if they have created a Combo using invalid combinations of keys
         var invalid = find(keys, function(k) {
@@ -382,7 +441,7 @@
         });
 
         if (invalid) {
-            console.warn('Warning: You have attempted to create a Combo using multiple non-meta Keys. This is not currently supported.');
+            warn('Warning: You have attempted to create a Combo using multiple non-meta Keys. This is not currently supported.');
         }
 
         function hasKey(collection, k) {
@@ -401,7 +460,9 @@
                    (this.alt   ? 'ALT+'   : '') +
                    (this.shift ? 'SHIFT+' : '') +
                    (this.meta  ? 'META+'  : '');
-        return meta + (key && key.name ? key.name : '');
+        if (this.key.isMeta())
+            return meta.endsWith('+') ? meta.slice(0, meta.length - 1) : meta;
+        else return meta + (this.key && this.key.name ? this.key.name : '');
     };
     /**
      * Serialize the Combo for persistance or transport.
@@ -478,11 +539,12 @@
      * @return {Combo}
      */
     Combo.fromEvent = function(e) {
-        var combo = new Combo(Key.fromCode(e.which));
-        combo.shift = combo.shift || e.shiftKey;
-        combo.alt   = combo.alt   || e.altKey;
-        combo.meta  = combo.meta  || e.metaKey;
-        combo.ctrl  = combo.ctrl  || e.ctrlKey;
+        var key = Key.fromCode(e.which);
+        var combo = new Combo(key);
+        combo.shift = e.shiftKey || key.eq(Key.SHIFT);
+        combo.alt   = e.altKey   || key.eq(Key.ALT);
+        combo.meta  = e.metaKey  || key.eq(Key.META) || key.eq(Key.META_RIGHT);
+        combo.ctrl  = e.ctrlKey  || key.eq(Key.CTRL);
         return combo;
     };
     /**
@@ -504,7 +566,7 @@
             combo.shift   = parts.indexOf('SHIFT') > -1;
             combo.meta    = parts.indexOf('META') > -1 || parts.indexOf('META_RIGHT') > -1;
             return combo;
-        } else throw Error('Combo.fromString: Invalid string');
+        } else throw new Error('Combo.fromString: Invalid string');
     };
     /**
      *  Determine if the this Combo was pressed given another Combo representing a keypress event.
@@ -606,8 +668,8 @@
      */
     function Bindings() {
         var self = this;
-        root.document.addEventListener('keydown', handleKeydown, true);
-        root.document.addEventListener('keyup',   handleKeyup,   true);
+        document.addEventListener('keydown', handleKeydown, true);
+        document.addEventListener('keyup',   handleKeyup,   true);
 
         this.bindings = [];
         this.handlers = [];
@@ -619,6 +681,9 @@
             // Execute any matching handlers
             self.getHandlersForCombo(combo)
                 .filter(function(h) { return h.eventType === 'keydown'; })
+                .tap(function(h) {
+                    log('Bindings.handleKeydown called for Combo: ' + combo.toString() + '. Handler `' + h.name + '` was called.');
+                }, true)
                 .forEach(function(h) { h.handler(); });
 
             return false;
@@ -631,6 +696,9 @@
             // Execute any matching handlers
             self.getHandlersForCombo(combo)
                 .filter(function(h) { return h.eventType === 'keyup'; })
+                .tap(function(h) {
+                    log('Bindings.handleKeyup called for Combo: ' + combo.toString() + '. Handler `' + h.name + '` was called.');
+                }, true)
                 .forEach(function(h) { h.handler(); });
 
             return false;
@@ -667,11 +735,13 @@
         var binding = find(this.bindings, function(b) { return b.name === name; });
         if (binding) {
             binding.combo = combo;
+            log('Bindings.add: Updated existing binding - `' + name + '` with Combo: ' + combo.toString());
         } else {
             this.bindings.push({
                 name:  name,
                 combo: combo
             });
+            log('Bindings.add: New binding - `' + name + '` with Combo: ' + combo.toString());
         }
     };
 
@@ -687,7 +757,7 @@
     Bindings.prototype.registerHandler = function(bindingName, eventType, handler) {
         // Permit eventType to be omitted and defaulted to keydown
         if (arguments.length === 2 && typeof eventType === 'function') {
-            handler = eventType;
+            handler   = eventType;
             eventType = 'keydown';
         }
 
@@ -699,6 +769,7 @@
             eventType: eventType,
             handler:   handler
         });
+        log('Bindings.registerHandler: Handler `' + bindingName + '` registered for `' + eventType + '` events.');
     };
 
     /**
@@ -736,6 +807,7 @@
                 };
             })()
         });
+        log('Bindings.registerToggle: Toggle `' + bindingName + '` registered.');
     };
 
     /**
@@ -767,6 +839,7 @@
         var parsed = JSON.parse(serialized);
         if (!parsed || !parsed.bindings || parsed instanceof Array)
             throw new Error('Keybindings.deserialize: Unable to deserialize keybindings');
+
         // Deserialize bindings
         var mapped = parsed.bindings.map(function(b) {
             b.combo = Combo.fromObject(b.combo);
@@ -784,13 +857,13 @@
      * @param {boolean} includeMeta - Include meta-only variations of the provided Combo
      */
     Bindings.prototype.getHandlersForCombo = function(combo, includeMeta) {
-        var self   = this;
+        var self     = this;
         var matching = this.bindings.filter(function(binding) {
             return includeMeta ? binding.combo.isMatch(combo, true) : binding.combo.isMatch(combo);
         });
         return this.handlers.filter(function(handler) {
             return find(matching, function(b) {
-                return b.name === handler.name || b.name === handler.name.replace('$$META', '');
+                return b.name === handler.name;
             });
         });
     };
