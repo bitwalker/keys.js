@@ -507,6 +507,8 @@
         // TODO: Convert from JSON even if JSON object is not provided.
         if (typeof JSON === 'undefined')
             throw new Error('Your browser does not currently support JSON deserialization.');
+        if (!serialized)
+            return null;
         // Deserialize
         var parsed = JSON.parse(serialized);
         // Create an actual Combo instance from the deserialized form
