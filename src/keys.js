@@ -553,6 +553,30 @@
             meta:  this.meta
         });
     };
+
+    /**
+     * This function is reused across a number of Combo functions to
+     * determine the meta Key instances to construct a new Combo instance
+     * with.
+     * 
+     * @param  {array} flags - These flags, when present, must be in CTRL > ALT > SHIFT > META order.
+     * @return {array} An array of Key instances matching the meta key flags passed in
+     */
+    function constructMetaParams(flags) {
+        if (!flags || !(flags instanceof Array)) {
+            flags = [ false, false, false, false ];
+        }
+        // Predicate to filter meta keys by
+        var isActive   = function(m) { return m[1] === true; };
+        // Extractor
+        var extractKey = function(m) { return m[0]; };
+        // Determine which meta keys were active, and map those to instances of Key
+        return Key.metaKeys.zipmap(flags)
+                           .filter(isActive)
+                           .map(extractKey);
+    }
+
+
     /**
      *  Create a Combo from an arbitrary object, primarily meant to be used in
      *  conjunction with Bindings.deserialize to properly reify a serialized Combo
@@ -567,18 +591,10 @@
         if (!obj || !obj.key || !obj.key.name || !obj.key.code)
             throw new Error('Combo.fromObject: Invalid Combo object provided.');
 
-        // Predicate to filter meta keys by
-        var isActive   = function(m) { return m[1] === true; };
-        // Extractor
-        var extractKey = function(m) { return m[0]; };
 
         // key param must be an instance of Key
-        var key      = new Key(obj.key.name, obj.key.code);
-        // Determine which meta keys were active, and map those to instances of Key
-        var metaKeys = [Key.CTRL, Key.ALT, Key.SHIFT, Key.META];
-        var meta     = metaKeys.zipmap([ obj.ctrl, obj.alt, obj.shift, obj.meta ])
-                               .filter(isActive)
-                               .map(extractKey);
+        var key  = new Key(obj.key.name, obj.key.code);
+        var meta = constructMetaParams([ obj.ctrl, obj.alt, obj.shift, obj.meta ]);
         if (meta.length)
             return new Combo(key, meta);
         else throw new Error('Combo.fromObject: Invalid Combo, at least one meta key should be set.');
@@ -592,13 +608,22 @@
      * @return {Combo}
      */
     Combo.fromEvent = function(e) {
+        if (!e || !e.which || !areDefined(e.ctrlKey, e.altKey, e.shiftKey, e.metaKey))
+            return null;
+
         var key = Key.fromCode(e.which);
-        var combo = new Combo(key);
-        combo.shift = e.shiftKey || key.eq(Key.SHIFT);
-        combo.alt   = e.altKey   || key.eq(Key.ALT);
-        combo.meta  = e.metaKey  || key.eq(Key.META) || key.eq(Key.META_RIGHT);
-        combo.ctrl  = e.ctrlKey  || key.eq(Key.CTRL);
-        return combo;
+        if (!key)
+            return null;
+
+        var meta = constructMetaParams([ e.ctrlKey, e.altKey, e.shiftKey, e.metaKey ]);
+        if (meta.length)
+            return new Combo(key, meta);
+        /**
+         * We return null as opposed to throwing an exception here, since many keypress events will be invalid Combos,
+         * and we'll be filtering those out anyways. Whereas fromObject failing is due to a coding or logic error,
+         * failures here are really just false positives due to the constraints we are placing on valid Combos.
+         */
+        else return null;
     };
     /**
      *  Reverse of toString, you should get the original combo if you call Combo.fromString(combo.toString()).
@@ -611,15 +636,30 @@
      *  @return {Combo}
      */
     Combo.fromString = function(str) {
-        var parts     = str.split('+');
-        if (parts.length >= 1) {
-            var combo     = new Combo(Key.fromName(parts[parts.length - 1]));
-            combo.ctrl    = parts.indexOf('CTRL') > -1;
-            combo.alt     = parts.indexOf('ALT') > -1;
-            combo.shift   = parts.indexOf('SHIFT') > -1;
-            combo.meta    = parts.indexOf('META') > -1 || parts.indexOf('META_RIGHT') > -1;
-            return combo;
-        } else throw new Error('Combo.fromString: Invalid string');
+        var noEmpties = function(s) { return !s ? false : true; };
+        var parts     = str.split('+').filter(noEmpties);
+        if (parts.length > 1) {
+            var ctrlKey    = parts.indexOf('CTRL') > -1;
+            var altKey     = parts.indexOf('ALT') > -1;
+            var shiftKey   = parts.indexOf('SHIFT') > -1;
+            var metaKey    = parts.indexOf('META') > -1 || parts.indexOf('META_RIGHT') > -1;
+            // Construct parameters
+            var key       = Key.fromName(parts[parts.length - 1]);
+            var meta      = constructMetaParams([ ctrlKey, altKey, shiftKey, metaKey ]);
+            // If there were no meta keys detected, but we have more than one part, there
+            // must be more than one non-meta key present, which is invalid
+            if (meta.length)
+                return new Combo(key, meta);
+            else
+                throw new Error('Combo.fromString: Cannot have more than one non-meta key.');
+        }
+        else if (parts.length === 1) {
+            if (Key.fromName(parts[0])) {
+                throw new Error('Combo.fromString: Must have more than one key.');
+            }
+        }
+
+        throw new Error('Combo.fromString: Invalid Combo string.');
     };
     /**
      *  Determine if this Combo is exactly equivalent to another Combo
