@@ -538,8 +538,8 @@
      *  @return {Combo}
      */
     Combo.fromObject = function(obj) {
-        if (!obj || !obj.key)
-            throw new Error('Combo.fromObject: Cannot create Combo from provided object');
+        if (!obj || !obj.key || !obj.key.name || !obj.key.code)
+            throw new Error('Combo.fromObject: Invalid Combo object provided.');
 
         // Predicate to filter meta keys by
         var isActive   = function(m) { return m[1] === true; };
@@ -553,7 +553,9 @@
         var meta     = metaKeys.zipmap([ obj.ctrl, obj.alt, obj.shift, obj.meta ])
                                .filter(isActive)
                                .map(extractKey);
-        return new Combo(key, meta);
+        if (meta.length)
+            return new Combo(key, meta);
+        else throw new Error('Combo.fromObject: Invalid Combo, at least one meta key should be set.');
     };
     /**
      * Given a keypress event, create a Combo that represents the set of pressed keys
