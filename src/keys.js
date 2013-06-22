@@ -593,6 +593,29 @@
         } else throw new Error('Combo.fromString: Invalid string');
     };
     /**
+     *  Determine if this Combo is exactly equivalent to another Combo
+     *
+     *  @memberOf Combo
+     *  @instance
+     *  @param {Combo} combo - The Combo to compare
+     *  @return {boolean}
+     */
+    Combo.prototype.eq = function (combo) {
+        if (!combo || !(combo instanceof Combo))
+            return false;
+        else if (!this.key.eq(combo.key))
+            return false;
+        else if (this.shift !== combo.shift)
+            return false;
+        else if (this.alt !== combo.alt)
+            return false;
+        else if (this.ctrl !== combo.ctrl)
+            return false;
+        else if (this.meta !== combo.meta)
+            return false;
+        else return true;
+    };
+    /**
      *  Determine if the this Combo was pressed given another Combo representing a keypress event.
      *
      *  @memberOf Combo
