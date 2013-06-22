@@ -65,7 +65,7 @@ bindings.registerToggle('toggle', toggleOn, toggleOff);
 
 ## Full Example
 
-```javascript
+```html
 <html>
 <body>
     <div class="wrapper">
