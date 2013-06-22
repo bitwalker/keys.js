@@ -8,33 +8,35 @@
     </div>
     <script type="text/javascript" src="../src/keys.js"></script>
     <script type="text/javascript">
-        // Toggle Flag
-    	var toggled = false;
+        (function() {
+            // Toggle Flag
+        	var toggled = false;
 
-        // Initialize application-wide bindings manager
-    	var bindings = new Bindings();
+            // Initialize application-wide bindings manager
+        	var bindings = window.bindings = new Bindings();
 
-        // Add keybindings
-    	bindings.add('displayAlert',   new Combo(Key.A, [ Key.CTRL, Key.SHIFT ]));
-    	bindings.add('toggleFlag',     new Combo(Key.C, [ Key.SHIFT, Key.META ]));
-        bindings.add('highlightInput', new Combo(Key.SHIFT, Key.META));
+            // Add keybindings
+        	bindings.add('displayAlert',   new Combo(Key.A, [ Key.CTRL, Key.SHIFT ]));
+        	bindings.add('toggleFlag',     new Combo(Key.C, [ Key.SHIFT, Key.META ]));
+            bindings.add('highlightInput', new Combo(Key.SHIFT, Key.META));
 
-        // Register displayAlert handler
-    	bindings.registerHandler('displayAlert', function() { alert('Hello!'); });
+            // Register displayAlert handler
+        	bindings.registerHandler('displayAlert', function() { alert('Hello!'); });
 
-        // Register toggleFlag toggle
-    	var toggleOn = function() { toggled = true; console.log(toggled); };
-    	var toggleOff = function() { toggled = false; console.log(toggled); };
-    	bindings.registerToggle('toggleFlag', toggleOn, toggleOff);
+            // Register toggleFlag toggle
+        	var toggleOn  = function() { toggled = true; console.log(toggled); };
+        	var toggleOff = function() { toggled = false; console.log(toggled); };
+        	bindings.registerToggle('toggleFlag', toggleOn, toggleOff);
 
-        // Register a pair of handlers on keyup/keydown to highlight a field
-        // while the associated Combo is activated (held down)
-    	bindings.registerHandler('highlightInput', 'keydown', function() {
-    		document.getElementById('test').style['background-color'] = 'yellow';
-    	});
-    	bindings.registerHandler('highlightInput', 'keyup', function() {
-    		document.getElementById('test').style['background-color'] = 'white';
-    	});
+            // Register a pair of handlers on keyup/keydown to highlight a field
+            // while the associated Combo is activated (held down)
+        	bindings.registerHandler('highlightInput', 'keydown', function() {
+        		document.getElementById('test').style['background-color'] = 'yellow';
+        	});
+        	bindings.registerHandler('highlightInput', 'keyup', function() {
+        		document.getElementById('test').style['background-color'] = 'white';
+        	});
+        })();
     </script>
 </body>
 </html>
