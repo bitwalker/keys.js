@@ -716,26 +716,6 @@
 
         return true;
     };
-    /** 
-     * Check if a Combo requires the presence of the provided key.
-     * 
-     * @memberOf Combo
-     * @instance
-     * @param {number} which - The key code we want to know is required or not
-     * @return {boolean}
-     */
-    Combo.prototype.requires = function(which) {
-        if (typeof which !== 'number')
-            throw new Error('Combo.requires: `which` must be a keycode (number)');
-
-        if (this.key.code === which) return true;
-        else if (this.ctrl  && this.key.eq(Key.CTRL))  return true;
-        else if (this.shift && this.key.eq(Key.SHIFT)) return true;
-        else if (this.alt   && this.key.eq(Key.ALT))   return true;
-        else if (this.meta  && (this.key.eq(Key.META) || key.eq(Key.META_RIGHT)))
-            return true;
-        else return false;
-    };
     /**
      * Check if this Combo contains any meta keys.
      *
