@@ -421,15 +421,6 @@
             throw new Error('Combo: Invalid number of arguments provided.');
         }
 
-        // From here on down, assume an array of keys was provided for meta
-        this.key   = key;
-        this.ctrl  = hasKey(keys, Key.CTRL)  || key.eq(Key.CTRL);
-        this.shift = hasKey(keys, Key.SHIFT) || key.eq(Key.SHIFT);
-        this.alt   = hasKey(keys, Key.ALT)   || key.eq(Key.ALT);
-        this.meta  = hasKey(keys, Key.META)  || hasKey(keys, Key.META_RIGHT);
-        this.meta  = this.meta || (key.eq(Key.META) || key.eq(Key.META_RIGHT));
-
-        // Warn the user if they have created a Combo using invalid combinations of keys
         var invalid = find(keys, function(k) {
             switch (k.code) {
                 case Key.CTRL.code:
@@ -444,8 +435,16 @@
         });
 
         if (invalid) {
-            warn('Warning: You have attempted to create a Combo using multiple non-meta Keys. This is not currently supported.');
+            throw new Error('Combo: Attempted to create a Combo with multiple non-meta Keys. This is not supported.');
         }
+
+        // From here on down, assume an array of keys was provided for meta
+        this.key   = key;
+        this.ctrl  = hasKey(keys, Key.CTRL)  || key.eq(Key.CTRL);
+        this.shift = hasKey(keys, Key.SHIFT) || key.eq(Key.SHIFT);
+        this.alt   = hasKey(keys, Key.ALT)   || key.eq(Key.ALT);
+        this.meta  = hasKey(keys, Key.META)  || hasKey(keys, Key.META_RIGHT);
+        this.meta  = this.meta || (key.eq(Key.META) || key.eq(Key.META_RIGHT));
 
         function hasKey(collection, k) {
             return find(collection, function(x) { return k.eq(x); }) !== null;
