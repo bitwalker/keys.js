@@ -540,14 +540,20 @@
     Combo.fromObject = function(obj) {
         if (!obj || !obj.key)
             throw new Error('Combo.fromObject: Cannot create Combo from provided object');
+
+        // Predicate to filter meta keys by
+        var isActive   = function(m) { return m[1] === true; };
+        // Extractor
+        var extractKey = function(m) { return m[0]; };
+
         // key param must be an instance of Key
-        var key     = new Key(obj.key.name, obj.key.code);
-        var combo   = new Combo(key);
-        combo.ctrl  = obj.ctrl  || false;
-        combo.alt   = obj.alt   || false;
-        combo.shift = obj.shift || false;
-        combo.meta  = obj.meta  || false;
-        return combo;
+        var key      = new Key(obj.key.name, obj.key.code);
+        // Determine which meta keys were active, and map those to instances of Key
+        var metaKeys = [Key.CTRL, Key.ALT, Key.SHIFT, Key.META];
+        var meta     = metaKeys.zipmap([ obj.ctrl, obj.alt, obj.shift, obj.meta ])
+                               .filter(isActive)
+                               .map(extractKey);
+        return new Combo(key, meta);
     };
     /**
      * Given a keypress event, create a Combo that represents the set of pressed keys
