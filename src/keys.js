@@ -748,7 +748,7 @@
      * 
      * @class
      * @classdesc Bindings is responsible for managing the mapping of behavior to Combos. In addition,
-     *            it is responsible for listening in on keyup/keydown events document-wide, and if a
+     *            it is responsible for listening in on keyup/keydown/keypress events document-wide, and if a
      *            Combo is matched, execute any associated handlers while also preventing the default
      *            behavior. It allows for persistance or transport by serializing the bindings currently
      *            managed, **but not the handlers**. Deserializing an instance of Bindings requires you
@@ -877,7 +877,7 @@
         }
         else if (arguments.length === 2 && typeof eventType === 'function') {
             // Inferred bindingName
-            if (bindingName === 'keyup' || bindingName === 'keydown') {
+            if (bindingName === 'keyup' || bindingName === 'keydown' || bindingName === 'keypress') {
                 handler     = eventType;
                 eventType   = bindingName;
                 bindingName = handler.name;
