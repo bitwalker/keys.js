@@ -923,6 +923,77 @@
     };
 
     /**
+     * For easier initialization, allow binding a group of handlers at one time using object notation
+     *
+     * @memberOf Bindings
+     * @instance
+     * @param {object|array} handlers - Either an object defining the handlers to register, using the schema shown in the example,
+     *                                  or an array of named functions, which will all use either 'keydown' or the provided default
+     *                                  eventType.
+     * @param {string} eventType - The default eventType to use for handlers provided {optional}
+     * @example
+     *      function displayAlert() { alert('Hello!'); }
+     *      function logEvent() { console.log('logEvent triggered!'); }
+     *      // Object notation
+     *      bindings.registerHandlers({
+     *          displayAlert: {
+     *              eventType: 'keyup',
+     *              handler: displayAlert
+     *          },
+     *          logEvent: logEvent
+     *      });
+     *      // Array notation
+     *      bindings.registerHandlers([ displayAlert, logEvent ]);
+     *      // Array notation with default eventType
+     *      bindings.registerHandlers([ displayAlert, logEvent ], 'keyup');
+     */
+    Bindings.prototype.registerHandlers = function(handlers, eventType) {
+        var self = this;
+        if (arguments.length > 2 || arguments.length === 0)
+            throw new Error('Bindings.registerHandlers: Bad invocation. Incorrect # of arguments provided.');
+
+        if (arguments.length === 2) {
+            if (typeof eventType !== 'string')
+                throw new Error('Bindings.registerHandlers: Bad invocation. eventType must be a string (keyup|keydown).');
+        }
+
+        // Array syntax
+        if (handlers instanceof Array) {
+            handlers.forEach(function(handler) {
+                if (!handler.name || handler.name === 'anonymous')
+                    throw new Error('Bindings.registerHandlers: Array notation with anonymous functions is not allowed.');
+                if (eventType)
+                    self.registerHandler(eventType, handler);
+                else
+                    self.registerHandler(handler);
+            });
+        }
+        else if (typeof handlers === 'object') {
+            for (var key in handlers) {
+                if (handlers.hasOwnProperty(key)) {
+                    var bindingName = key;
+                    var handler     = handlers[key];
+                    if (typeof handler === 'function') {
+                        self.registerHandler(bindingName, handler);
+                    }
+                    else if (typeof handler === 'object') {
+                        var evType = handler.eventType || eventType;
+                        var fn     = handler.handler;
+                        if (!fn || typeof fn !== 'function')
+                            throw new Error('Bindings.registerHandlers: Invalid handler specification, must define the handler property as a function.');
+                        if (evType) {
+                            self.registerHandler(bindingName, evType, fn);
+                        }
+                        else {
+                            self.registerHandler(bindingName, fn);
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    /**
      * Register a toggle for when a Combo is executed.
      *
      * @memberOf Bindings
