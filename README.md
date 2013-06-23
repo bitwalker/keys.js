@@ -11,6 +11,7 @@ Stable, but it's a new project, so as always, caveat emptor. The documentation i
 - Implement scoped bindings (only execute a binding if focus is within the scope of a given element)
 - Comprehensive documentation (good progress already)
 - Discover additional use cases that aren't covered as well as they could be
+- Implement a faux-Vim example to demonstrate a complex usecase of keybindings in a web application.
 
 ## Features
 
@@ -39,6 +40,10 @@ Key.js has CommonJS and AMD module support, and can be used with require.js or a
 #### External Dependencies
 
 None. I wanted to ensure that Keys could stand on it's own, independent of any third party libraries. This makes it really easy to deploy on an existing project. The only exception is in IE<7 where the JSON object is not provided. In this case, you would need to add the JSON2 library to your project. This is only necessary if you plan on making use of the serialization features that Keys.js provides.
+
+#### Potential Side Effects
+
+Key.js polyfills Array.forEach, Array.map, Array.filter and Array.indexOf **if they are not already implemented by the browser, or another library**, for internal use. I currently have no plans to remove these polyfills, but if it is causing issues for you, let me know and I'll look into alternative approaches. If you are curious, the decision to polyfill those methods was due to my opinion that the improvements in code clarity and maintainability make them worthwhile.
 
 ## Architecture
 
