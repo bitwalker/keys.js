@@ -4,19 +4,20 @@
 (function (root, builder, undefined) {
     if (typeof exports === 'object') {
         // CommonJS Native
-        exports = builder(exports);
+        var globals = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : {});
+        exports = builder(exports, globals);
     }
-    if (typeof define === 'function') {
+    else if (typeof define === 'function') {
         // CommonJS AMD
         define(function() {
-            return builder(root);
+            return builder({}, root);
         });
     }
     else {
         // Vanilla environments (browser)
-        root = builder(root);
+        root = builder(root, window);
     }
-})(this, function (exports, undefined) {
+})(this, function (exports, globals, undefined) {
     'use strict';
 
     exports = exports || {};
@@ -779,8 +780,9 @@
      */
     function Bindings() {
         var self = this;
-        document.addEventListener('keydown', handleKeydown, true);
-        document.addEventListener('keyup',   handleKeyup,   true);
+
+        globals.document.addEventListener('keydown', handleKeydown, true);
+        globals.document.addEventListener('keyup',   handleKeyup,   true);
 
         this.bindings = [];
         this.handlers = [];
