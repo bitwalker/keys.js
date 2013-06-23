@@ -2,17 +2,43 @@
 
 This project spawned out of a Chrome extension I was working on where I kept handling more and more key combinations for shortcut actions, until it eventually became an unmaintainable rats nest. Obviously I needed a solution, and Keys.js was born.
 
-## Current State
+## Status
 
-Stable, but it's a new project, so as always, caveat emptor. The documentation is very close to comprehensive, but some work needs to be done. The test suite is comprehensive, and very few gaps are left to fill there that are meaningful. Please help me identify any gaps in functionality, testing, or docs, by submitting issues so that I can prioritize things as needed.
+Stable, but it's a new project, so as always, caveat emptor. The documentation is very close to comprehensive, but some work needs to be done. The test suite is comprehensive, and very few gaps are left to fill there that are meaningful. Please help me identify any gaps in functionality, testing, or docs, by submitting issues so that I can prioritize things as needed. The current list of things I am working on is as follows:
 
-## Usage
+- Implement locale selection, locale loading
+- Implement Sequences (non-chord key combinations)
+- Implement scoped bindings (only execute a binding if focus is within the scope of a given element)
+- Comprehensive documentation (good progress already)
+- Discover additional use cases that aren't covered as well as they could be
 
-This library is intended for use in the browser, but offers support for any CommonJS or AMD module loaders, such as require.js, etc.
+## Features
 
-## External Dependencies
+- Bind behavior to a specific key or combination of keys, ex. `bindings.add('undo', Key.U)` or `bindings.add('undoAll', new Combo(Key.U, Key.META))`
+- Bind behavior to multiple keys/combos with a single binding, ex. `bindings.add('auditEvent', Key.D, new Combo(Key.D, Key.META))`
+- Handle bindings with a callback function using `Bindings.registerHandler`
+- Handle bindings with toggle-style behavior using `Bindings.registerToggle(bindingName, toggleOnHandler, toggleOffHandler)`
+- Work with objects, ex. `new Combo(Key.A, Key.CTRL)`, instead of strings, i.e `new Combo('ctrl+a')`. While slightly more verbose, it is less error prone, and allows you to catch errors early on if you spell a key wrong, or try to create a Combo with an invalid combination of keys.
+- Save bindings to localStorage or send to a server for persistance using `Combo.serialize` or `Bindings.serialize`. Very useful for allowing users to customize their keybindings.
+- Pretty print Combos using `Combo.toString`
+- More to come!
 
-None. I wanted to ensure that Keys could stand on it's own, independent of any third party libraries. This makes it really easy to deploy on an existing project.
+#### Browser Support
+
+I've tested in the following browsers:
+
+- IE7+ (I suspect IE6 works, but I don't have a way to test)
+- Firefox 21+
+- Safari 6+
+- Chrome 27+
+
+#### Module Support
+
+Key.js has CommonJS and AMD module support, and can be used with require.js or another module loader.
+
+#### External Dependencies
+
+None. I wanted to ensure that Keys could stand on it's own, independent of any third party libraries. This makes it really easy to deploy on an existing project. The only exception is in IE<7 where the JSON object is not provided. In this case, you would need to add the JSON2 library to your project. This is only necessary if you plan on making use of the serialization features that Keys.js provides.
 
 ## Architecture
 
@@ -29,6 +55,8 @@ This class manages information about a combination of physical keys on the keybo
 You can create Combos easily using one of the following variations:
 
 ```javascript
+// Single key
+var combo = new Combo(Key.A);
 // Single meta key
 var combo = new Combo(Key.A, Key.CTRL);
 // Multiple meta keys, constructor called as a variadic function
@@ -39,20 +67,29 @@ var combo = new Combo(Key.A, [ Key.CTRL, Key.SHIFT ]);
 
 #### Bindings
 
-This class manages the mapping of behavior to Combos. It intercepts keydown/keyup document-wide, creates a Combo from the keypress event, matches that Combo against the set of configured keybindings (instances of Combo), and if a match is found, executes any handlers for that Combo and event type (you can have distinct handlers for keydown/keyup). **Note:** You should only ever have one instance of Bindings on the page, or you will encounter duplication/dropping of events.
+This class manages the mapping of behavior to Combos. It intercepts keypress/keydown/keyup document-wide, creates a Combo from that event, matches that Combo against the set of configured keybindings (instances of Combo), and if a match is found, executes any handlers for that Combo and event type (you can have distinct handlers for keydown/keyup). **Note:** You should only ever have one instance of Bindings on the page, or you will encounter duplication/dropping of events.
 
 Bindings offers a simple API for taking Combos and binding behavior to them. First, you use `add` to create a keybinding:
 
 ```javascript
 var bindings = new Bindings();
-bindings.add('displayAlert', new Combo(Key.A, [ Key.CTRL, Key.SHIFT ]));
-bindings.add('toggle', new Combo(Key.A, [ Key.CTRL, Key.META ]));
+// Typical binding syntax
+bindings.add('displayAlert', new Combo(Key.A, Key.CTRL, Key.SHIFT));
+bindings.add('toggle', new Combo(Key.S, Key.CTRL, Key.META));
+// Multiple bindings for one event
+bindings.add('anotherEvent', new Combo(Key.D, Key.META), new Combo(Key.D, Key.SHIFT));
 ```
 
-After you've added your keybindings, you can register a handler using `registerHandler`. You can register multiple handlers for a single event, they will all be executed.
+Add behavior to a binding using `Bindings.registerHandler`. You can also add multiple handlers for one event (for instance one handler for undo logic, one to perform the actual action).
 
 ```javascript
+var displayAlert = function() { alert('Hello!'); };
+// Inferred binding name and eventType syntax
+bindings.registerHandler(displayAlert);
+// Inferred eventType syntax
 bindings.registerHandler('displayAlert', function() { alert('Hello!'); });
+// Full syntax
+bindings.registerHandler('displayAlert', 'keypress', function() { alert('Hello!'); });
 ```
 
 If you have toggle-like behavior you'd like to implement, you are in luck! Register your toggle using `registerToggle`:
@@ -110,14 +147,6 @@ bindings.registerToggle('toggle', toggleOn, toggleOff);
 </body>
 </html>
 ```
-
-## TODO
-
-I feel pretty happy with the current state of this, but as always, bugs and corner cases are sure to arise. A couple things I'd like to do:
-
-- Implement locales other than en_US
-- Comprehensive documentation (good progress already)
-- Discover additional use cases that aren't covered as well as they could be with Keys
 
 ## License
 
