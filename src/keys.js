@@ -875,6 +875,10 @@
         if (!bindingName || !eventType || !handler || typeof handler !== 'function')
             throw new Error('Keybindings.registerHandler: Invalid arguments provided');
 
+        if (!this.get(bindingName)) {
+            warn('Bindings.registerHandler: You have registered a handler for `' + bindingName + '`, but that binding as not yet been added.');
+        }
+
         this.handlers.push({
             name:      bindingName,
             eventType: eventType,
