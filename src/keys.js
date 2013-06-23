@@ -869,19 +869,46 @@
      *
      * @memberOf Bindings
      * @instance
-     * @param  {string} bindingName - The name of the binding to watch
+     * @param  {string} bindingName - The name of the binding to watch, can be inferred when handler is a named function and bindingName is omitted
      * @param  {string} eventType - Either keyup or keydown, depending on needs. Defaults to keydown.
      * @param  {function} handler - The function to call when the Combo is executed.
+     * @example
+     *      function displayAlert() { alert('Hello!'); }
+     *      // Full specification syntax
+     *      bindings.registerHandler('displayAlert', 'keyup', function() { alert('Hello!'); });
+     *      // Partial specification, with inferred eventType syntax
+     *      bindings.registerHandler('displayAlert', function() { alert('Hello!'); });
+     *      // Partial specification, with inferred bindingName syntax
+     *      bindings.registerHandler('keyup', displayAlert);
+     *      // Minimal specification, with inferred bindingName and eventType syntax, using a named function
+     *      bindings.registerHandler(displayAlert);
      */
     Bindings.prototype.registerHandler = function(bindingName, eventType, handler) {
-        // Permit eventType to be omitted and defaulted to keydown
-        if (arguments.length === 2 && typeof eventType === 'function') {
-            handler   = eventType;
-            eventType = 'keydown';
+        // Inferred bindingName and eventType
+        if (arguments.length === 1 && typeof bindingName === 'function') {
+            handler     = bindingName;
+            bindingName = handler.name;
+            eventType   = 'keydown';
+        }
+        else if (arguments.length === 2 && typeof eventType === 'function') {
+            // Inferred bindingName
+            if (bindingName === 'keyup' || bindingName === 'keydown') {
+                handler     = eventType;
+                eventType   = bindingName;
+                bindingName = handler.name;
+            }
+            // Inferred eventType
+            else {
+                handler   = eventType;
+                eventType = 'keydown';
+            }
         }
 
+        // Only possibilities left are invalid invocation or everything was fully specified.
         if (!bindingName || !eventType || !handler || typeof handler !== 'function')
-            throw new Error('Keybindings.registerHandler: Invalid arguments provided');
+            throw new Error('Bindings.registerHandler: Invalid arguments provided');
+        if (bindingName === 'anonymous')
+            throw new Error('Bindings.registerHandler: The function handler provided was anonymous when it needs to be named (in order to infer the binding name)');
 
         if (!this.get(bindingName)) {
             warn('Bindings.registerHandler: You have registered a handler for `' + bindingName + '`, but that binding as not yet been added.');
