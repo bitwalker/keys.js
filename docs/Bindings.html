@@ -87,7 +87,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 748
+        keys.js, line 746
     </li></ul></dd>
     
     
@@ -155,7 +155,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="add"><span class="type-signature"></span>add<span class="signature">(name, combo)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="add"><span class="type-signature"></span>add<span class="signature">(name, combos)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -220,7 +220,7 @@
 	
         <tr>
             
-                <td class="name"><code>combo</code></td>
+                <td class="name"><code>combos</code></td>
             
             
             <td class="type">
@@ -236,7 +236,7 @@
             
             
             
-            <td class="description last"><p>The Combo which triggers this binding.</p></td>
+            <td class="description last"><p>One or more Combos which trigger this binding</p></td>
         </tr>
 	
 	
@@ -267,7 +267,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 847
+        keys.js, line 845
     </li></ul></dd>
     
     
@@ -384,7 +384,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 957
+        keys.js, line 1056
     </li></ul></dd>
     
     
@@ -501,7 +501,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 835
+        keys.js, line 833
     </li></ul></dd>
     
     
@@ -640,7 +640,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 981
+        keys.js, line 1079
     </li></ul></dd>
     
     
@@ -726,7 +726,7 @@
             
             
             
-            <td class="description last"><p>The name of the binding to watch</p></td>
+            <td class="description last"><p>The name of the binding to watch, can be inferred when handler is a named function and bindingName is omitted</p></td>
         </tr>
 	
 	
@@ -803,7 +803,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 876
+        keys.js, line 888
     </li></ul></dd>
     
     
@@ -825,6 +825,182 @@
     
     
     
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>     function displayAlert() { alert('Hello!'); }
+     // Full specification syntax
+     bindings.registerHandler('displayAlert', 'keyup', function() { alert('Hello!'); });
+     // Partial specification, with inferred eventType syntax
+     bindings.registerHandler('displayAlert', function() { alert('Hello!'); });
+     // Partial specification, with inferred bindingName syntax
+     bindings.registerHandler('keyup', displayAlert);
+     // Minimal specification, with inferred bindingName and eventType syntax, using a named function
+     bindings.registerHandler(displayAlert);</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="registerHandlers"><span class="type-signature"></span>registerHandlers<span class="signature">(handlers, eventType)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>For easier initialization, allow binding a group of handlers at one time using object notation</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>handlers</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+|
+
+<span class="param-type">array</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>Either an object defining the handlers to register, using the schema shown in the example,
+                                 or an array of named functions, which will all use either &#39;keydown&#39; or the provided default
+                                 eventType.</p></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>eventType</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>The default eventType to use for handlers provided {optional}</p></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        keys.js, line 952
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>     function displayAlert() { alert('Hello!'); }
+     function logEvent() { console.log('logEvent triggered!'); }
+     // Object notation
+     bindings.registerHandlers({
+         displayAlert: {
+             eventType: 'keyup',
+             handler: displayAlert
+         },
+         logEvent: logEvent
+     });
+     // Array notation
+     bindings.registerHandlers([ displayAlert, logEvent ]);
+     // Array notation with default eventType
+     bindings.registerHandlers([ displayAlert, logEvent ], 'keyup');</code></pre>
+
     
 </dd>
 
@@ -966,7 +1142,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 907
+        keys.js, line 1007
     </li></ul></dd>
     
     
@@ -1035,7 +1211,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 943
+        keys.js, line 1043
     </li></ul></dd>
     
     
@@ -1104,7 +1280,7 @@
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Sat Jun 22 2013 21:43:17 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Sun Jun 23 2013 11:25:46 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>

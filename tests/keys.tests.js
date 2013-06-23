@@ -411,7 +411,8 @@ vows.describe('Keys.js').addBatch({
                 "It is possible to add a valid binding": function(bindings) {
                     var combo = new Combo(Key.A, [ Key.SHIFT, Key.CTRL ]);
                     bindings.add('testBind', combo);
-                    assert.isTrue(bindings.get('testBind').combo.eq(combo));
+                    assert.lengthOf(bindings.get('testBind').combos, 1);
+                    assert.isTrue(bindings.get('testBind').combos[0].eq(combo));
                 },
                 "It is not possible to add a binding without a name": function(bindings) {
                     var combo = new Combo(Key.B, [ Key.SHIFT, Key.CTRL ]);
@@ -440,7 +441,8 @@ vows.describe('Keys.js').addBatch({
                     assert.isNotNull(bindings.get('testBind'));
                     var combo = new Combo(Key.D, [ Key.SHIFT, Key.CTRL ]);
                     bindings.add('testBind', combo);
-                    assert.isTrue(bindings.get('testBind').combo.eq(combo));
+                    assert.lengthOf(bindings.get('testBind').combos, 1);
+                    assert.isTrue(bindings.get('testBind').combos[0].eq(combo));
                 }
             },
             "Can retrieve handlers for a given Combo": {
@@ -480,7 +482,9 @@ vows.describe('Keys.js').addBatch({
                     var serializable = find(bindings.bindings, function(b) { return b.name === 'serializable'; });
                     assert.isNotNull(serializable);
                     assert.equal(serializable.name, 'serializable');
-                    assert.instanceOf(serializable.combo, Combo);
+                    assert.instanceOf(serializable.combos, Array);
+                    assert.isTrue(serializable.combos.length > 0);
+                    assert.instanceOf(serializable.combos[0], Combo);
 
                     function find(collection, predicate) {
                         for (var i = 0; i < collection.length; i++) {

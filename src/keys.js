@@ -839,26 +839,30 @@
      *
      * @memberOf Bindings
      * @instance
-     * @param  {string} name - The name of the binding.
-     * @param  {Combo} combo - The Combo which triggers this binding.
+     * @param  {string} name  - The name of the binding.
+     * @param  {Combo} combos - One or more Combos which trigger this binding
      */
-    Bindings.prototype.add = function(name, combo) {
-        if (!name || !combo)
+    Bindings.prototype.add = function(name /* combo1, ..comboN */) {
+        var combos = Array.prototype.slice.call(arguments, 1);
+        if (arguments.length < 2 || !name || !combos.length)
             throw new Error('Keybindings.add: Invalid arguments provided');
-        if (!(combo instanceof Combo))
-            throw new Error('Keybindings.add: `combo` must be an instance of Combo');
+        // Validate combos
+        combos.forEach(function(combo) {
+            if (!(combo instanceof Combo))
+                throw new Error('Keybindings.add: `combo` must be an instance of Combo');
+        });
 
         // If the binding name already exists, overwrite it
         var binding = find(this.bindings, function(b) { return b.name === name; });
         if (binding) {
-            binding.combo = combo;
-            log('Bindings.add: Updated existing binding - `' + name + '` with Combo: ' + combo.toString());
+            binding.combos = combos;
+            log('Bindings.add: Updated existing binding - `' + name + '` with ' + combos.length + ' combos');
         } else {
             this.bindings.push({
                 name:  name,
-                combo: combo
+                combos: combos
             });
-            log('Bindings.add: New binding - `' + name + '` with Combo: ' + combo.toString());
+            log('Bindings.add: New binding - `' + name + '` with ' + combos.length + ' combos');
         }
     };
 
@@ -1059,7 +1063,7 @@
 
         // Deserialize bindings
         var mapped = parsed.bindings.map(function(b) {
-            b.combo = Combo.fromObject(b.combo);
+            b.combos = b.combos.map(function(c) { return Combo.fromObject(c); });
             return b;
         });
         this.bindings = mapped;
@@ -1075,13 +1079,21 @@
     Bindings.prototype.getHandlersForCombo = function(combo) {
         var self     = this;
         var matching = this.bindings.filter(function(binding) {
-            return binding.combo.isMatch(combo);
+            return any(binding.combos, function(c) { return c.isMatch(combo); });
         });
         return this.handlers.filter(function(handler) {
             return find(matching, function(b) {
                 return b.name === handler.name;
             });
         });
+
+        function any(collection, predicate) {
+            for (var i = 0; i < collection.length; i++) {
+                if (predicate(collection[i]))
+                    return true;
+            }
+            return false;
+        }
     };
 
     exports.Bindings = Bindings;
