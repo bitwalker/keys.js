@@ -17,11 +17,23 @@
 
             // Add keybindings
         	bindings.add('displayAlert',   new Combo(Key.A, [ Key.CTRL, Key.SHIFT ]));
+            bindings.add('printMessage',   new Combo(Key.M, [ Key.CTRL, Key.SHIFT ]));
         	bindings.add('toggleFlag',     new Combo(Key.C, [ Key.SHIFT, Key.ALT ]));
             bindings.add('highlightInput', new Combo(Key.SHIFT, Key.META));
 
             // Register displayAlert handler
-        	bindings.registerHandler('displayAlert', function() { alert('Hello!'); });
+            function displayAlert() { alert('Hello!'); }
+        	bindings.registerHandler(displayAlert);
+
+            // Register handlers in bulk
+            function printMessage() { console.log('Hello!'); }
+            bindings.registerHandlers({
+                printMessage: {
+                    eventType: 'keyup',
+                    handler: printMessage
+                },
+                displayAlert: displayAlert
+            });
 
             // Register toggleFlag toggle
         	var toggleOn  = function() { toggled = true; console.log(toggled); };
