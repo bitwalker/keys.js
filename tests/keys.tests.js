@@ -1,7 +1,8 @@
 var vows   = require('vows'),
-    assert = require('assert');
+    assert = require('assert'),
+    events = require('events'),
+    Keys   = require('../src/keys');
 
-var Keys = require('../src/keys');
 var Key      = Keys.Key;
 var Combo    = Keys.Combo;
 var Bindings = Keys.Bindings;
@@ -68,6 +69,8 @@ vows.describe('Keys.js').addBatch({
             }
         }
     },
+
+
     'Combo': {
         'Creating Combos': {
             "cannot create a Combo with a non-meta Key unless it is the first argument of the constructor": function() {
@@ -364,6 +367,228 @@ vows.describe('Keys.js').addBatch({
                 assert.lengthOf(meta, 2);
                 assert.include(meta, Key.SHIFT);
                 assert.include(meta, Key.META);
+            }
+        }
+    },
+    'Bindings': {
+        'Integration Tests': {
+            topic: function() {
+                /**
+                 * There is no document object in node so we are going to mock
+                 * out document and the event listener implementation so that we 
+                 * can test Bindings fully.
+                 */
+                if (!global.document) {
+                    global.document = {
+                        listeners: [],
+                        addEventListener: function(eventType, fn, stopPropagation) {
+                            this.listeners.push({
+                                eventType: eventType,
+                                handler:   fn
+                            });
+                        },
+                        keyup: function(e) {
+                            this.listeners.forEach(function(listener) {
+                                if (listener.eventType === 'keyup')
+                                    listener.handler.call(null, e);
+                            });
+                        },
+                        keydown: function(e) {
+                            this.listeners.forEach(function(listener) {
+                                if (listener.eventType === 'keydown')
+                                    listener.handler.call(null, e);
+                            });
+                        }
+                    };
+                }
+                var bindings = new Bindings();
+                return { document: global.document, bindings: bindings };
+            },
+            "Can add bindings": {
+                topic: function(context) {
+                    return context.bindings;
+                },
+                "It is possible to add a valid binding": function(bindings) {
+                    var combo = new Combo(Key.A, [ Key.SHIFT, Key.CTRL ]);
+                    bindings.add('testBind', combo);
+                    assert.isTrue(bindings.get('testBind').combo.eq(combo));
+                },
+                "It is not possible to add a binding without a name": function(bindings) {
+                    var combo = new Combo(Key.B, [ Key.SHIFT, Key.CTRL ]);
+                    assert.throws(function() {
+                        bindings.add(combo);
+                    }, Error);
+                    try { bindings.add(combo); }
+                    catch (ex) { assert.include(ex.message, 'Invalid arguments'); }
+                },
+                "It is not possible to add a binding without a Combo": function(bindings) {
+                    assert.throws(function() {
+                        bindings.add('noCombo');
+                    }, Error);
+                    try { bindings.add('noCombo'); }
+                    catch (ex) { assert.include(ex.message, 'Invalid arguments'); }
+                },
+                "Bindings.add validates that the combo provided is an instance of Combo": function(bindings) {
+                    var combo = { key: Key.C, shift: true, ctrl: true, alt: false, meta: false };
+                    assert.throws(function() {
+                        bindings.add('comboLike', combo);
+                    }, Error);
+                    try { bindings.add('comboLike', combo); }
+                    catch (ex) { assert.include(ex.message, 'must be an instance of Combo'); }
+                },
+                "Calling add with a name that already exists overwrites the Combo for that binding": function(bindings) {
+                    assert.isNotNull(bindings.get('testBind'));
+                    var combo = new Combo(Key.D, [ Key.SHIFT, Key.CTRL ]);
+                    bindings.add('testBind', combo);
+                    assert.isTrue(bindings.get('testBind').combo.eq(combo));
+                }
+            },
+            "Can retrieve handlers for a given Combo": {
+                topic: function(context) {
+                    return context.bindings;
+                },
+                "After adding a binding, and registering a handler, it is possible to look up the handler given a Combo object": function(bindings) {
+                    bindings.add('metaF', new Combo(Key.F, Key.META));
+                    bindings.registerHandler('metaF', function() {
+                        // Do stuff
+                    });
+                    var handler = bindings.getHandlersForCombo(new Combo(Key.F, Key.META));
+                    assert.isNotNull(handler);
+                    assert.lengthOf(handler, 1);
+                    assert.equal(handler[0].name, 'metaF');
+                    assert.equal(handler[0].eventType, 'keydown');
+                }
+            },
+            "Serialization": {
+                topic: function(context) {
+                    return context.bindings;
+                },
+                "Can serialize the Bindings object": function(bindings) {
+                    var serialized = bindings.serialize();
+                    assert.isNotNull(serialized);
+                    assert.typeOf(serialized, 'string');
+                },
+                "Can restore bindings from a serialized Bindings object with deserialize": function(bindings) {
+                    // Add a test binding
+                    bindings.add('serializable', new Combo(Key.S, Key.META, Key.SHIFT));
+                    // Serialize
+                    var serialized = bindings.serialize();
+                    // Deserialize
+                    bindings.deserialize(serialized);
+
+                    // Find test binding and assert that everything is as expected
+                    var serializable = find(bindings.bindings, function(b) { return b.name === 'serializable'; });
+                    assert.isNotNull(serializable);
+                    assert.equal(serializable.name, 'serializable');
+                    assert.instanceOf(serializable.combo, Combo);
+
+                    function find(collection, predicate) {
+                        for (var i = 0; i < collection.length; i++) {
+                            if (predicate(collection[i]))
+                                return collection[i];
+                        }
+                        return null;
+                    }
+                }
+            },
+            "Registering a handler with no eventType, defaults to keydown": {
+                topic: function(context) {
+                    var promise = new(events.EventEmitter);
+                    context.bindings.add('shiftA', new Combo(Key.A, Key.SHIFT));
+                    context.bindings.registerHandler('shiftA', function() {
+                        promise.emit('success');
+                    });
+                    context.document.keydown({
+                        which: Key.A.code,
+                        shiftKey: true,
+                        ctrlKey: false,
+                        metaKey: false,
+                        altKey: false,
+                        stopImmediatePropagation: function() {}
+                    });
+                    return promise;
+                },
+                "The handler was successfully triggered": function(result, err) {}
+            },
+            "Registering a handler with a particular eventType will only be fired for events of that type": {
+                topic: function(context) {
+                    var promise = new(events.EventEmitter);
+                    context.bindings.add('shiftB', new Combo(Key.B, Key.SHIFT));
+                    context.bindings.registerHandler('shiftB', 'keyup', function() {
+                        promise.emit('success');
+                    });
+                    context.bindings.registerHandler('shiftB', 'keydown', function() {
+                        promise.emit('error');
+                    });
+                    context.document.keyup({
+                        which: Key.B.code,
+                        shiftKey: true,
+                        ctrlKey: false,
+                        metaKey: false,
+                        altKey: false,
+                        stopImmediatePropagation: function() {}
+                    });
+                    return promise;
+                },
+                "The handler was successfully triggered by the proper event type": function(result, err) {
+                    assert.isTrue(typeof err === 'undefined' || err === null);
+                }
+            },
+            "Can register a toggle": {
+                topic: function(context) {
+                    var promise = new(events.EventEmitter);
+                    context.bindings.add('ctrlMetaA', new Combo(Key.A, Key.CTRL, Key.META));
+                    /**
+                     * Since toggles work by starting in the off state, we can test if it's
+                     * successful by performing the following steps: 
+                     * 
+                     * 1. Set toggle to false to reflect the default state of 'off'
+                     * 2. Trigger the toggle combo once, which fires the 'on' handler
+                     * 2a. 'on' handler sets toggle to true, emits error if toggle is already true
+                     * 3. Trigger the toggle combo again, which fires the 'off' handler
+                     * 3a. 'off' handler sets toggle to false, emits error if toggle is already false
+                     * 3b. 'off' handler increments toggles
+                     * 3c. 'off' handler checks toggles count, if equal to 2, emits success
+                     */
+                    var toggle  = false; // off
+                    var toggles = 0;
+                    context.bindings.registerToggle('ctrlMetaA', function() {
+                        // On
+                        if (toggle) {
+                            promise.emit('error');
+                        }
+                        toggle = true;
+                    }, function() {
+                        // Off
+                        if (!toggle) {
+                            promise.emit('error');
+                        }
+                        toggle = false;
+                        toggles++;
+                        if (toggles == 2) {
+                            promise.emit('success');
+                        }
+                    });
+                    var triggerToggle = function() {
+                        context.document.keydown({
+                            which: Key.A.code,
+                            shiftKey: false,
+                            ctrlKey: true,
+                            metaKey: true,
+                            altKey: false,
+                            stopImmediatePropagation: function() {}
+                        });
+                    };
+                    var executions = 2;
+                    // Trigger the toggle twice for every number of executions we wish to perform
+                    for (var i = 0; i < executions * 2; i++) {
+                        triggerToggle();
+                    }
+                    return promise;
+                },
+                "Toggle was able to successfully toggle between it's two states as expected": function(result, err) {
+                    assert.isTrue(typeof err === 'undefined' || err === null);
+                }
             }
         }
     }
