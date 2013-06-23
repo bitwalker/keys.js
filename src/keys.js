@@ -791,6 +791,9 @@
             e.stopImmediatePropagation();
 
             var combo = Combo.fromEvent(e);
+            if (!combo)
+                return;
+
             // Execute any matching handlers
             self.getHandlersForCombo(combo)
                 .filter(function(h) { return h.eventType === 'keydown'; })
@@ -806,6 +809,9 @@
             e.stopImmediatePropagation();
 
             var combo = Combo.fromEvent(e);
+            if (!combo)
+                return;
+
             // Execute any matching handlers
             self.getHandlersForCombo(combo)
                 .filter(function(h) { return h.eventType === 'keyup'; })
