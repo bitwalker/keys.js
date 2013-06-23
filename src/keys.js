@@ -514,7 +514,6 @@
      * @return {string} The Combo as a JSON string
      */
     Combo.prototype.serialize = function() {
-        // TODO: Convert to JSON even if JSON object is not provided.
         if (typeof JSON === 'undefined')
             throw new Error('Your browser does not currently support JSON serialization.');
         return JSON.stringify(this);
@@ -528,7 +527,6 @@
      * @return {object} - The deserialized Combo as a regular object
      */
     Combo.deserialize = function(serialized) {
-        // TODO: Convert from JSON even if JSON object is not provided.
         if (typeof JSON === 'undefined')
             throw new Error('Your browser does not currently support JSON deserialization.');
         if (!serialized)
@@ -1039,7 +1037,6 @@
      * @return {string} - The Bindings instance as a JSON encoded string
      */
     Bindings.prototype.serialize = function() {
-        // TODO: Serialize bindings even if JSON object is not provided
         if (typeof JSON === 'undefined')
             throw new Error('Your browser does not support JSON serialization.');
         return JSON.stringify(this);
@@ -1053,7 +1050,6 @@
      * @param  {string} serialized - The JSON object to deserialize
      */
     Bindings.prototype.deserialize = function(serialized) {
-        // TODO: Serialize bindings even if JSON object is not provided
         if (typeof JSON === 'undefined')
             throw new Error('Your browser does not support JSON serialization.');
 
