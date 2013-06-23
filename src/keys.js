@@ -969,12 +969,11 @@
      * @memberOf Bindings
      * @instance
      * @param {Combo} combo - The Combo to match handlers to.
-     * @param {boolean} includeMeta - Include meta-only variations of the provided Combo
      */
-    Bindings.prototype.getHandlersForCombo = function(combo, includeMeta) {
+    Bindings.prototype.getHandlersForCombo = function(combo) {
         var self     = this;
         var matching = this.bindings.filter(function(binding) {
-            return includeMeta ? binding.combo.isMatch(combo, true) : binding.combo.isMatch(combo);
+            return binding.combo.isMatch(combo);
         });
         return this.handlers.filter(function(handler) {
             return find(matching, function(b) {
