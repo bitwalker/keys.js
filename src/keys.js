@@ -154,18 +154,18 @@
      * in any way, additionally allowing you to chain calls together with this
      * in the middle for debugging
      *
-     * @memberof Array
-     * @instance
+     * @static
+     * @param {array} collection - The array to tap
      * @param {function} fn - The function to call for each element the tap encounters
      * @param {boolean} debugOnly - If true, will only execute the tap fn if debug === true, defaults to false (always on)
      */
-    Array.prototype.tap = function(fn, debugOnly) {
+    function tap(collection, fn, debugOnly) {
         if (!debugOnly || exports.debug) {
             // Clone the original array to prevent tampering, and send each element to the tap
-            this.slice().forEach(function(element) { fn.call(null, element); });
+            collection.slice().forEach(function(element) { fn.call(null, element); });
         }
-        return this;
-    };
+        return collection;
+    }
 
     /**
      * Produces an array of arrays which are the result of zipping together the
@@ -173,13 +173,13 @@
      * longer than `this`, their remaining elements will be skipped. If any of the array
      * arguments are shorter than `this`, their missing elements will be replaced with null.
      *
-     * @memberOf  Array
-     * @instance
+     * @static
+     * @param {array} collection - The source array
      * @param {array} arrays* - A variadic number of arrays to be zipmapped
      */
-    Array.prototype.zipmap = function() {
-        var arrays = Array.prototype.slice.call(arguments);
-        return this.map(function(element, i) {
+    function zipmap(collection) {
+        var arrays = Array.prototype.slice.call(arguments, 1);
+        return collection.map(function(element, i) {
             var others = [];
             for (var j = 0; j < arrays.length; j++) {
                 var el = arrays[j] && arrays[j][i];
@@ -187,20 +187,21 @@
             }
             return [element].concat(others);
         });
-    };
+    }
 
     /**
      * Determine if a string ends with the provided string.
      *
      * @memberof String
      * @instance
-     * @param {string} str - The string to match
+     * @param {string} str - The string to check
+     * @param {string} ending - The string to match
      */
-    String.prototype.endsWith = function(str) {
-        if (this.length - str.length === this.lastIndexOf(str))
+    function endsWith(str, ending) {
+        if (str.length - ending.length === str.lastIndexOf(ending))
             return true;
         else return false;
-    };
+    }
 
     /**
      * Search for the first element that matches a predicate within the collection
@@ -503,7 +504,7 @@
                    (this.shift ? 'SHIFT+' : '') +
                    (this.meta  ? 'META+'  : '');
         if (this.key.isMeta())
-            return meta.endsWith('+') ? meta.slice(0, meta.length - 1) : meta;
+            return endsWith(meta, '+') ? meta.slice(0, meta.length - 1) : meta;
         else return meta + (this.key && this.key.name ? this.key.name : '');
     };
     /**
@@ -570,9 +571,7 @@
         // Extractor
         var extractKey = function(m) { return m[0]; };
         // Determine which meta keys were active, and map those to instances of Key
-        return Key.metaKeys.zipmap(flags)
-                           .filter(isActive)
-                           .map(extractKey);
+        return zipmap(Key.metaKeys, flags).filter(isActive).map(extractKey);
     }
 
 
@@ -794,12 +793,12 @@
                 return;
 
             // Execute any matching handlers
-            self.getHandlersForCombo(combo)
-                .filter(function(h) { return h.eventType === e.type; })
-                .tap(function(h) {
-                    log('Bindings.handleEvent called for Combo: ' + combo.toString() + '. Handler `' + h.name + '` was called.');
-                }, true)
-                .forEach(function(h) { h.handler(); });
+            var isType = function(h) { return h.eventType === e.type; };
+            var logHandler = function(h) {
+                log('Bindings.handleEvent called for Combo: ' + combo.toString() + '. Handler `' + h.name + '` was called.');
+            };
+            var execute = function(h) { h.handler.call(null); };
+            tap(self.getHandlersForCombo(combo).filter(isType), logHandler, true).forEach(execute);
 
             return false;
         }
