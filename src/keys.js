@@ -779,13 +779,14 @@
     function Bindings() {
         var self = this;
 
-        globals.document.addEventListener('keydown', handleKeydown, true);
-        globals.document.addEventListener('keyup',   handleKeyup,   true);
+        globals.document.addEventListener('keydown',  handleEvent, true);
+        globals.document.addEventListener('keyup',    handleEvent, true);
+        globals.document.addEventListener('keypress', handleEvent, true);
 
         this.bindings = [];
         this.handlers = [];
 
-        function handleKeydown(e) {
+        function handleEvent(e) {
             e.stopImmediatePropagation();
 
             var combo = Combo.fromEvent(e);
@@ -794,27 +795,9 @@
 
             // Execute any matching handlers
             self.getHandlersForCombo(combo)
-                .filter(function(h) { return h.eventType === 'keydown'; })
+                .filter(function(h) { return h.eventType === e.type; })
                 .tap(function(h) {
-                    log('Bindings.handleKeydown called for Combo: ' + combo.toString() + '. Handler `' + h.name + '` was called.');
-                }, true)
-                .forEach(function(h) { h.handler(); });
-
-            return false;
-        }
-
-        function handleKeyup(e) {
-            e.stopImmediatePropagation();
-
-            var combo = Combo.fromEvent(e);
-            if (!combo)
-                return;
-
-            // Execute any matching handlers
-            self.getHandlersForCombo(combo)
-                .filter(function(h) { return h.eventType === 'keyup'; })
-                .tap(function(h) {
-                    log('Bindings.handleKeyup called for Combo: ' + combo.toString() + '. Handler `' + h.name + '` was called.');
+                    log('Bindings.handleEvent called for Combo: ' + combo.toString() + '. Handler `' + h.name + '` was called.');
                 }, true)
                 .forEach(function(h) { h.handler(); });
 
