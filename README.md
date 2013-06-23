@@ -2,6 +2,10 @@
 
 This project spawned out of a Chrome extension I was working on where I kept handling more and more key combinations for shortcut actions, until it eventually became an unmaintainable rats nest. Obviously I needed a solution, and Keys.js was born.
 
+## Current State
+
+Stable, but it's a new project, so as always, caveat emptor. The documentation is very close to comprehensive, but some work needs to be done. The test suite is comprehensive, and very few gaps are left to fill there that are meaningful. Please help me identify any gaps in functionality, testing, or docs, by submitting issues so that I can prioritize things as needed.
+
 ## Usage
 
 This library is intended for use in the browser, but offers support for any CommonJS or AMD module loaders, such as require.js, etc.
@@ -111,7 +115,6 @@ bindings.registerToggle('toggle', toggleOn, toggleOff);
 
 I feel pretty happy with the current state of this, but as always, bugs and corner cases are sure to arise. A couple things I'd like to do:
 
-- Full suite of tests
 - Comprehensive documentation (good progress already)
 - Discover additional use cases that aren't covered as well as they could be with Keys
 
