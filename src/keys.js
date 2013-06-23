@@ -58,9 +58,11 @@
             };
         };
     }
+    var bind = Function.prototype.bind;
 
     var log = (function() {
-        var _log = console ? console.log.bind(console) : Function.prototype.valueOf();
+        // We call bind from the Function prototype like this because IE doesn't support console.log.bind
+        var _log = console ? bind.call(console.log, console) : Function.prototype.valueOf();
         return function() {
             if (exports.debug) {
                 var args = Array.prototype.slice.call(arguments);
@@ -69,7 +71,8 @@
         };
     })();
     var warn = (function() {
-        var _warn = console ? console.warn.bind(console) : Function.prototype.valueOf();
+        // We call bind from the Function prototype like this because IE doesn't support console.warn.bind
+        var _warn = console ? bind.call(console.warn, console) : Function.prototype.valueOf();
         return function() {
             var args  = Array.prototype.slice.call(arguments);
             _warn.apply(null, args);
@@ -77,40 +80,40 @@
     })();
 
     if (!Array.prototype.forEach) {
-        Array.prototype.forEach = function (collection, iterator, context) {
-            if (!collection)
+        Array.prototype.forEach = function (iterator, context) {
+            if (!this)
                 throw new Error('forEach: Array is null or undefined.');
             if (typeof iterator !== 'function')
                 throw new Error('forEach: Iterator is not callable.');
 
-            var len        = collection.length >>> 0; // Force collection.length to int
+            var len        = this.length >>> 0; // Force collection.length to int
             var index      = 0;
             context = context || null;
             while (index < len) {
-                if (Object.prototype.hasOwnProperty.call(collection, index)) {
-                    var val = collection[index];
-                    iterator.call(context, val, index, collection);
+                if (Object.prototype.hasOwnProperty.call(this, index)) {
+                    var val = this[index];
+                    iterator.call(context, val, index, this);
                 }
                 index++;
             }
         };
     }
     if (!Array.prototype.map) {
-        Array.prototype.map = function (collection, fn) {
+        Array.prototype.map = function (fn) {
             var results = [];
-            collection.forEach(function(element, index, all) {
+            this.forEach(function(element, index, all) {
                 results.push(fn.call(null, element, index, all));
             });
             return results;
         };
     }
     if (!Array.prototype.filter) {
-        Array.prototype.filter = function (collection, predicate, context) {
+        Array.prototype.filter = function (predicate, context) {
             if (typeof predicate !== 'function')
                 throw new Error("Predicate is not callable.");
 
             var results = [];
-            collection.forEach(function (element, index, all) {
+            this.forEach(function (element, index, all) {
                 if (predicate.call(context, element, index, all))
                     results.push(element);
             });
@@ -621,10 +624,10 @@
      * @return {Combo}
      */
     Combo.fromEvent = function(e) {
-        if (!e || !e.which)
+        if (!e || !(e.which || e.keyCode))
             return null;
 
-        var key = Key.fromCode(e.which);
+        var key = Key.fromCode(e.which || e.keyCode);
         if (!key)
             return null;
 
@@ -787,15 +790,27 @@
     function Bindings() {
         var self = this;
 
-        globals.document.addEventListener('keydown',  handleEvent, true);
-        globals.document.addEventListener('keyup',    handleEvent, true);
-        globals.document.addEventListener('keypress', handleEvent, true);
+        // IE<9 doesn't have addEventListener
+        if (typeof globals.document.addEventListener !== 'undefined') {
+            globals.document.addEventListener('keydown',  handleEvent, true);
+            globals.document.addEventListener('keyup',    handleEvent, true);
+            globals.document.addEventListener('keypress', handleEvent, true);
+        }
+        else {
+            globals.document.attachEvent('onkeydown',  handleEvent);
+            globals.document.attachEvent('onkeyup',    handleEvent);
+            globals.document.attachEvent('onkeypress', handleEvent);
+        }
 
         this.bindings = [];
         this.handlers = [];
 
         function handleEvent(e) {
-            e.stopImmediatePropagation();
+            // IE<9 doesn't have stopImmediatePropagation
+            if (typeof e.stopImmediatePropagation !== 'undefined')
+                e.stopImmediatePropagation();
+            else
+                e.cancelBubble = true;
 
             var combo = Combo.fromEvent(e);
             if (!combo)
