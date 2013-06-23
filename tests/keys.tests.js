@@ -89,10 +89,14 @@ vows.describe('Keys.js').addBatch({
                     var combo = new Combo();
                 }, Error);
             },
-            "cannot create a Combo with a single key": function() {
-                assert.throws(function() {
-                    var combo = new Combo(Key.A);
-                }, Error);
+            "can create a Combo with a single key": function() {
+                var combo = new Combo(Key.A);
+                assert.isNotNull(combo);
+                assert.isTrue(Key.A.eq(combo.key));
+                assert.isFalse(combo.ctrl);
+                assert.isFalse(combo.shift);
+                assert.isFalse(combo.alt);
+                assert.isFalse(combo.meta);
             },
             "cannot create a Combo with more than one non-meta key": function() {
                 assert.throws(function() {
@@ -161,24 +165,6 @@ vows.describe('Keys.js').addBatch({
                     var obj = JSON.stringify({ id: 5, test: 'string' });
                     var result = Combo.deserialize(obj);
                 }, Error);
-            },
-            "deserializing an invalid Combo object (no meta keys set), throws an appropriate Error": function() {
-                var combo = new Combo(Key.A, Key.SHIFT);
-                // Quick serialize/deserialize to get an anonymous object
-                var obj = JSON.parse(JSON.stringify(combo));
-                // Reset shift to false
-                obj.shift = false;
-                // Re-serialize
-                var serialized = JSON.stringify(obj);
-                assert.throws(function() {
-                    var result = Combo.deserialize(serialized);
-                }, Error);
-                try {
-                    var result = Combo.deserialize(serialized);
-                }
-                catch(ex) {
-                    assert.include(ex.message, 'Invalid Combo, at least one meta key should be set.');
-                }
             }
         },
         'Combo.prototype.clone': {
@@ -210,7 +196,7 @@ vows.describe('Keys.js').addBatch({
                 assert.isTrue(combo.eq(result));
             },
             "Converting an invalid object throws an Error": function() {
-                var obj = { key: 5, shift: true, meta: true };
+                var obj = { key: 5, shift: false, meta: true };
                 assert.throws(function() {
                     var result = Combo.fromObject(obj);
                 }, Error);
@@ -218,20 +204,6 @@ vows.describe('Keys.js').addBatch({
                     var result = Combo.fromObject(obj);
                 } catch (ex) {
                     assert.include(ex.message, 'Invalid Combo object provided');
-                }
-            },
-            "Converting an invalid Combo-like object throws an Error": function() {
-                var combo = new Combo(Key.A, Key.SHIFT);
-                // Quick serialize/deserialize to get an anonymous object
-                var obj = JSON.parse(JSON.stringify(combo));
-                obj.shift = false;
-                assert.throws(function() {
-                    var result = Combo.fromObject(obj);
-                }, Error);
-                try {
-                    var result = Combo.fromObject(obj);
-                } catch (ex) {
-                    assert.include(ex.message, 'Invalid Combo, at least one meta key should be set');
                 }
             }
         },
@@ -256,7 +228,7 @@ vows.describe('Keys.js').addBatch({
             "Converting a valid KeyboardEvent object that would result in an invalid Combo returns null": function() {
                 // Simulated KeyboardEvent
                 var ev = {
-                    which:    Key.A.code,
+                    which:    null,
                     shiftKey: false,
                     altKey:   false,
                     metaKey:  false,
@@ -269,7 +241,7 @@ vows.describe('Keys.js').addBatch({
             "Converting a null or invalid KeyboardEvent object returns null": function() {
                 var nulled  = Combo.fromEvent(null);
                 // Missing meta key properties
-                var invalid = Combo.fromEvent({ which: Key.A.code });
+                var invalid = Combo.fromEvent({ which: null });
                 assert.isNull(nulled);
                 assert.isNull(invalid);
             }
@@ -292,22 +264,13 @@ vows.describe('Keys.js').addBatch({
                     assert.include(ex.message, 'Invalid Combo string.');
                 }
             },
-            "Converting a Combo-like string, with not enough keys, throws an Error": function() {
-                assert.throws(function() {
-                    Combo.fromString('A');
-                }, Error);
-                try { Combo.fromString('A'); }
-                catch (ex) {
-                    assert.include(ex.message, 'Must have more than one key.');
-                }
-            },
             "Converting a Combo-like string, with more than one non-meta key, throws an Error": function() {
                 assert.throws(function() {
                     Combo.fromString('A+Num Lock');
                 }, Error);
                 try { Combo.fromString('A+Num Lock'); }
                 catch (ex) {
-                    assert.include(ex.message, 'Cannot have more than one non-meta key.');
+                    assert.include(ex.message, 'Invalid Combo string, more than one non-meta key was specified.');
                 }
             }
         },
@@ -371,7 +334,7 @@ vows.describe('Keys.js').addBatch({
         }
     },
     'Bindings': {
-        'Integration Tests': {
+        ' > ': {
             topic: function() {
                 /**
                  * There is no document object in node so we are going to mock
@@ -435,7 +398,7 @@ vows.describe('Keys.js').addBatch({
                         bindings.add('comboLike', combo);
                     }, Error);
                     try { bindings.add('comboLike', combo); }
-                    catch (ex) { assert.include(ex.message, 'must be an instance of Combo'); }
+                    catch (ex) { assert.include(ex.message, 'must be an instance of Key or Combo'); }
                 },
                 "Calling add with a name that already exists overwrites the Combo for that binding": function(bindings) {
                     assert.isNotNull(bindings.get('testBind'));

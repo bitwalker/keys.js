@@ -390,6 +390,15 @@
     };
 
     /**
+     * Retreive a Key instance from a KeyboardEvent
+     * @param  {KeyboardEvent} e
+     * @return {Key}
+     */
+    Key.fromEvent = function(e) {
+        return Key.fromCode(e.which);
+    };
+
+    /**
      * Determine if the provided key code was pressed
      *
      * @memberOf Key
@@ -446,7 +455,7 @@
      * @namespace Combo
      * @constructor
      * @param {Key} key - The primary Key for this Combo.
-     * @param {array} meta - An array of meta Keys required for this Combo to be activated.
+     * @param {array} meta - An array of meta Keys needed for this Combo to be activated. {optional}
      */
     function Combo(key, meta) {
         var keys = null;
@@ -457,7 +466,12 @@
             keys = Array.prototype.slice.call(arguments, 1);
         }
         else if (arguments.length === 1) {
-            throw new Error('Combo: At least one meta key is required for a Combo');
+            this.key   = key;
+            this.ctrl  = key.eq(Key.CTRL);
+            this.shift = key.eq(Key.SHIFT);
+            this.alt   = key.eq(Key.ALT);
+            this.meta  = key.eq(Key.META) || key.eq(Key.META_RIGHT);
+            return;
         }
         else {
             throw new Error('Combo: Invalid number of arguments provided.');
@@ -595,7 +609,8 @@
         var meta = constructMetaParams([ obj.ctrl, obj.alt, obj.shift, obj.meta ]);
         if (meta.length)
             return new Combo(key, meta);
-        else throw new Error('Combo.fromObject: Invalid Combo, at least one meta key should be set.');
+        else
+            return new Combo(key);
     };
     /**
      * Given a keypress event, create a Combo that represents the set of pressed keys
@@ -606,7 +621,7 @@
      * @return {Combo}
      */
     Combo.fromEvent = function(e) {
-        if (!e || !e.which || !areDefined(e.ctrlKey, e.altKey, e.shiftKey, e.metaKey))
+        if (!e || !e.which)
             return null;
 
         var key = Key.fromCode(e.which);
@@ -616,12 +631,8 @@
         var meta = constructMetaParams([ e.ctrlKey, e.altKey, e.shiftKey, e.metaKey ]);
         if (meta.length)
             return new Combo(key, meta);
-        /**
-         * We return null as opposed to throwing an exception here, since many keypress events will be invalid Combos,
-         * and we'll be filtering those out anyways. Whereas fromObject failing is due to a coding or logic error,
-         * failures here are really just false positives due to the constraints we are placing on valid Combos.
-         */
-        else return null;
+        else
+            return new Combo(key);
     };
     /**
      *  Reverse of toString, you should get the original combo if you call Combo.fromString(combo.toString()).
@@ -636,24 +647,22 @@
     Combo.fromString = function(str) {
         var noEmpties = function(s) { return !s ? false : true; };
         var parts     = str.split('+').filter(noEmpties);
-        if (parts.length > 1) {
-            var ctrlKey    = parts.indexOf('CTRL') > -1;
-            var altKey     = parts.indexOf('ALT') > -1;
-            var shiftKey   = parts.indexOf('SHIFT') > -1;
-            var metaKey    = parts.indexOf('META') > -1 || parts.indexOf('META_RIGHT') > -1;
-            // Construct parameters
-            var key       = Key.fromName(parts[parts.length - 1]);
-            var meta      = constructMetaParams([ ctrlKey, altKey, shiftKey, metaKey ]);
-            // If there were no meta keys detected, but we have more than one part, there
-            // must be more than one non-meta key present, which is invalid
-            if (meta.length)
-                return new Combo(key, meta);
-            else
-                throw new Error('Combo.fromString: Cannot have more than one non-meta key.');
-        }
-        else if (parts.length === 1) {
-            if (Key.fromName(parts[0])) {
-                throw new Error('Combo.fromString: Must have more than one key.');
+        var key       = Key.fromName(parts.length ? parts[parts.length - 1] : parts[0]);
+        if (parts.length) {
+            if (parts.length > 1) {
+                var ctrlKey    = parts.indexOf('CTRL') > -1;
+                var altKey     = parts.indexOf('ALT') > -1;
+                var shiftKey   = parts.indexOf('SHIFT') > -1;
+                var metaKey    = parts.indexOf('META') > -1 || parts.indexOf('META_RIGHT') > -1;
+                // Construct parameters
+                var meta      = constructMetaParams([ ctrlKey, altKey, shiftKey, metaKey ]);
+                if (key && meta.length)
+                    return new Combo(key, meta);
+                else
+                    throw new Error('Combo.fromString: Invalid Combo string, more than one non-meta key was specified.');
+            }
+            if (key) {
+                return new Combo(key);
             }
         }
 
@@ -822,7 +831,7 @@
      * @memberOf Bindings
      * @instance
      * @param  {string} name  - The name of the binding.
-     * @param  {Combo} combos - One or more Combos which trigger this binding
+     * @param  {Combo} combos - One or more Keys or Combos which trigger this binding
      */
     Bindings.prototype.add = function(name /* combo1, ..comboN */) {
         var combos = Array.prototype.slice.call(arguments, 1);
@@ -830,8 +839,8 @@
             throw new Error('Keybindings.add: Invalid arguments provided');
         // Validate combos
         combos.forEach(function(combo) {
-            if (!(combo instanceof Combo))
-                throw new Error('Keybindings.add: `combo` must be an instance of Combo');
+            if (!(combo instanceof Combo || combo instanceof Key))
+                throw new Error('Keybindings.add: `combo` must be an instance of Key or Combo');
         });
 
         // If the binding name already exists, overwrite it
@@ -1045,7 +1054,12 @@
 
         // Deserialize bindings
         var mapped = parsed.bindings.map(function(b) {
-            b.combos = b.combos.map(function(c) { return Combo.fromObject(c); });
+            b.combos = b.combos.map(function(c) {
+                if (typeof c.code !== 'undefined')
+                    return new Key(c.name, c.code);
+                else
+                    return Combo.fromObject(c);
+            });
             return b;
         });
         this.bindings = mapped;
@@ -1061,7 +1075,12 @@
     Bindings.prototype.getHandlersForCombo = function(combo) {
         var self     = this;
         var matching = this.bindings.filter(function(binding) {
-            return any(binding.combos, function(c) { return c.isMatch(combo); });
+            return any(binding.combos, function(c) {
+                if (c instanceof Key)
+                    return combo.key.eq(c);
+                else
+                    return c.isMatch(combo);
+            });
         });
         return this.handlers.filter(function(handler) {
             return find(matching, function(b) {
