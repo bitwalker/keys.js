@@ -115,6 +115,7 @@ bindings.registerToggle('toggle', toggleOn, toggleOff);
 
 I feel pretty happy with the current state of this, but as always, bugs and corner cases are sure to arise. A couple things I'd like to do:
 
+- Implement locales other than en_US
 - Comprehensive documentation (good progress already)
 - Discover additional use cases that aren't covered as well as they could be with Keys
 
