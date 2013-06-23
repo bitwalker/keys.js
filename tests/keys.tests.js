@@ -503,6 +503,7 @@ vows.describe('Keys.js').addBatch({
                         promise.emit('success');
                     });
                     context.document.keydown({
+                        type: 'keydown',
                         which: Key.A.code,
                         shiftKey: true,
                         ctrlKey: false,
@@ -525,6 +526,7 @@ vows.describe('Keys.js').addBatch({
                         promise.emit('error');
                     });
                     context.document.keyup({
+                        type: 'keyup',
                         which: Key.B.code,
                         shiftKey: true,
                         ctrlKey: false,
@@ -575,6 +577,7 @@ vows.describe('Keys.js').addBatch({
                     });
                     var triggerToggle = function() {
                         context.document.keydown({
+                            type: 'keydown',
                             which: Key.A.code,
                             shiftKey: false,
                             ctrlKey: true,
