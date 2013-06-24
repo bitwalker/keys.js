@@ -69,7 +69,7 @@
     }
 
     /**
-     *  Polyfills and Logging
+     *  Polyfills
      */
     if (!Function.prototype.bind) {
         Function.prototype.bind = function(context) {
@@ -81,25 +81,6 @@
         };
     }
     var bind = Function.prototype.bind;
-
-    var log = (function() {
-        // We call bind from the Function prototype like this because IE doesn't support console.log.bind
-        var _log = console ? bind.call(console.log, console) : Function.prototype.valueOf();
-        return function() {
-            if (exports.debug) {
-                var args = Array.prototype.slice.call(arguments);
-                _log.apply(null, args);
-            }
-        };
-    })();
-    var warn = (function() {
-        // We call bind from the Function prototype like this because IE doesn't support console.warn.bind
-        var _warn = console ? bind.call(console.warn, console) : Function.prototype.valueOf();
-        return function() {
-            var args  = Array.prototype.slice.call(arguments);
-            _warn.apply(null, args);
-        };
-    })();
 
     if (!Array.prototype.forEach) {
         Array.prototype.forEach = function (iterator, context) {
@@ -173,6 +154,28 @@
             return -1;
         };
     }
+
+    /**
+     * Logging Functions
+     */
+    var log = (function() {
+        // We call bind from the Function prototype like this because IE doesn't support console.log.bind
+        var _log = console ? bind.call(console.log, console) : Function.prototype.valueOf();
+        return function() {
+            if (exports.debug) {
+                var args = Array.prototype.slice.call(arguments);
+                _log.apply(null, args);
+            }
+        };
+    })();
+    var warn = (function() {
+        // We call bind from the Function prototype like this because IE doesn't support console.warn.bind
+        var _warn = console ? bind.call(console.warn, console) : Function.prototype.valueOf();
+        return function() {
+            var args  = Array.prototype.slice.call(arguments);
+            _warn.apply(null, args);
+        };
+    })();
 
     /**
      * Allows you to tap into the current set of elements without affecting them
