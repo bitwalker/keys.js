@@ -863,6 +863,77 @@
     };
 
     /**
+     * Load allows you to add all of your applications bindings and event handlers
+     * using a "bindings specification" object
+     *
+     * @param  {object} specs - The bindings specification
+     * @example
+     *     function displayAlert() { alert('Hello!'); }
+     *
+     *     bindings.load({
+     *         // Simplest example
+     *         displayAlert: {
+     *             bind: new Combo(Key.A, Key.SHIFT),
+     *             handler: displayAlert
+     *         },
+     *         // Customize eventType
+     *         doStuff: {
+     *             bind: new Combo(Key.A, Key.CTRL, Key.SHIFT),
+     *             eventType: 'keyup',
+     *             handler: doStuff
+     *         },
+     *         // Multiple binds
+     *         logActivity: {
+     *             bind: [ Key.L, new Combo(Key.L, Key.SHIFT) ],
+     *             handler: function () { console.log('gerg'); }
+     *         }
+     *     });
+     */
+    Bindings.prototype.load = function(specs) {
+        var self = this;
+        if (!isObject(specs))
+            throw new Error('Bindings.load: `specs` must be an object.');
+
+        for (var key in specs) {
+            if (Object.prototype.hasOwnProperty.call(specs, key)) {
+                var invalidWarning = 'Bindings.load: The specs object provided contains an invalid binding specification `' + key + '` - ';
+
+                if (!isObject(specs[key]))
+                    warn(invalidWarning + 'invalid value type.');
+                else {
+                    var bindingName = key;
+                    var bind        = specs[key].bind;
+                    var handler     = specs[key].handler;
+                    var eventType   = specs[key].eventType;
+
+                    // A binding spec is not valid if bind and handler are not defined
+                    if (!areDefined(bind, handler)) {
+                        warn(invalidWarning + 'requires definition of bind or handler.');
+                    }
+                    else if (!isFunction(handler)) {
+                        warn(invalidWarning + 'handler must be a function.');
+                    }
+                    else if (!(bind instanceof Array || bind instanceof Combo || bind instanceof Key)) {
+                        warn(invalidWarning + 'bind must be an instance of Array, Combo, or Key');
+                    }
+                    else {
+                        // Add the binding
+                        var addArgs = [ bindingName ].concat(bind);
+                        self.add.apply(self, addArgs);
+                        // Register the handler
+                        if (eventType) {
+                            self.registerHandler.call(self, bindingName, eventType, handler);
+                        }
+                        else {
+                            self.registerHandler.call(self, bindingName, handler);
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    /**
      * Adds a new binding.
      *
      * @memberOf Bindings
