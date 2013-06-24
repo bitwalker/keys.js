@@ -40,7 +40,7 @@
     function areDefined() {
         var objects = Array.prototype.slice.call(arguments);
         for (var i = 0; i < objects.length; i++) {
-            if (typeof objects[i] === 'undefined')
+            if (objects[i] !== null && typeof objects[i] === 'undefined')
                 return false;
         }
         return true;
