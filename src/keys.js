@@ -47,6 +47,28 @@
     }
 
     /**
+     * Determine if the provided argument is an object
+     * @param  {object}  obj
+     * @return {Boolean}
+     */
+    function isObject(obj) {
+        if (!obj || !obj.constructor || obj.constructor.name !== 'Object')
+            return false;
+        else return true;
+    }
+
+    /**
+     * Determine if the provided argument is a function
+     * @param  {Function} fn
+     * @return {Boolean}
+     */
+    function isFunction(fn) {
+        if (!fn || typeof fn !== 'function')
+            return false;
+        else return true;
+    }
+
+    /**
      *  Polyfills and Logging
      */
     if (!Function.prototype.bind) {
