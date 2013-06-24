@@ -1,0 +1,153 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Keys.js - Examples</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1><a href="index.html">Keys.js</a></h1>
+        <p>Easy keybindings for browser applications!</p>
+        <p class="view"><a href="https://github.com/bitwalker/keys.js">View the Project on GitHub <small>bitwalker/keys.js</small></a></p>
+        <ul>
+          <li><a href="examples.html">View <strong>Examples</strong></a></li>
+          <li><a href="api.html">Read The <strong>Docs</strong></a></li>
+          <li><a href="https://github.com/bitwalker/keys.js/zipball/master">Download <strong>ZIP</strong></a></li>
+          <li><a href="https://github.com/bitwalker/keys.js">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h2>Examples</h2>
+
+<h4>Basic</h4>
+
+<p>The following code demonstrates the most basic example of initializing Keys.js, adding a new binding, and defining behavior for that binding. It is assumed that for this, and all following examples, you have included the Keys.js script previously on the page.</p>
+
+<div class="highlight"><pre><code class="javascript"><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nb">window</span><span class="p">.</span><span class="nx">Bindings</span> <span class="o">=</span> <span class="nx">Keys</span><span class="p">.</span><span class="nx">Bindings</span><span class="p">;</span>
+    <span class="nb">window</span><span class="p">.</span><span class="nx">Combo</span>    <span class="o">=</span> <span class="nx">Keys</span><span class="p">.</span><span class="nx">Combo</span><span class="p">;</span>
+    <span class="nb">window</span><span class="p">.</span><span class="nx">Key</span>      <span class="o">=</span> <span class="nx">Keys</span><span class="p">.</span><span class="nx">Key</span><span class="p">;</span>
+
+    <span class="c1">// Initialize application-wide bindings manager</span>
+    <span class="nb">window</span><span class="p">.</span><span class="nx">bindings</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Bindings</span><span class="p">();</span>
+
+    <span class="c1">// Add binding to display an alert</span>
+    <span class="nx">bindings</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">&#39;displayAlert&#39;</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Combo</span><span class="p">(</span><span class="nx">Key</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">Key</span><span class="p">.</span><span class="nx">SHIFT</span><span class="p">));</span>
+
+    <span class="c1">// Register display alert behavior using inferred name/eventType notation</span>
+    <span class="nx">bindings</span><span class="p">.</span><span class="nx">registerHandler</span><span class="p">(</span><span class="nx">displayAlert</span><span class="p">);</span>
+    <span class="cm">/**</span>
+<span class="cm">     *  If you want to use a specific eventType (default is &#39;keydown&#39;):</span>
+<span class="cm">    bindings.registerHandler(&#39;keyup&#39;, displayAlert);</span>
+
+<span class="cm">     *  Or if you want to use a named function for a binding with a different name:</span>
+<span class="cm">    bindings.registerHandler(&#39;sayHello&#39;, displayAlert);</span>
+
+<span class="cm">     *  Or if you want to use an anonymous function for the handler:</span>
+<span class="cm">    bindings.registerHandler(&#39;displayAlert&#39;, function() {</span>
+<span class="cm">        alert(&#39;Hello!&#39;);</span>
+<span class="cm">    });</span>
+
+<span class="cm">     *  Or if you want to specify everything at once:</span>
+<span class="cm">    bindings.registerHandler(&#39;displayAlert&#39;, &#39;keyup&#39;, displayAlert);</span>
+
+<span class="cm">     */</span>
+    <span class="kd">function</span> <span class="nx">displayAlert</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;Hello!&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">})();</span>
+</code></pre></div>
+
+
+<h4>Toggles</h4>
+
+<p>This code demonstrates how to configure a basic toggle with behavior. I'm using jQuery syntax for DOM manipulation here, but it is not required by Keys.js and the basic concepts don't change.</p>
+
+<div class="highlight"><pre><code class="javascript"><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nb">window</span><span class="p">.</span><span class="nx">Bindings</span> <span class="o">=</span> <span class="nx">Keys</span><span class="p">.</span><span class="nx">Bindings</span><span class="p">;</span>
+    <span class="nb">window</span><span class="p">.</span><span class="nx">Combo</span>    <span class="o">=</span> <span class="nx">Keys</span><span class="p">.</span><span class="nx">Combo</span><span class="p">;</span>
+    <span class="nb">window</span><span class="p">.</span><span class="nx">Key</span>      <span class="o">=</span> <span class="nx">Keys</span><span class="p">.</span><span class="nx">Key</span><span class="p">;</span>
+
+    <span class="c1">// Initialize application-wide bindings manager</span>
+    <span class="nb">window</span><span class="p">.</span><span class="nx">bindings</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Bindings</span><span class="p">();</span>
+
+    <span class="c1">// Add a binding to toggle the page background color</span>
+    <span class="nx">bindings</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">&#39;toggleBackground&#39;</span><span class="p">,</span> <span class="nx">Key</span><span class="p">.</span><span class="nx">B</span><span class="p">);</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Register background color toggle behavior</span>
+<span class="cm">     * Toggles always fire on &#39;keydown&#39;</span>
+<span class="cm">     */</span>
+    <span class="nx">bindings</span><span class="p">.</span><span class="nx">registerToggle</span><span class="p">(</span><span class="s1">&#39;toggleBackground&#39;</span><span class="p">,</span> <span class="nx">toggleBlack</span><span class="p">,</span> <span class="nx">toggleWhite</span><span class="p">);</span>
+    <span class="kd">function</span> <span class="nx">toggleBlack</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s1">&#39;background-color&#39;</span><span class="p">,</span> <span class="s1">&#39;black&#39;</span><span class="p">);</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;h1&#39;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s1">&#39;color&#39;</span><span class="p">,</span> <span class="s1">&#39;white&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="kd">function</span> <span class="nx">toggleWhite</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s1">&#39;background-color&#39;</span><span class="p">,</span> <span class="s1">&#39;white&#39;</span><span class="p">);</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;h1&#39;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s1">&#39;color&#39;</span><span class="p">,</span> <span class="s1">&#39;black&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">})();</span>
+</code></pre></div>
+
+
+<h4>Bulk Registration</h4>
+
+<p>This code demonstrates how you can use <code>Bindings.load</code> to bulk define bindings and their behavior with one API call.</p>
+
+<div class="highlight"><pre><code class="javascript"><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nb">window</span><span class="p">.</span><span class="nx">Bindings</span> <span class="o">=</span> <span class="nx">Keys</span><span class="p">.</span><span class="nx">Bindings</span><span class="p">;</span>
+    <span class="nb">window</span><span class="p">.</span><span class="nx">Combo</span>    <span class="o">=</span> <span class="nx">Keys</span><span class="p">.</span><span class="nx">Combo</span><span class="p">;</span>
+    <span class="nb">window</span><span class="p">.</span><span class="nx">Key</span>      <span class="o">=</span> <span class="nx">Keys</span><span class="p">.</span><span class="nx">Key</span><span class="p">;</span>
+
+    <span class="c1">// Initialize application-wide bindings manager</span>
+    <span class="nb">window</span><span class="p">.</span><span class="nx">bindings</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Bindings</span><span class="p">();</span>
+
+    <span class="nx">bindings</span><span class="p">.</span><span class="nx">load</span><span class="p">({</span>
+        <span class="nx">displayAlert</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">bind</span><span class="o">:</span> <span class="k">new</span> <span class="nx">Combo</span><span class="p">(</span><span class="nx">Key</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">Key</span><span class="p">.</span><span class="nx">SHIFT</span><span class="p">),</span>
+            <span class="nx">handler</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;Hello!&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nx">displayModal</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">bind</span><span class="o">:</span> <span class="k">new</span> <span class="nx">Combo</span><span class="p">(</span><span class="nx">Key</span><span class="p">.</span><span class="nx">M</span><span class="p">,</span> <span class="nx">Key</span><span class="p">.</span><span class="nx">SHIFT</span><span class="p">),</span>
+            <span class="nx">handler</span><span class="o">:</span> <span class="nx">displayModal</span>
+        <span class="p">},</span>
+        <span class="nx">hideModal</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">bind</span><span class="o">:</span> <span class="k">new</span> <span class="nx">Combo</span><span class="p">(</span><span class="nx">Key</span><span class="p">.</span><span class="nx">X</span><span class="p">,</span> <span class="nx">Key</span><span class="p">.</span><span class="nx">SHIFT</span><span class="p">),</span>
+            <span class="nx">eventType</span><span class="o">:</span> <span class="s1">&#39;keypress&#39;</span><span class="p">,</span>
+            <span class="nx">handler</span><span class="o">:</span> <span class="nx">hideModal</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+
+    <span class="kd">function</span> <span class="nx">displayModal</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;.modal&#39;</span><span class="p">).</span><span class="nx">fadeIn</span><span class="p">(</span><span class="s1">&#39;fast&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="kd">function</span> <span class="nx">hideModal</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;.modal&#39;</span><span class="p">).</span><span class="nx">fadeOut</span><span class="p">(</span><span class="s1">&#39;fast&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">})();</span>
+</code></pre></div>
+
+
+      </section>
+    </div>
+    <footer>
+      <p>Project maintained by <a href="https://github.com/bitwalker">bitwalker</a></p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+  </body>
+</html>

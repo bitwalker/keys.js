@@ -1,0 +1,105 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Keys.js - API</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1><a href="index.html">Keys.js</a></h1>
+        <p>Easy keybindings for browser applications!</p>
+        <p class="view"><a href="https://github.com/bitwalker/keys.js">View the Project on GitHub <small>bitwalker/keys.js</small></a></p>
+        <ul>
+          <li><a href="examples.html">View <strong>Examples</strong></a></li>
+          <li><a href="api.html">Read The <strong>Docs</strong></a></li>
+          <li><a href="https://github.com/bitwalker/keys.js/zipball/master">Download <strong>ZIP</strong></a></li>
+          <li><a href="https://github.com/bitwalker/keys.js">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h4>This documentation is a work in progress</h4>
+
+<p><strong>See the examples page for additional information</strong></p>
+
+<h2>Architecture</h2>
+
+<p>Keys is composed of three classes that function a bit like a pyramid, starting with the smallest unit (Key) up to a document-wide event manager (Bindings).</p>
+
+<h4>Key</h4>
+
+<p>This class manages information about a single physical key on the keyboard. One can reference a given key instance using <code>Key.A</code> or <code>Key['Num Lock']</code>. There is little need to actually create new instances of Key as all of the keys on the keyboard already have static instances defined.</p>
+
+<h4>Combo</h4>
+
+<p>This class manages information about a combination of physical keys on the keyboard. Specifically, one physical key of any type, and any combination of the meta keys (SHIFT, ALT, META, etc). Combos are where we match the keys pressed in a keypress event to the keys required in Combos we wish to execute behavior against (as managed by the Bindings class).</p>
+
+<p>You can create Combos easily using one of the following variations:</p>
+
+<div class="highlight"><pre><code class="javascript"><span class="c1">// Single key</span>
+<span class="kd">var</span> <span class="nx">combo</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Combo</span><span class="p">(</span><span class="nx">Key</span><span class="p">.</span><span class="nx">A</span><span class="p">);</span>
+<span class="c1">// Single meta key</span>
+<span class="kd">var</span> <span class="nx">combo</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Combo</span><span class="p">(</span><span class="nx">Key</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">Key</span><span class="p">.</span><span class="nx">CTRL</span><span class="p">);</span>
+<span class="c1">// Multiple meta keys, constructor called as a variadic function</span>
+<span class="kd">var</span> <span class="nx">combo</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Combo</span><span class="p">(</span><span class="nx">Key</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">Key</span><span class="p">.</span><span class="nx">CTRL</span><span class="p">,</span> <span class="nx">Key</span><span class="p">.</span><span class="nx">SHIFT</span><span class="p">);</span>
+<span class="c1">// Multiple meta keys passed as an array</span>
+<span class="kd">var</span> <span class="nx">combo</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Combo</span><span class="p">(</span><span class="nx">Key</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="p">[</span> <span class="nx">Key</span><span class="p">.</span><span class="nx">CTRL</span><span class="p">,</span> <span class="nx">Key</span><span class="p">.</span><span class="nx">SHIFT</span> <span class="p">]);</span>
+</code></pre></div>
+
+
+<h4>Bindings</h4>
+
+<p>This class manages the mapping of behavior to Combos. It intercepts keypress/keydown/keyup document-wide, creates a Combo from that event, matches that Combo against the set of configured keybindings (instances of Combo), and if a match is found, executes any handlers for that Combo and event type (you can have distinct handlers for keydown/keyup). <strong>Note:</strong> You should only ever have one instance of Bindings on the page, or you will encounter duplication/dropping of events.</p>
+
+<p>Bindings offers a simple API for taking Combos and binding behavior to them. First, you use <code>add</code> to create a keybinding:</p>
+
+<div class="highlight"><pre><code class="javascript"><span class="kd">var</span> <span class="nx">bindings</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Bindings</span><span class="p">();</span>
+<span class="c1">// Typical binding syntax</span>
+<span class="nx">bindings</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">&#39;displayAlert&#39;</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Combo</span><span class="p">(</span><span class="nx">Key</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">Key</span><span class="p">.</span><span class="nx">CTRL</span><span class="p">,</span> <span class="nx">Key</span><span class="p">.</span><span class="nx">SHIFT</span><span class="p">));</span>
+<span class="nx">bindings</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">&#39;toggle&#39;</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Combo</span><span class="p">(</span><span class="nx">Key</span><span class="p">.</span><span class="nx">S</span><span class="p">,</span> <span class="nx">Key</span><span class="p">.</span><span class="nx">CTRL</span><span class="p">,</span> <span class="nx">Key</span><span class="p">.</span><span class="nx">META</span><span class="p">));</span>
+<span class="c1">// Multiple bindings for one event</span>
+<span class="nx">bindings</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">&#39;anotherEvent&#39;</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Combo</span><span class="p">(</span><span class="nx">Key</span><span class="p">.</span><span class="nx">D</span><span class="p">,</span> <span class="nx">Key</span><span class="p">.</span><span class="nx">META</span><span class="p">),</span> <span class="k">new</span> <span class="nx">Combo</span><span class="p">(</span><span class="nx">Key</span><span class="p">.</span><span class="nx">D</span><span class="p">,</span> <span class="nx">Key</span><span class="p">.</span><span class="nx">SHIFT</span><span class="p">));</span>
+</code></pre></div>
+
+
+<p>Add behavior to a binding using <code>Bindings.registerHandler</code>. You can also add multiple handlers for one event (for instance one handler for undo logic, one to perform the actual action).</p>
+
+<div class="highlight"><pre><code class="javascript"><span class="kd">var</span> <span class="nx">displayAlert</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;Hello!&#39;</span><span class="p">);</span> <span class="p">};</span>
+<span class="c1">// Inferred binding name and eventType syntax</span>
+<span class="nx">bindings</span><span class="p">.</span><span class="nx">registerHandler</span><span class="p">(</span><span class="nx">displayAlert</span><span class="p">);</span>
+<span class="c1">// Inferred eventType syntax</span>
+<span class="nx">bindings</span><span class="p">.</span><span class="nx">registerHandler</span><span class="p">(</span><span class="s1">&#39;displayAlert&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;Hello!&#39;</span><span class="p">);</span> <span class="p">});</span>
+<span class="c1">// Full syntax</span>
+<span class="nx">bindings</span><span class="p">.</span><span class="nx">registerHandler</span><span class="p">(</span><span class="s1">&#39;displayAlert&#39;</span><span class="p">,</span> <span class="s1">&#39;keypress&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;Hello!&#39;</span><span class="p">);</span> <span class="p">});</span>
+</code></pre></div>
+
+
+<p>If you have toggle-like behavior you'd like to implement, you are in luck! Register your toggle using <code>registerToggle</code>:</p>
+
+<div class="highlight"><pre><code class="javascript"><span class="kd">var</span> <span class="nx">toggleOn</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Lights on!&#39;</span><span class="p">);</span> <span class="p">};</span>
+<span class="kd">var</span> <span class="nx">toggleOff</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Lights off!&#39;</span><span class="p">);</span> <span class="p">};</span>
+<span class="nx">bindings</span><span class="p">.</span><span class="nx">registerToggle</span><span class="p">(</span><span class="s1">&#39;toggle&#39;</span><span class="p">,</span> <span class="nx">toggleOn</span><span class="p">,</span> <span class="nx">toggleOff</span><span class="p">);</span>
+</code></pre></div>
+
+
+<p><strong>Note:</strong> The toggle starts in the off position.</p>
+
+      </section>
+    </div>
+    <footer>
+      <p>Project maintained by <a href="https://github.com/bitwalker">bitwalker</a></p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+  </body>
+</html>

@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Keys.js - Introduction</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1><a href="index.html">Keys.js</a></h1>
+        <p>Easy keybindings for browser applications!</p>
+        <p class="view"><a href="https://github.com/bitwalker/keys.js">View the Project on GitHub <small>bitwalker/keys.js</small></a></p>
+        <ul>
+          <li><a href="examples.html">View <strong>Examples</strong></a></li>
+          <li><a href="api.html">Read The <strong>Docs</strong></a></li>
+          <li><a href="https://github.com/bitwalker/keys.js/zipball/master">Download <strong>ZIP</strong></a></li>
+          <li><a href="https://github.com/bitwalker/keys.js">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h2>Features</h2>
+
+<ul>
+<li>Define bindings with a name, and assign one or more keys or combinations of keys</li>
+<li>Attach behavior to a binding</li>
+<li>Execute one or more behaviors for a single binding</li>
+<li>Execute toggle-like behavior for a binding using a simple API for that use case</li>
+<li>Enable/disable bindings by name, or all at once</li>
+<li>Use a simple API based on objects instead of strings to catch errors early on (spelling mistakes are caught immediately). This also allows Keys.js to help prevent creating invalid key combinations.</li>
+<li>Serialize bindings for persistance using localStorage, or uploading to a server for personalized keybindings in your web application. Deserialize them easily using the same API.</li>
+</ul>
+
+
+<h4>Browser Support</h4>
+
+<p>I've tested in the following browsers:</p>
+
+<ul>
+<li>IE7+ (I suspect IE6 works, but I don't have a way to test)</li>
+<li>Firefox 21+</li>
+<li>Safari 6+</li>
+<li>Chrome 27+</li>
+</ul>
+
+
+<h4>Module Support</h4>
+
+<p>Key.js has CommonJS and AMD module support, and can be used with require.js or another module loader.</p>
+
+<h4>External Dependencies</h4>
+
+<p>None. I wanted to ensure that Keys could stand on it's own, independent of any third party libraries. This makes it really easy to deploy on an existing project. The only exception is in IE&lt;7 where the JSON object is not provided. In this case, you would need to add the JSON2 library to your project. This is only necessary if you plan on making use of the serialization features that Keys.js provides.</p>
+
+<h4>Potential Side Effects</h4>
+
+<p>Key.js polyfills <code>Array.forEach</code>, <code>Array.map</code>, <code>Array.filter</code> and <code>Array.indexOf</code> <strong>if they are not already implemented by the browser, or another library</strong>, for internal use. I currently have no plans to remove these polyfills, but if it is causing issues for you, let me know and I'll look into alternative approaches. If you are curious, the decision to polyfill those methods was due to my opinion that the improvements in code clarity and maintainability make them worthwhile.</p>
+
+<h2>Coming Soon!</h2>
+
+<ul>
+<li>Scoped bindings (only execute a binding if focus is within the scope of a given element)</li>
+<li>Sequences (non-chord key combinations - think the Konami code)</li>
+</ul>
+
+
+<h2>License</h2>
+
+<p>This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License.</p>
+
+      </section>
+    </div>
+    <footer>
+      <p>Project maintained by <a href="https://github.com/bitwalker">bitwalker</a></p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+  </body>
+</html>
