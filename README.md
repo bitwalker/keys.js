@@ -13,7 +13,7 @@ Stable, but it's a new project, so as always, caveat emptor. The documentation i
 - Discover additional use cases that aren't covered as well as they could be
 - Implement a faux-Vim example to demonstrate a complex usecase of keybindings in a web application.
 
-Check out the [Keys.js](https://bitwalker.github.io/keys.js) home page for information on browser support, dependencies, examples, and in-depth description of how Key.js works.
+Check out the [Keys.js](https://bitwalker.github.io/keys.js) home page for information on browser support, dependencies, examples, and in-depth description of how Keys.js works.
 
 ## License
 
