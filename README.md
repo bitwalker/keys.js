@@ -111,47 +111,7 @@ bindings.registerToggle('toggle', toggleOn, toggleOff);
 
 ## Full Example
 
-```html
-<html>
-<body>
-    <div class="wrapper">
-        <input type="text" id="test" placeholder="Test input.." />
-    </div>
-    <script type="text/javascript" src="../src/keys.js"></script>
-    <script type="text/javascript">
-        (function() {
-            // Toggle Flag
-        	var toggled = false;
-
-            // Initialize application-wide bindings manager
-        	var bindings = window.bindings = new Bindings();
-
-            // Add keybindings
-        	bindings.add('displayAlert',   new Combo(Key.A, [ Key.CTRL, Key.SHIFT ]));
-        	bindings.add('toggleFlag',     new Combo(Key.C, [ Key.SHIFT, Key.META ]));
-            bindings.add('highlightInput', new Combo(Key.SHIFT, Key.META));
-
-            // Register displayAlert handler
-        	bindings.registerHandler('displayAlert', function() { alert('Hello!'); });
-
-            // Register toggleFlag toggle
-        	var toggleOn  = function() { toggled = true; console.log(toggled); };
-        	var toggleOff = function() { toggled = false; console.log(toggled); };
-        	bindings.registerToggle('toggleFlag', toggleOn, toggleOff);
-
-            // Register a pair of handlers on keyup/keydown to highlight a field
-            // while the associated Combo is activated (held down)
-        	bindings.registerHandler('highlightInput', 'keydown', function() {
-        		document.getElementById('test').style['background-color'] = 'yellow';
-        	});
-        	bindings.registerHandler('highlightInput', 'keyup', function() {
-        		document.getElementById('test').style['background-color'] = 'white';
-        	});
-        })();
-    </script>
-</body>
-</html>
-```
+See the `examples` directory for examples of different functionality, calling conventions, etc.
 
 ## License
 
