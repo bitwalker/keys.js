@@ -1,0 +1,51 @@
+body {
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+}
+
+.page {
+    height: 100%;
+    text-align: center;
+    padding-top: 200px;
+    width: 100%;
+}
+
+.content {
+    text-align: center;
+    margin: 0 auto;
+    width: 940px;
+}
+
+.shelf {
+     display: none;
+     position: absolute;
+     left: 0px;
+     top: 0px;
+     width:100%;
+     height:100%;
+     text-align:center;
+     z-index: 1000;
+     padding-top: 50px;
+}
+
+button {
+    width: 300px;
+    border: solid 1px grey;
+    background-color: #333;
+    line-height: 24px;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 3px;
+    display: inline-block;
+    margin: 0 auto;
+}
+
+pre {
+    text-align: left;
+    width: 800px;
+    margin: 0 auto;
+}
+
+.hide {
+    display: none !important;
+}
