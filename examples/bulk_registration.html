@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Basic Example</title>
+    <title>Bulk Registration Example</title>
     <link rel="stylesheet" href="styles/style.css" />
     <!-- Syntax Highlighting -->
     <link rel="stylesheet" href="styles/sh_style.css" />
@@ -35,8 +35,12 @@
     <script type="text/javascript" src="../src/keys.js"></script>
     <script type="text/javascript" id="code">
         (function() {
+            window.Bindings = Keys.Bindings;
+            window.Combo    = Keys.Combo;
+            window.Key      = Keys.Key;
+
             // Initialize application-wide bindings manager
-            var bindings = window.bindings = new Bindings();
+            window.bindings = new Bindings();
 
             /**
              * You can load up your applications keybindings quickly using load.

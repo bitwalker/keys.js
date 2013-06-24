@@ -15,7 +15,7 @@
     }
     else {
         // Vanilla environments (browser)
-        root = builder(root, window);
+        root.Keys = builder(root.Keys, window);
     }
 })(this, function (exports, globals, undefined) {
     'use strict';

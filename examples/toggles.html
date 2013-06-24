@@ -23,8 +23,12 @@
     <script type="text/javascript" src="../src/keys.js"></script>
     <script type="text/javascript" id="code">
         (function() {
+            window.Bindings = Keys.Bindings;
+            window.Combo    = Keys.Combo;
+            window.Key      = Keys.Key;
+
             // Initialize application-wide bindings manager
-            var bindings = window.bindings = new Bindings();
+            window.bindings = new Bindings();
 
             // Add a binding to toggle the page background color
             bindings.add('toggleBackground', Key.B);
