@@ -49,3 +49,52 @@ pre {
 .hide {
     display: none !important;
 }
+
+/************
+ Modal
+*************/
+.overlay {
+    background-color: rgba(220, 220, 220, 0.9);
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    z-index: 9999;
+    display: none;
+}
+
+.modalBox {
+    margin: 0 auto;
+    width: 400px;
+    position: relative;
+    top: 200px;
+    background-color: rgba(200, 200, 200, 1);
+    text-align: left;
+    border: solid 1px rgba(150, 150, 150, 1);
+    box-shadow: 0 3px 2px -2px;
+}
+
+.modalBox .title {
+    padding-left: 10px;
+    color: white;
+    text-shadow: 1px 1px 1px black;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+.modalBox .message {
+    padding-left: 10px;
+    color: white;
+    text-shadow: 0px 1px 1px black;
+}
+
+.modalBox .close {
+    color: white;
+    font-weight: bold;
+    position: absolute;
+    top: 0;
+    right: 10px;
+    text-shadow: 1px 1px 1px black;
+    cursor: pointer;
+}
