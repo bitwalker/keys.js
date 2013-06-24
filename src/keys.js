@@ -813,45 +813,143 @@
      * @constructor
      */
     function Bindings() {
-        var self = this;
-
-        // IE<9 doesn't have addEventListener
-        if (typeof globals.document.addEventListener !== 'undefined') {
-            globals.document.addEventListener('keydown',  handleEvent, true);
-            globals.document.addEventListener('keyup',    handleEvent, true);
-            globals.document.addEventListener('keypress', handleEvent, true);
-        }
-        else {
-            globals.document.attachEvent('onkeydown',  handleEvent);
-            globals.document.attachEvent('onkeyup',    handleEvent);
-            globals.document.attachEvent('onkeypress', handleEvent);
-        }
-
         this.bindings = [];
         this.handlers = [];
 
-        function handleEvent(e) {
-            // IE<9 doesn't have stopImmediatePropagation
-            if (typeof e.stopImmediatePropagation !== 'undefined')
-                e.stopImmediatePropagation();
-            else
-                e.cancelBubble = true;
-
-            var combo = Combo.fromEvent(e);
-            if (!combo)
-                return;
-
-            // Execute any matching handlers
-            var isType = function(h) { return h.eventType === e.type; };
-            var logHandler = function(h) {
-                log('Bindings.handleEvent called for Combo: ' + combo.toString() + '. Handler `' + h.name + '` was called.');
-            };
-            var execute = function(h) { h.handler.call(null); };
-            tap(self.getHandlersForCombo(combo).filter(isType), logHandler, true).forEach(execute);
-
-            return false;
-        }
+        this.enable();
     }
+
+    /**
+     * The core logic that executes for every input event.
+     * @param  {Event} e - An instance of Event specific to the input type
+     */
+    Bindings.prototype.onInputEvent = function (e) {
+        // IE<9 doesn't have stopImmediatePropagation
+        if (typeof e.stopImmediatePropagation !== 'undefined')
+            e.stopImmediatePropagation();
+        else
+            e.cancelBubble = true;
+
+        var combo = Combo.fromEvent(e);
+        if (!combo)
+            return;
+
+        // Gather event handlers
+        var eventHandlers = this.getHandlersForCombo(combo)
+                                .filter(isType);
+        // Log them
+        tap(eventHandlers, debug, true /* only tap if Keys.debug == true */);
+        // Execute them
+        eventHandlers.forEach(execute);
+
+        return false;
+
+        function isType (h) {
+            return h.eventType === e.type;
+        }
+        function debug(h) {
+            log('Bindings.handleEvent called for Combo: ' + combo.toString() + '. Handler `' + h.name + '` was called.');
+        }
+        function execute(h) {
+            h.handler.call(null);
+        }
+    };
+
+    /**
+     * Re-enable Keys.js or a specific binding or bindings,
+     * depending on the number of arguments. None will re-enable
+     * Key.js if it is currently disabled. One or more will re-enable
+     * each of the bindings matched by the names provided.
+     *
+     * @memberOf Bindings
+     * @instance
+     * @param {string} bindingNames* - One or more binding names to re-enable
+     */
+    Bindings.prototype.enable = function() {
+        var self = this;
+
+        var bindingNames = Array.prototype.slice.call(arguments);
+
+        // If no arguments are provided, we're re-enabling Keys entirely
+        if (!bindingNames.length) {
+            var onInputEvent = this.onInputEvent.bind(this);
+            // IE<9 doesn't have addEventListener
+            if (typeof globals.document.addEventListener !== 'undefined') {
+                globals.document.addEventListener('keydown',  onInputEvent, true);
+                globals.document.addEventListener('keyup',    onInputEvent, true);
+                globals.document.addEventListener('keypress', onInputEvent, true);
+            }
+            else {
+                globals.document.attachEvent('onkeydown',  onInputEvent);
+                globals.document.attachEvent('onkeyup',    onInputEvent);
+                globals.document.attachEvent('onkeypress', onInputEvent);
+            }
+            this.bindings.forEach(function(binding) {
+                binding.enabled = true;
+            });
+        }
+        // Otherwise we only care about specific bindings
+        else {
+            bindingNames.forEach(function(name) {
+                if (name && typeof name === 'string') {
+                    self.bindings.forEach(function(binding) {
+                        if (binding.name === name) {
+                            binding.enabled = true;
+                        }
+                    });
+                }
+            });
+        }
+
+
+    };
+
+    /**
+     * Disable Keys.js or a specific binding or bindings,
+     * depending on the number of arguments. None will disable
+     * Key.js if it is currently disabled. One or more will disable
+     * each of the bindings matched by the names provided.
+     *
+     * @memberOf Bindings
+     * @instance
+     * @param {string} bindingNames* - One or more binding names to disable
+     */
+    Bindings.prototype.disable = function() {
+        var self = this;
+
+        var bindingNames = Array.prototype.slice.call(arguments);
+
+        // If no arguments are provided, we're disabling Keys entirely
+        if (!bindingNames.length) {
+            var onInputEvent = this.onInputEvent.bind(this);
+            // IE<9 doesn't have addEventListener
+            if (typeof globals.document.removeEventListener !== 'undefined') {
+                globals.document.removeEventListener('keydown',  onInputEvent, true);
+                globals.document.removeEventListener('keyup',    onInputEvent, true);
+                globals.document.removeEventListener('keypress', onInputEvent, true);
+            }
+            else {
+                globals.document.detachEvent('onkeydown',  onInputEvent);
+                globals.document.detachEvent('onkeyup',    onInputEvent);
+                globals.document.detachEvent('onkeypress', onInputEvent);
+            }
+            this.bindings.forEach(function(binding) {
+                binding.enabled = false;
+            });
+        }
+        // Otherwise we only care about specific bindings
+        else {
+            bindingNames.forEach(function(name) {
+                if (name && typeof name === 'string') {
+                    self.bindings.forEach(function(binding) {
+                        if (binding.name === name) {
+                            binding.enabled = false;
+                        }
+                    });
+                }
+            });
+        }
+    };
 
     /**
      * Fetches a binding by it's name.
@@ -962,7 +1060,8 @@
         } else {
             this.bindings.push({
                 name:  name,
-                combos: combos
+                combos: combos,
+                enabled: true
             });
             log('Bindings.add: New binding - `' + name + '` with ' + combos.length + ' combos');
         }
@@ -1186,7 +1285,7 @@
     Bindings.prototype.getHandlersForCombo = function(combo) {
         var self     = this;
         var matching = this.bindings.filter(function(binding) {
-            return any(binding.combos, function(c) {
+            return binding.enabled && any(binding.combos, function(c) {
                 if (c instanceof Key)
                     return combo.key.eq(c);
                 else

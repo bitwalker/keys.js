@@ -15,10 +15,13 @@ Stable, but it's a new project, so as always, caveat emptor. The documentation i
 
 ## Features
 
+- Define bindings and behavior in bulk using `bindings.load`, for quick initialization
 - Bind behavior to a specific key or combination of keys, ex. `bindings.add('undo', Key.U)` or `bindings.add('undoAll', new Combo(Key.U, Key.META))`
 - Bind behavior to multiple keys/combos with a single binding, ex. `bindings.add('auditEvent', Key.D, new Combo(Key.D, Key.META))`
 - Handle bindings with a callback function using `Bindings.registerHandler`
 - Handle bindings with toggle-style behavior using `Bindings.registerToggle(bindingName, toggleOnHandler, toggleOffHandler)`
+- Disable Key.js temporarily using `bindings.disable()`
+- `disable` will also behavior for a specific binding when provided with one or more binding names
 - Work with objects, ex. `new Combo(Key.A, Key.CTRL)`, instead of strings, i.e `new Combo('ctrl+a')`. While slightly more verbose, it is less error prone, and allows you to catch errors early on if you spell a key wrong, or try to create a Combo with an invalid combination of keys.
 - Save bindings to localStorage or send to a server for persistance using `Combo.serialize` or `Bindings.serialize`. Very useful for allowing users to customize their keybindings.
 - Pretty print Combos using `Combo.toString`
