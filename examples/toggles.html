@@ -1,0 +1,30 @@
+---
+layout: example
+title: Using Toggles
+instructions: Press B to toggle the background color.
+---
+(function() {
+    window.Bindings = Keys.Bindings;
+    window.Combo    = Keys.Combo;
+    window.Key      = Keys.Key;
+
+    // Initialize application-wide bindings manager
+    window.bindings = new Bindings();
+
+    // Add a binding to toggle the page background color
+    bindings.add('toggleBackground', Key.B);
+
+    /**
+     * Register background color toggle behavior
+     * Toggles always fire on 'keydown', this can be changed in future versions if needed.
+     */
+    bindings.registerToggle('toggleBackground', toggleBlack, toggleWhite);
+    function toggleBlack() {
+        $('body').css('background-color', 'black');
+        $('h1').css('color', 'white');
+    }
+    function toggleWhite() {
+        $('body').css('background-color', 'white');
+        $('h1').css('color', 'black');
+    }
+})();

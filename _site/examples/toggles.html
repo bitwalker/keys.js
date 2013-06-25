@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Keys.js Example - Using Toggles</title>
+    <link rel="stylesheet" href="styles/examples.css" />
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!-- Syntax Highlighting -->
+    <link rel="stylesheet" href="styles/sh_style.css" />
+    <script type="text/javascript" src="scripts/sh_main.min.js"></script>
+    <script type="text/javascript" src="scripts/sh_javascript.min.js"></script>
+    <!-- jQuery -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    <!-- Keys.js -->
+    <script type="text/javascript" src="scripts/keys.min.js"></script>
+</head>
+<body>
+    <div class="page">
+        <h1 class="introduction">Press B to toggle the background color.</h1>
+        <div class="content">
+            <button id="clicker">Show Code</button>
+        </div>
+        <div class="shelf">
+            <pre id="sauce" class="sh_javascript"></pre>
+            <h3>Press ESC to return to the demo.</h3>
+        </div>
+    </div>
+    <div class="modal overlay">
+        <div class="modalBox">
+            <h3 class="title">Alert</h3>
+            <hr />
+            <p class="message">Press SHIFT+X to close..</p>
+            <span class="close">x</span>
+        </div>
+    </div>
+    <script type="text/javascript" id="code">
+(function() {
+    window.Bindings = Keys.Bindings;
+    window.Combo    = Keys.Combo;
+    window.Key      = Keys.Key;
+
+    // Initialize application-wide bindings manager
+    window.bindings = new Bindings();
+
+    // Add a binding to toggle the page background color
+    bindings.add('toggleBackground', Key.B);
+
+    /**
+     * Register background color toggle behavior
+     * Toggles always fire on 'keydown', this can be changed in future versions if needed.
+     */
+    bindings.registerToggle('toggleBackground', toggleBlack, toggleWhite);
+    function toggleBlack() {
+        $('body').css('background-color', 'black');
+        $('h1').css('color', 'white');
+    }
+    function toggleWhite() {
+        $('body').css('background-color', 'white');
+        $('h1').css('color', 'black');
+    }
+})();
+    </script>
+    <script type="text/javascript">
+        $(function() {
+            var script = $('#code');
+            var sauce  = $('#sauce');
+
+            bindings.add('showDemo', Key.Esc);
+            bindings.registerHandler('showDemo', function() {
+                $('.shelf').hide();
+            });
+
+            // Copy script to 'sauce' div
+            sauce.html(script.html());
+
+            // Show sauce on button click
+            var shown = false;
+            $('#clicker').click(function() {
+                if (shown) {
+                    $('.shelf').hide();
+                    sauce.addClass('hide');
+                    shown = false;
+                }
+                else {
+                    $('.shelf').show();
+                    sauce.removeClass('hide');
+                    shown = true;
+                }
+                // Initialize syntax highlighting
+                sh_highlightDocument();
+            });
+        });
+    </script>
+</body>
+</html>

@@ -7,6 +7,8 @@ title: Examples
 
 #### Basic
 
+[View Demo](examples/basic.html)
+
 The following code demonstrates the most basic example of initializing Keys.js, adding a new binding, and defining behavior for that binding. It is assumed that for this, and all following examples, you have included the Keys.js script previously on the page.
 
 {% highlight javascript %}
@@ -47,6 +49,8 @@ The following code demonstrates the most basic example of initializing Keys.js, 
 
 #### Toggles
 
+[View Demo](examples/toggles.html)
+
 This code demonstrates how to configure a basic toggle with behavior. I'm using jQuery syntax for DOM manipulation here, but it is not required by Keys.js and the basic concepts don't change.
 
 {% highlight javascript %}
@@ -77,7 +81,9 @@ This code demonstrates how to configure a basic toggle with behavior. I'm using 
 })();
 {% endhighlight %}
 
-#### Bulk Registration
+#### Using Bindings.load
+
+[View Demo](examples/using_load.html)
 
 This code demonstrates how you can use `Bindings.load` to bulk define bindings and their behavior with one API call.
 

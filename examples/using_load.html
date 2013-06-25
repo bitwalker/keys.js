@@ -1,0 +1,39 @@
+---
+layout: example
+title: Using Bindings.load
+instructions: Press SHIFT+A to show an alert or SHIFT+M to show a modal.
+---
+
+(function() {
+    window.Bindings = Keys.Bindings;
+    window.Combo    = Keys.Combo;
+    window.Key      = Keys.Key;
+
+    // Initialize application-wide bindings manager
+    window.bindings = new Bindings();
+
+    bindings.load({
+        displayAlert: {
+            bind: new Combo(Key.A, Key.SHIFT),
+            handler: function() {
+                alert('Hello!');
+            }
+        },
+        displayModal: {
+            bind: new Combo(Key.M, Key.SHIFT),
+            handler: displayModal
+        },
+        hideModal: {
+            bind: new Combo(Key.X, Key.SHIFT),
+            eventType: 'keypress',
+            handler: hideModal
+        }
+    });
+
+    function displayModal() {
+        $('.modal').fadeIn('fast');
+    }
+    function hideModal() {
+        $('.modal').fadeOut('fast');
+    }
+})();
