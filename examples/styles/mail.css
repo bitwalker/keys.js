@@ -1,0 +1,11 @@
+body {
+    padding-top: 60px;
+}
+
+th.inbox-from {
+    width: 200px;
+}
+
+td > span.label:last-child {
+    margin-right: 10px;
+}
