@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Demo App</title>
+        <title>Demo Mail</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="styles/bootstrap.min.css" rel="stylesheet" media="screen">
         <link href="styles/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
@@ -101,8 +101,37 @@
         </script>
 
         <script type="text/template" id="reading-pane">
-            <div class="well">
-                <h3>{{subject}}</h3>
+            <div class="well reading-pane">
+                <div class="subnav subnav-inverse">
+                    <ul class="nav nav-pills">
+                        {{#archivable}}
+                        <li><a class="archive" data-id="{{id}}"><i class="icon-white icon-inbox"></i>Archive</a></li>
+                        {{/archivable}}
+                        {{#archived}}
+                        <li><a class="archive" data-id="{{id}}"><i class="icon-white icon-inbox"></i>Show In Inbox</a></li>
+                        {{/archived}}
+                        {{#deletable}}
+                        <li><a class="delete" data-id="{{id}}"><i class="icon-white icon-remove"></i>Delete</a></li>
+                        {{/deletable}}
+                        {{#deleted}}
+                        <li><a class="delete" data-id="{{id}}"><i class="icon-white icon-remove"></i>Restore</a></li>
+                        {{/deleted}}
+                        {{#markable}}
+                        <li><a class="spam" data-id="{{id}}"><i class="icon-white icon-warning-sign"></i>Mark As Spam</a></li>
+                        {{/markable}}
+                        {{#isSpam}}
+                        <li><a class="spam" data-id="{{id}}"><i class="icon-white icon-warning-sign"></i>Not Spam</a></li>
+                        {{/isSpam}}
+                    </ul>
+                </div>
+                <h5 class="pull-left">{{from}}</h5>
+                <h5 class="pull-right">{{received}}</h5>
+                <div class="clearfix"></div>
+                <h4>{{subject}}</h4>
+                {{#labels}}
+                    <span class="label label-{{type}}">{{name}}</span>
+                {{/labels}}
+                <hr />
                 <p>{{body}}</p>
             </div>
         </script>

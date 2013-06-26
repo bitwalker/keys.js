@@ -9,3 +9,71 @@ th.inbox-from {
 td > span.label:last-child {
     margin-right: 10px;
 }
+
+.reading-pane {
+	padding-top: 60px;
+	position: relative;
+}
+
+.reading-pane h4 {
+	margin-top: 0;
+	margin-bottom: 15px;
+}
+
+.reading-pane h5 {
+	margin-top: 0;
+}
+
+.reading-pane hr {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.reading-pane .subnav {
+	padding-left: 0px;
+	padding-right: 0px;
+	position: absolute;
+	top: 15px;
+	left: 0;
+	height: 36px;
+	width: 100%;
+}
+
+.reading-pane .subnav i {
+	padding-right: 5px;
+	position: relative;
+	top: 1px;
+}
+
+div.subnav-inverse {
+  	background-color: #45a1de;
+  	background-image: linear-gradient(to bottom,#3498db,#5faee3);
+  	border-radius: 0px;
+}
+
+div.subnav-inverse .nav > li > a {
+	color: #ecf0f1;
+	border-radius: 0px;
+}
+
+div.subnav-inverse .nav > li > a:hover {
+  	color: #ecf0f1;
+  	background-color: #45a1de;
+}
+
+div.subnav-inverse .nav > .active > a,
+div.subnav-inverse .nav > .active > a:hover {
+  	color: #ecf0f1;
+  	background-color: #45a1de;
+}
+
+@media (max-width: 767px) {
+  	div.subnav-inverse .nav > li:first-child > a:hover,
+  	div.subnav-inverse .nav > li + li > a:hover {
+	  	background-color: #45a1de;
+  	}
+}
+
+span.label-inverse {
+	background-color: #2c2c2c;
+}

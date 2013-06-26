@@ -19,6 +19,35 @@
         };
     };
 
+    /**
+     * Defines an event handler for a jQuery event, but with your own context
+     * The element target is captured as a jQuery object, and along with the event object,
+     * the two are passed along as the first parameters to the handler. You can
+     * partially apply arguments when calling eventHandler, and they will be passed
+     * to the handler as arguments following the element and event object.
+     * 
+     * @param  {Function} fn      - event handler function
+     * @param  {Object}   context - the context to use for `this` inside the handler
+     * @returns {Function}
+     */
+    var eventHandler = function(fn, context) {
+        var args = Array.prototype.slice.call(arguments, 2);
+        return function(e) {
+            var el = $(this);
+            return fn.apply(context, [el, e].concat(args));
+        };
+    };
+
+    /**
+     * Determine if this string ends with the provided string
+     * @param  {string} s The string to test for
+     * @return {Boolean}
+     */
+    String.prototype.endsWith = function(s) {
+        if (!s || typeof s !== 'string') return false;
+        return this.indexOf(s) === this.length - s.length;
+    };
+
     // Data Classes
     function SidebarItem(page, name, isActive) {
         this.name = name;
@@ -53,17 +82,84 @@
             return "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum mauris. Maecenas congue ligula ac quam viverra nec consectetur ante hendrerit. Donec et mollis dolor. Praesent et diam eget libero egestas mattis sit amet vitae augue. Nam tincidunt congue enim, ut porta lorem lacinia consectetur. Donec ut libero sed arcu vehicula ultricies a non tortor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ut gravida lorem. Ut turpis felis, pulvinar a semper sed, adipiscing id dolor. Pellentesque auctor nisi id magna consequat sagittis. Curabitur dapibus enim sit amet elit pharetra tincidunt feugiat nisl imperdiet. Ut convallis libero in urna ultrices accumsan. Donec sed odio eros. Donec viverra mi quis quam pulvinar at malesuada arcu rhoncus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In rutrum accumsan ultricies. Mauris vitae nisi at sem facilisis semper ac in est.";
         }
     }
+    Email.prototype.hasLabel = function(label) {
+        for (var i = 0; i < this.labels.length; i++) {
+            if (this.labels[i].eq(label))
+                return true;
+        }
+        return false;
+    };
+    Email.prototype.addLabel = function(label) {
+        if (!this.hasLabel(label)) {
+            this.labels.push(label);
+        }
+    };
+    Email.prototype.removeLabel = function(label) {
+        this.labels = this.labels.filter(function(l) {
+            return !l.eq(label);
+        });
+    };
+    Email.prototype.trash = function() {
+        if (this.deleted) {
+            this.deleted = false;
+            this.deletable = true;
+            this.archived = false;
+            this.archivable = true;
+            this.removeLabel(Label.trash);
+        }
+        else {
+            this.deleted = true;
+            this.deletable = false;
+            this.archived = false;
+            this.archivable = false;
+            this.addLabel(Label.trash);
+        }
+    };
+    Email.prototype.archive = function() {
+        if (this.archived) {
+            this.archived = false;
+            this.archivable = true;
+        }
+        else {
+            this.archived = true;
+            this.archivable = false;
+        }
+    };
+    Email.prototype.markSpam = function() {
+        if (this.hasLabel(Label.spam)) {
+            this.removeLabel(Label.spam);
+            this.markable = true;
+            this.isSpam = false;
+            if (this.deleted) {
+                this.trash();
+            }
+        }
+        else {
+            this.addLabel(Label.spam);
+            this.markable = false;
+            this.isSpam = true;
+            if (!this.deleted) {
+                this.trash();
+            }
+        }
+    };
 
     function Label(name, type) {
         this.name = name;
         this.type = type;
     }
+    Label.prototype.eq = function(label) {
+        if (label.name === this.name && label.type === this.type)
+            return true;
+        else return false;
+    };
     // Static labels
     Label.important = new Label('Important', 'important');
     Label.friend    = new Label('Friend', 'info');
     Label.family    = new Label('Family', 'success');
     Label.work      = new Label('Work', 'default');
     Label.spam      = new Label('Spam', 'warning');
+    Label.trash     = new Label('Trash', 'inverse');
 
     function Alert(message) {
         this.message = message;
@@ -125,11 +221,14 @@
              * arguments prior to the router applying it's own arguments when calling the handler.
              */
             this.routes = {
-                'default':            this.showInbox,
-                '#/inbox':            this.showInbox,
-                '#/inbox/\\w+':       this.showInbox,
-                '#/inbox/\\w+/\\d+':  this.showInbox,
-                '#/settings':         this.showSettings
+                'default':               this.showInbox,
+                '#/inbox':               this.showInbox,
+                '#/inbox/\\d+':          this.showInbox,
+                '#/inbox/\\w+':          this.showInbox,
+                '#/inbox/\\w+/\\d+':     this.showInbox,
+                '#/search/read/.+/\\d+': this.searchInbox,
+                '#/search/.+':           partial(this.searchInbox, this, 'search'),
+                '#/settings':            this.showSettings
             };
 
             // Compile templates
@@ -144,20 +243,17 @@
             $(window).on('hashchange', function() { self.router(location.hash); });
 
             // Handle inbox search
-            $('form.navbar-search').on('submit', function(e) {
-                e.preventDefault();
-                self.searchInbox(self.elements.query.val());
-                return false;
-            });
+            $('form.navbar-search').on('submit', eventHandler(this.onSearch, this));
+            // Handle inbox item selection
+            this.elements.view.on('click', '.email', eventHandler(this.onMailSelected, this));
+            // Handle deletion
+            this.elements.view.on('click', '.reading-pane .delete', eventHandler(this.onDeleteMail, this));
+            // Handle archival
+            this.elements.view.on('click', '.reading-pane .archive', eventHandler(this.onArchiveMail, this));
+            // Handle mark as spam
+            this.elements.view.on('click', '.reading-pane .spam', eventHandler(this.onMarkAsSpam, this));
 
-            this.elements.view.on('click', '.email', function() {
-                var email = $(this);
-                var id = email.data('id');
-                location.hash = location.hash + '/' + id;
-            });
-
-            // Kickstart the router
-            $(window).trigger('hashchange');
+            this.refresh();
         },
 
         router: function(hash) {
@@ -195,53 +291,146 @@
             }
         },
 
-        showInbox: function(inboxType, messageId) {
-            // Render Inbox
-            var inbox = {
-                emails: this.state.inbox.emails.filter(function(email) {
-                    switch (inboxType) {
-                        case 'archived':
-                            return email.archived === true;
-                        case 'trash':
-                            return email.deleted === true;
-                        default:
-                            return !(email.archived || email.deleted);
-                    }
-                })
-            };
-            this.elements.view.html(this.templates.inbox.view(inbox));
+        refresh: function() {
+            $(window).trigger('hashchange');
+        },
 
-            if (this.state.showWelcomePopup) {
-                this.state.showWelcomePopup = false;
-                var welcome = 'Demo Mail is an entirely keyboard driven mail application. Menus can be navigated by mouse or keyboard. To get started, CTRL+SHIFT+K!';
-                this.elements.view.prepend(this.templates.alert(new Alert(welcome)));
+        showInbox: function(inboxType, emailId) {
+            // If no inbox type was selected, but a message id was passed in, rearrange the params
+            if (/[\d]+/.test(inboxType)) {
+                emailId = inboxType;
+                inboxType = '';
             }
 
-            // Render Reading Pane (if needed)
-            if (messageId) {
-                var email = this.state.emails.filter(function(e) {
-                    if (e.id === messageId) return true;
-                    else return false;
-                });
-                console.log(email);
-                if (email.length) {
-                    this.elements.view.append(this.templates.inbox.readingPane(email[0]));
-                }
+            // Render Inbox
+            var emails = this.getMail(inboxType);
+            this.elements.view.html(this.templates.inbox.view(emails));
+
+            // Show welcome popup
+            if (this.state.showWelcomePopup) {
+                this.showWelcome();
+            }
+
+            // Display an email if an email id was provided
+            if (emailId) {
+                this.readMail(emailId);
             }
 
             // Render sidebar
-            var sidebar = {
+            this.renderSidebar({
                 items: [
-                    new SidebarItem('inbox', 'Inbox', !inboxType),
+                    new SidebarItem('inbox', 'Inbox',    !inboxType),
                     new SidebarItem('inbox', 'Archived', inboxType === 'archived'),
                     new SidebarItem('inbox', 'Trash',    inboxType === 'trash')
                 ]
-            };
-            this.elements.sidebar.html(this.templates.sidebar(sidebar));
+            });
 
             // Change active nav item
             this.elements.navInbox.addClass('active');
             this.elements.navSettings.removeClass('active');
+        },
+
+        searchInbox: function(action, query, emailId) {
+            // Render Inbox
+            var emails = this.getMail(function(email) {
+                return email.subject.indexOf(query) > -1 || email.body.indexOf(query) > -1 || email.from.indexOf(query) > -1;
+            });
+            this.elements.view.html(this.templates.inbox.view(emails));
+
+            if (action === 'read' && emailId) {
+                this.readMail(emailId);
+            }
+
+            // Render sidebar
+            this.renderSidebar({
+                items: [
+                    new SidebarItem('inbox', 'Inbox',    true),
+                    new SidebarItem('inbox', 'Archived', false),
+                    new SidebarItem('inbox', 'Trash',    false)
+                ]
+            });
+
+            // Change active nav item
+            this.elements.navInbox.addClass('active');
+            this.elements.navSettings.removeClass('active');
+        },
+
+        onSearch: function(element, e) {
+            e.preventDefault();
+            var query = this.elements.query.val();
+            location.hash = '#/search/' + encodeURIComponent(query);
+            return false;
+        },
+
+        onMailSelected: function(element, e) {
+            var id = element.data('id');
+            // If there is no page specified
+            if (!location.hash.split('/').slice(1).length) {
+                location.hash = '#/inbox/' + id;
+            }
+            else {
+                // If we're already reading an email
+                if (/[\d]+$/.test(location.hash)) {
+                    location.hash = location.hash.replace(/[\d]+$/, id);
+                }
+                else {
+                    // If we're searching, then change the action to read
+                    if (/#\/search/.test(location.hash)) {
+                        location.hash = location.hash.replace(/#\/search\//, '#/search/read/') + '/' + id;
+                    }
+                    else {
+                        location.hash = location.hash + '/' + id;
+                    }
+                }
+            }
+        },
+
+        onDeleteMail: function(element, e) {
+            e.preventDefault();
+
+            var id = element.data('id');
+
+            this.state.inbox.emails.forEach(function(email) {
+                if (email.id == id) {
+                    email.trash();
+                }
+            });
+
+            this.refresh();
+
+            return false;
+        },
+
+        onArchiveMail: function(element, e) {
+            e.preventDefault();
+
+            var id = element.data('id');
+
+            this.state.inbox.emails.forEach(function(email) {
+                if (email.id == id) {
+                    email.archive();
+                }
+            });
+
+            this.refresh();
+
+            return false;
+        },
+
+        onMarkAsSpam: function(element, e) {
+            e.preventDefault();
+
+            var id = element.data('id');
+
+            this.state.inbox.emails.forEach(function(email) {
+                if (email.id == id) {
+                    email.markSpam();
+                }
+            });
+
+            this.refresh();
+
+            return false;
         },
 
         showSettings: function(settingsType) {
@@ -249,22 +438,83 @@
             this.elements.view.html('');
 
             // Render sidebar
-            var sidebar = {
+            this.renderSidebar({
                 items: [
                     new SidebarItem('settings', 'Keybindings', true)
                 ]
-            };
-            this.elements.sidebar.html(this.templates.sidebar(sidebar));
+            });
 
             // Change active nav item
             this.elements.navSettings.addClass('active');
             this.elements.navInbox.removeClass('active');
         },
 
-        /** Inbox Actions **/
+        showWelcome: function() {
+            this.state.showWelcomePopup = false;
+            var welcome = 'Demo Mail is an entirely keyboard driven mail application. Menus can be navigated by mouse or keyboard. To get started, CTRL+SHIFT+K!';
+            this.elements.view.prepend(this.templates.alert(new Alert(welcome)));
+        },
 
-        searchInbox: function(query) {
+        readMail: function(id) {
+            var email = this.state.inbox.emails.filter(function(e) {
+                if (e.id === id) return true;
+                else return false;
+            });
+            if (email.length) {
+                this.elements.view.append(this.templates.inbox.readingPane(email[0]));
+            }
+        },
 
+        getMail: function(filter, predicate) {
+            if (typeof filter === 'function') {
+                predicate = filter;
+                filter = '';
+            }
+            var emails = this.state.inbox.emails.filter(function(e) {
+                switch (filter) {
+                    case 'archived':
+                        return predicate ? e.archived && predicate(e) : e.archived === true;
+                    case 'trash':
+                        return predicate ? e.deleted && predicate(e) : e.deleted === true;
+                    default:
+                        var criteria = !e.archived && !e.deleted;
+                        return predicate ? criteria && predicate(e) : criteria;
+                }
+            });
+
+            return {
+                emails: emails.map(function(e) {
+                    // Add view specific properties in order to hide/show actions based on current status
+                    if (e.deleted)
+                        e.deletable = false;
+                    else
+                        e.deletable = true;
+
+                    if (e.archived)
+                        e.archivable = false;
+                    else {
+                        // Can't archive a deleted message
+                        if (e.deleted)
+                            e.archivable = false;
+                        else
+                            e.archivable = true;
+                    }
+
+                    if (e.hasLabel(Label.spam)) {
+                        e.isSpam = true;
+                        e.markable = false;
+                    }
+                    else {
+                        e.isSpam = false;
+                        e.markable = true;
+                    }
+                    return e;
+                })
+            };
+        },
+
+        renderSidebar: function(data) {
+            this.elements.sidebar.html(this.templates.sidebar(data));
         },
 
         /** Settings Actions **/
