@@ -35,78 +35,71 @@
 
         <div class="container-fluid">
             <div class="row-fluid">
-                <!-- Sidebar -->
                 <div class="span2">
-                    <ul class="nav nav-pills nav-stacked sidebar-items">
-                        <!-- Left off here -->
+                    <ul class="nav nav-pills nav-stacked sidebar">
+                        <!-- Sidebar -->
                     </ul>
                 </div>
-                <!-- Main Content -->
-                <div class="span10">
-                    <div class="alert alert-info">
-                        <button type="button" class="close" data-dismiss="alert">x</button>
-                        <strong>Attention!</strong>
-                        Demo Mail is an entirely keyboard driven mail application. Menus can be navigated by mouse or keyboard.
-                        To get started, CTRL+SHIFT+K!
-                    </div>
-                    <table class="table table-hover table-striped">
-                        <thead>
-                            <tr>
-                                <th class="inbox-from">From</th>
-                                <th>Subject</th>
-                                <th>Received</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Paul Schoenfelder</td>
-                                <td>
-                                    <span class="label label-success">Friends</span>
-                                    Welcome to Demo Mail!
-                                </td>
-                                <td>9:40 PM</td>
-                            </tr>
-                            <tr>
-                                <td>Paul Schoenfelder</td>
-                                <td>
-                                    <span class="label label-success">Friends</span>
-                                    <span class="label label-important">Important</span>
-                                    RSVP!
-                                </td>
-                                <td>3:30 PM</td>
-                            </tr>
-                            <tr>
-                                <td>The Boss</td>
-                                <td>
-                                    <span class="label label-info">Work</span>
-                                    Meeting with client on Thursday!
-                                </td>
-                                <td>10:20 AM</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="span10 view">
+                    <!-- Main Content -->
                 </div>
             </div>
         </div>
 
-        <script type="text/template" id="inbox-sidebar">
-            <li class="active"><a href="#/inbox/all">All</a></li>
-            <li><a href="#/inbox/spam">Spam</a></li>
-            <li><a href="#/inbox/trash">Trash</a></li>
+        <script type="text/template" id="alert">
+            <div class="alert alert-info">
+                <button type="button" class="close" data-dismiss="alert">x</button>
+                <strong>Attention!</strong>
+                {{message}}
+            </div> 
         </script>
 
-        <script type="text/template" id="settings-sidebar">
-            <li class="active"><a>Keybindings</a></li>
+        <script type="text/template" id="inbox">
+            <table class="table table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th class="inbox-from">From</th>
+                        <th>Subject</th>
+                        <th>Received</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#emails}}
+                    <tr>
+                        <td>{{from}}</td>
+                        <td>
+                            {{#labels}}
+                                <span class="label label-{{type}}">{{name}}</span>
+                            {{/labels}}
+                            {{subject}}
+                        </td>
+                        <td>{{received}}</td>
+                    </tr>
+                    {{/emails}}
+                </tbody>
+            </table>
         </script>
 
-        <script type="text/template" id="inbox-item">
+        <script type="text/template" id="sidebar">
+            {{#items}}
+            <li class="{{className}}"><a href="{{url}}">{{name}}</a></li>
+            {{/items}}
+        </script>
+
+        <script type="text/template" id="email">
             <tr>
                 <td>{{from}}</td>
                 <td>
-                    {{each labels}}
+                    {{#labels}}
+                        <span class="label label-{{type}}">{{name}}</span>
+                    {{/labels}}
+                    {{subject}}
                 </td>
-                <td>9:00 AM</td>
+                <td>{{received}}
             </tr>
+        </script>
+
+        <script type="text/template" id="reading-pane">
         </script>
 
         <!-- jQuery -->
