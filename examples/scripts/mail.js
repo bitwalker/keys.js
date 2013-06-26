@@ -480,45 +480,17 @@
                 predicate = filter;
                 filter = '';
             }
-            var emails = this.state.inbox.emails.filter(function(e) {
-                switch (filter) {
-                    case 'archived':
-                        return predicate ? e.archived && predicate(e) : e.archived === true;
-                    case 'trash':
-                        return predicate ? e.deleted && predicate(e) : e.deleted === true;
-                    default:
-                        var criteria = !e.archived && !e.deleted;
-                        return predicate ? criteria && predicate(e) : criteria;
-                }
-            });
-
             return {
-                emails: emails.map(function(e) {
-                    // Add view specific properties in order to hide/show actions based on current status
-                    if (e.deleted)
-                        e.deletable = false;
-                    else
-                        e.deletable = true;
-
-                    if (e.archived)
-                        e.archivable = false;
-                    else {
-                        // Can't archive a deleted message
-                        if (e.deleted)
-                            e.archivable = false;
-                        else
-                            e.archivable = true;
+                emails: this.state.inbox.emails.filter(function(e) {
+                    switch (filter) {
+                        case 'archived':
+                            return predicate ? e.archived && predicate(e) : e.archived === true;
+                        case 'trash':
+                            return predicate ? e.deleted && predicate(e) : e.deleted === true;
+                        default:
+                            var criteria = !e.archived && !e.deleted;
+                            return predicate ? criteria && predicate(e) : criteria;
                     }
-
-                    if (e.hasLabel(Label.spam)) {
-                        e.isSpam = true;
-                        e.markable = false;
-                    }
-                    else {
-                        e.isSpam = false;
-                        e.markable = true;
-                    }
-                    return e;
                 })
             };
         },
