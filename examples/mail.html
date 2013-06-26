@@ -65,7 +65,7 @@
                 </thead>
                 <tbody>
                     {{#emails}}
-                    <tr>
+                    <tr class="email" data-id="{{id}}">
                         <td>{{from}}</td>
                         <td>
                             {{#labels}}
@@ -78,6 +78,7 @@
                     {{/emails}}
                 </tbody>
             </table>
+            <hr />
         </script>
 
         <script type="text/template" id="sidebar">
@@ -87,7 +88,7 @@
         </script>
 
         <script type="text/template" id="email">
-            <tr>
+            <tr class="email" data-id="{{id}}">
                 <td>{{from}}</td>
                 <td>
                     {{#labels}}
@@ -100,6 +101,10 @@
         </script>
 
         <script type="text/template" id="reading-pane">
+            <div class="well">
+                <h3>{{subject}}</h3>
+                <p>{{body}}</p>
+            </div>
         </script>
 
         <!-- jQuery -->
