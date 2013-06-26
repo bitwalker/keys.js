@@ -31,12 +31,27 @@
     }
 
     function Email(from, labels, subject, received) {
+        this.id = generateId(8);
         this.from = from;
         this.labels = labels;
         this.subject = subject;
+        this.body = loremIpsum();
         this.received = received;
         this.archived = false;
         this.deleted = false;
+
+        function generateId(limit) {
+            limit = limit || 32;
+            var result = '';
+            while (result.length < limit) {
+                result = result + Math.random().toString(10).slice(2);
+            }
+            return result.slice(0, limit);
+        }
+
+        function loremIpsum() {
+            return "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum mauris. Maecenas congue ligula ac quam viverra nec consectetur ante hendrerit. Donec et mollis dolor. Praesent et diam eget libero egestas mattis sit amet vitae augue. Nam tincidunt congue enim, ut porta lorem lacinia consectetur. Donec ut libero sed arcu vehicula ultricies a non tortor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ut gravida lorem. Ut turpis felis, pulvinar a semper sed, adipiscing id dolor. Pellentesque auctor nisi id magna consequat sagittis. Curabitur dapibus enim sit amet elit pharetra tincidunt feugiat nisl imperdiet. Ut convallis libero in urna ultrices accumsan. Donec sed odio eros. Donec viverra mi quis quam pulvinar at malesuada arcu rhoncus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In rutrum accumsan ultricies. Mauris vitae nisi at sem facilisis semper ac in est.";
+        }
     }
 
     function Label(name, type) {
@@ -135,6 +150,12 @@
                 return false;
             });
 
+            this.elements.view.on('click', '.email', function() {
+                var email = $(this);
+                var id = email.data('id');
+                location.hash = location.hash + '/' + id;
+            });
+
             // Kickstart the router
             $(window).trigger('hashchange');
         },
@@ -174,7 +195,7 @@
             }
         },
 
-        showInbox: function(inboxType) {
+        showInbox: function(inboxType, messageId) {
             // Render Inbox
             var inbox = {
                 emails: this.state.inbox.emails.filter(function(email) {
@@ -194,6 +215,18 @@
                 this.state.showWelcomePopup = false;
                 var welcome = 'Demo Mail is an entirely keyboard driven mail application. Menus can be navigated by mouse or keyboard. To get started, CTRL+SHIFT+K!';
                 this.elements.view.prepend(this.templates.alert(new Alert(welcome)));
+            }
+
+            // Render Reading Pane (if needed)
+            if (messageId) {
+                var email = this.state.emails.filter(function(e) {
+                    if (e.id === messageId) return true;
+                    else return false;
+                });
+                console.log(email);
+                if (email.length) {
+                    this.elements.view.append(this.templates.inbox.readingPane(email[0]));
+                }
             }
 
             // Render sidebar
