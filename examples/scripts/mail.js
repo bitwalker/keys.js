@@ -445,7 +445,7 @@
 
         showSettings: function(settingsType) {
             // Render content
-            this.elements.view.html('');
+            this.elements.view.html(this.templates.settings.view());
 
             // Render sidebar
             this.renderSidebar({

@@ -81,6 +81,100 @@
             <hr />
         </script>
 
+        <script type="text/template" id="settings">
+
+            <!-- Button to trigger modal -->
+            <a href="#editbinding" role="button" class="btn" data-toggle="modal">Edit Binding</a>
+             
+            <!-- Modal -->
+            <div id="editbinding" class="editbinding-modal modal hide fade" tabindex="-1" role="dialog" aria-labelledby="editbindingLabel" aria-hidden="true">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                    <h3 id="editbindingLabel">Edit Binding{{#bindingName}} - {{.}}{{/bindingName}}</h3>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Build a combination to bind by clicking the keys (or typing them!)</strong></p>
+                    <div class="keyboard-container">
+                        <ul id="keyboard">
+                            <li class="symbol"><span class="off">`</span><span class="on">~</span></li>
+                            <li class="symbol"><span class="off">1</span><span class="on">!</span></li>
+                            <li class="symbol"><span class="off">2</span><span class="on">@</span></li>
+                            <li class="symbol"><span class="off">3</span><span class="on">#</span></li>
+                            <li class="symbol"><span class="off">4</span><span class="on">$</span></li>
+                            <li class="symbol"><span class="off">5</span><span class="on">%</span></li>
+                            <li class="symbol"><span class="off">6</span><span class="on">^</span></li>
+                            <li class="symbol"><span class="off">7</span><span class="on">&amp;</span></li>
+                            <li class="symbol"><span class="off">8</span><span class="on">*</span></li>
+                            <li class="symbol"><span class="off">9</span><span class="on">(</span></li>
+                            <li class="symbol"><span class="off">0</span><span class="on">)</span></li>
+                            <li class="symbol"><span class="off">-</span><span class="on">_</span></li>
+                            <li class="symbol"><span class="off">=</span><span class="on">+</span></li>
+                            <li class="delete lastitem">delete</li>
+                            <li class="tab">tab</li>
+                            <li class="letter">q</li>
+                            <li class="letter">w</li>
+                            <li class="letter">e</li>
+                            <li class="letter">r</li>
+                            <li class="letter">t</li>
+                            <li class="letter">y</li>
+                            <li class="letter">u</li>
+                            <li class="letter">i</li>
+                            <li class="letter">o</li>
+                            <li class="letter">p</li>
+                            <li class="symbol"><span class="off">[</span><span class="on">{</span></li>
+                            <li class="symbol"><span class="off">]</span><span class="on">}</span></li>
+                            <li class="symbol lastitem"><span class="off">\</span><span class="on">|</span></li>
+                            <li class="ctrl">ctrl</li>
+                            <li class="letter">a</li>
+                            <li class="letter">s</li>
+                            <li class="letter">d</li>
+                            <li class="letter">f</li>
+                            <li class="letter">g</li>
+                            <li class="letter">h</li>
+                            <li class="letter">j</li>
+                            <li class="letter">k</li>
+                            <li class="letter">l</li>
+                            <li class="symbol"><span class="off">;</span><span class="on">:</span></li>
+                            <li class="symbol"><span class="off">&#39;</span><span class="on">&quot;</span></li>
+                            <li class="return lastitem">return</li>
+                            <li class="left-shift">shift</li>
+                            <li class="letter">z</li>
+                            <li class="letter">x</li>
+                            <li class="letter">c</li>
+                            <li class="letter">v</li>
+                            <li class="letter">b</li>
+                            <li class="letter">n</li>
+                            <li class="letter">m</li>
+                            <li class="symbol"><span class="off">,</span><span class="on">&lt;</span></li>
+                            <li class="symbol"><span class="off">.</span><span class="on">&gt;</span></li>
+                            <li class="symbol"><span class="off">/</span><span class="on">?</span></li>
+                            <li class="right-shift lastitem">shift</li>
+                            <li class="space lastitem">&nbsp;</li>
+                        </ul>
+                    </div>
+
+                    <form class="form-horizontal well">
+                        <fieldset>
+                            <div class="control-group">
+                                <label class="control-label">Current Binding:</label>
+                                <div class="controls">
+                                  <span class="input-xlarge uneditable-input">CTRL+SHIFT+M</span>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                    <button class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </script>
+
+        <script type="text/template" id="keyboard">
+
+        </script>
+
         <script type="text/template" id="sidebar">
             {{#items}}
             <li class="{{className}}"><a href="{{url}}">{{name}}</a></li>
