@@ -19,20 +19,57 @@
         };
     };
 
+    // Data Classes
+    function SidebarItem(page, name, isActive) {
+        this.name = name;
+        // If the page and the section name are the same, drop it from the url
+        if (page === name.toLowerCase())
+            this.url = '#/' + page;
+        else
+            this.url = '#/' + page + '/' + name.toLowerCase();
+        this.className = isActive ? 'active' : '';
+    }
+
+    function Email(from, labels, subject, received) {
+        this.from = from;
+        this.labels = labels;
+        this.subject = subject;
+        this.received = received;
+        this.archived = false;
+        this.deleted = false;
+    }
+
+    function Label(name, type) {
+        this.name = name;
+        this.type = type;
+    }
+    // Static labels
+    Label.important = new Label('Important', 'important');
+    Label.friend    = new Label('Friend', 'info');
+    Label.family    = new Label('Family', 'success');
+    Label.work      = new Label('Work', 'default');
+    Label.spam      = new Label('Spam', 'warning');
+
+    function Alert(message) {
+        this.message = message;
+    }
+
     var App = {
 
-        routes: {
-            '/inbox':       partial(App.navigate, App, 'inbox'),
-            '/inbox/all':   partial(App.navigate, App, 'inbox'),
-            '/inbox/spam':  partial(App.navigate, App, 'inbox', 'spam'),
-            '/inbox/trash': partial(App.navigate, App, 'inbox', 'trash'),
-            '/settings':    partial(App.navigate, App, 'settings')
-        },
+        // Defined in `init`
+        routes: null,
 
         templates: {
-            'inbox':     null,
-            'settings':  null,
-            'emailItem': null
+            sidebar: null,
+            alert: null,
+            inbox: {
+                view: null,
+                email: null,
+                readingPane: null
+            },
+            settings: {
+                view: null
+            }
         },
 
         bindings: new Bindings(),
@@ -41,17 +78,55 @@
             navInbox: $('.nav .nav-inbox'),
             navSettings: $('.nav .nav-settings'),
             query: $('input.search-query'),
+            sidebar: $('.sidebar'),
+            view: $('.view')
+        },
+
+        state: {
+            // If this is the first time the user has viewed the inbox,
+            // show them the informational dialog explaining the application
+            showWelcomePopup: true,
+            inbox: {
+                emails: [
+                    new Email('Paul Schoenfelder', [ Label.friend ], 'Hey man, check this out!', '9:40 PM'),
+                    new Email('Acme Company', [ Label.important, Label.work ], "We're going public!", '8:37 PM'),
+                    new Email('Mom', [ Label.family ], "You haven't called in two weeks!!", '5:43 PM'),
+                    new Email('Super Important Guy', [ Label.spam ], 'You really have to read this right away!', '5:00 PM')
+                ]
+            }
         },
 
         init: function() {
             var self = this;
 
+            /**
+             * Routes are defined as follows:
+             * The key is the rule which will match location.hash when onhashchange is called. You can provide
+             * variables in the form of regular expressions, which will be passed along to the route
+             * handler as parameters in the order that they are found.
+             * 
+             * The value in the routes object is the route handler, and will be called so that `this`
+             * is set to the App context. Use `partial` if you wish to partially apply route handler
+             * arguments prior to the router applying it's own arguments when calling the handler.
+             */
+            this.routes = {
+                'default':            this.showInbox,
+                '#/inbox':            this.showInbox,
+                '#/inbox/\\w+':       this.showInbox,
+                '#/inbox/\\w+/\\d+':  this.showInbox,
+                '#/settings':         this.showSettings
+            };
+
+            // Compile templates
+            this.templates.sidebar           = Mustache.compile($('#sidebar').html());
+            this.templates.alert             = Mustache.compile($('#alert').html());
+            this.templates.inbox.view        = Mustache.compile($('#inbox').html());
+            this.templates.inbox.email       = Mustache.compile($('#email').html());
+            this.templates.inbox.readingPane = Mustache.compile($('#reading-pane').html());
+            this.templates.settings.view     = Mustache.compile($('#settings').html());
+
             // Handle hashchange for routing
-            $(window).on('hashchange', function() {
-                // Creates an array starting with the page, ex. ["inbox"] or ["inbox", "trash"]
-                var args = location.hash.replace('#/', '').split('/');
-                self.navigate.apply(self, args);
-            });
+            $(window).on('hashchange', function() { self.router(location.hash); });
 
             // Handle inbox search
             $('form.navbar-search').on('submit', function(e) {
@@ -59,23 +134,98 @@
                 self.searchInbox(self.elements.query.val());
                 return false;
             });
+
+            // Kickstart the router
+            $(window).trigger('hashchange');
         },
 
-        navigate: function(page, filter) {
-            if (!page) page = 'inbox';
-            if (!filter) filter = 'all';
-            switch (page) {
-                case 'inbox':
-                    this.showInbox(filter);
+        router: function(hash) {
+            var self  = this;
+            var route = null;
+            for (var rule in this.routes) {
+                var rx = new RegExp('^' + rule + '$');
+                if (rx.test(location.hash)) {
+                    route = rule;
                     break;
-                case 'settings':
-                    this.showSettings();
-                    break;
+                }
+            }
+
+            // The parameters to apply to the route handler
+            var params      = [];
+            // Parameters defined in the route
+            var routeParams = route !== null ? route.split('/').slice(2) : [];
+            // Parameters found in the actual hash
+            var hashParams  = location.hash.split('/').slice(2);
+            // Are there parameters to work with?
+            var hasParams   = hashParams.length && routeParams.length;
+            if (hasParams) {
+                for (var i = 0; i < routeParams.length; i++) {
+                    if (typeof hashParams[i] !== 'undefined') {
+                        params.push(hashParams[i]);
+                    }
+                }
+            }
+
+            if (!route) {
+                this.routes['default'].call(this);
+            }
+            else {
+                this.routes[route].apply(this, params);
             }
         },
 
         showInbox: function(inboxType) {
+            // Render Inbox
+            var inbox = {
+                emails: this.state.inbox.emails.filter(function(email) {
+                    switch (inboxType) {
+                        case 'archived':
+                            return email.archived === true;
+                        case 'trash':
+                            return email.deleted === true;
+                        default:
+                            return !(email.archived || email.deleted);
+                    }
+                })
+            };
+            this.elements.view.html(this.templates.inbox.view(inbox));
 
+            if (this.state.showWelcomePopup) {
+                this.state.showWelcomePopup = false;
+                var welcome = 'Demo Mail is an entirely keyboard driven mail application. Menus can be navigated by mouse or keyboard. To get started, CTRL+SHIFT+K!';
+                this.elements.view.prepend(this.templates.alert(new Alert(welcome)));
+            }
+
+            // Render sidebar
+            var sidebar = {
+                items: [
+                    new SidebarItem('inbox', 'Inbox', !inboxType),
+                    new SidebarItem('inbox', 'Archived', inboxType === 'archived'),
+                    new SidebarItem('inbox', 'Trash',    inboxType === 'trash')
+                ]
+            };
+            this.elements.sidebar.html(this.templates.sidebar(sidebar));
+
+            // Change active nav item
+            this.elements.navInbox.addClass('active');
+            this.elements.navSettings.removeClass('active');
+        },
+
+        showSettings: function(settingsType) {
+            // Render content
+            this.elements.view.html('');
+
+            // Render sidebar
+            var sidebar = {
+                items: [
+                    new SidebarItem('settings', 'Keybindings', true)
+                ]
+            };
+            this.elements.sidebar.html(this.templates.sidebar(sidebar));
+
+            // Change active nav item
+            this.elements.navSettings.addClass('active');
+            this.elements.navInbox.removeClass('active');
         },
 
         /** Inbox Actions **/
@@ -85,9 +235,6 @@
         },
 
         /** Settings Actions **/
-        showSettings: function() {
-
-        },
 
         saveSettings: function() {
 
@@ -98,6 +245,9 @@
         }
     };
 
+
     App.init();
+
+
 
 })(jQuery, Mustache, Keys);
