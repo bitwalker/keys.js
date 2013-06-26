@@ -60,14 +60,24 @@
     }
 
     function Email(from, labels, subject, received) {
-        this.id = generateId(8);
-        this.from = from;
-        this.labels = labels;
-        this.subject = subject;
-        this.body = loremIpsum();
-        this.received = received;
-        this.archived = false;
-        this.deleted = false;
+        this.id         = generateId(8);
+        this.from       = from;
+        this.labels     = labels || [];
+        this.subject    = subject;
+        this.body       = loremIpsum();
+        this.received   = received;
+        // These flags represent special email states
+        this.archived   = false;
+        this.deleted    = false;
+        this.isSpam     = this.hasLabel(Label.spam);
+
+        // These flags represent the logical opposite of current state,
+        // and are there primarily to provide Mustache with a way to render
+        // conditional elements of related templates. This state is managed
+        // entirely by the Email class.
+        this.archivable = !this.archived && !this.deleted;
+        this.deletable  = !this.deleted;
+        this.markable   = !this.isSpam;
 
         function generateId(limit) {
             limit = limit || 32;
