@@ -20,6 +20,20 @@
     };
 
     /**
+     * Delay execution of a function by `ms` milliseconds.
+     * @param  {Function} fn - The function to delay
+     * @param  {[type]}   ms - The number of milliseconds to delay
+     */
+    var delay = function(fn, ms) {
+        ms = ms || 100;
+        setTimeout(function() {
+            fn.call(null);
+            clearTimeout(timeout);
+            timeout = null;
+        }, ms);
+    };
+
+    /**
      * Defines an event handler for a jQuery event, but with your own context
      * The element target is captured as a jQuery object, and along with the event object,
      * the two are passed along as the first parameters to the handler. You can
