@@ -217,7 +217,8 @@
                 readingPane: null
             },
             settings: {
-                view: null
+                view: null,
+                editBinding: null,
             }
         },
 
@@ -228,7 +229,7 @@
             navSettings: $('.nav .nav-settings'),
             query: $('input.search-query'),
             sidebar: $('.sidebar'),
-            view: $('.view')
+            view: $('.view'),
         },
 
         state: {
@@ -242,6 +243,18 @@
                     new Email('Mom', [ Label.family ], "You haven't called in two weeks!!", '5:43 PM'),
                     new Email('Super Important Guy', [ Label.spam ], 'You really have to read this right away!', '5:00 PM')
                 ]
+            },
+            settings: {
+                // These are the default bindings, once edited, user preferences are saved and will
+                // override the ones defined here.
+                bindings: {
+                    inbox: [
+                        { name: 'goToInbox',    description: 'Go To Inbox',    binding: new Combo(Key.I, Key.CTRL) }
+                    ],
+                    settings: [
+                        { name: 'goToSettings', description: 'Go To Settings', binding: new Combo(Key.S, Key.CTRL) }
+                    ]
+                }
             }
         },
 
@@ -270,16 +283,20 @@
             };
 
             // Compile templates
-            this.templates.sidebar           = Mustache.compile($('#sidebar').html());
-            this.templates.alert             = Mustache.compile($('#alert').html());
-            this.templates.inbox.view        = Mustache.compile($('#inbox').html());
-            this.templates.inbox.email       = Mustache.compile($('#email').html());
-            this.templates.inbox.readingPane = Mustache.compile($('#reading-pane').html());
-            this.templates.settings.view     = Mustache.compile($('#settings').html());
+            this.templates.sidebar              = Mustache.compile($('#sidebar').html());
+            this.templates.alert                = Mustache.compile($('#alert').html());
+            this.templates.inbox.view           = Mustache.compile($('#inbox').html());
+            this.templates.inbox.email          = Mustache.compile($('#email').html());
+            this.templates.inbox.readingPane    = Mustache.compile($('#reading-pane').html());
+            this.templates.settings.view        = Mustache.compile($('#settings').html());
+            this.templates.settings.editBinding = Mustache.compile($('#edit-binding').html());
 
             // Handle hashchange for routing
             $(window).on('hashchange', function() { self.router(location.hash); });
 
+            /**
+             * Inbox Behavior
+             */
             // Handle inbox search
             $('form.navbar-search').on('submit', eventHandler(this.onSearch, this));
             // Handle inbox item selection
@@ -290,6 +307,16 @@
             this.elements.view.on('click', '.reading-pane .archive', eventHandler(this.onArchiveMail, this));
             // Handle mark as spam
             this.elements.view.on('click', '.reading-pane .spam', eventHandler(this.onMarkAsSpam, this));
+
+            /**
+             * Settings Behavior
+             */
+            // Open edit binding modal
+            this.elements.view.on('click', '.edit-binding', eventHandler(this.onEditKeybinding, this));
+            // Reset binding selection during edit
+            this.elements.view.on('click', '#editbindings button[data-reset]', eventHandler(this.onResetBinding, this));
+            // Save binding selection during edit
+            this.elements.view.on('click', '#editbindings button[data-save]', eventHandler(this.onSaveBinding, this));
 
             this.refresh();
         },
@@ -473,7 +500,7 @@
 
         showSettings: function(settingsType) {
             // Render content
-            this.elements.view.html(this.templates.settings.view());
+            this.elements.view.html(this.templates.settings.view(this.state.settings));
 
             // Render sidebar
             this.renderSidebar({
@@ -529,12 +556,111 @@
 
         /** Settings Actions **/
 
-        saveSettings: function() {
+        onEditKeybinding: function(element, e) {
+            e.preventDefault();
+
+            var category    = element.data('binding-category');
+            var bindingName = element.data('binding');
+            var binding     = this.state.settings.bindings[category].pick('name', bindingName);
+
+            // Elements
+            var modal    = null;
+            var keyboard = null;
+            var keys     = null;
+
+            if (binding) {
+                // Render modal to page
+                this.elements.view.append(this.templates.settings.editBinding(binding));
+
+                // Show modal
+                modal    = this.elements.view.find('#editbinding');
+                keyboard = modal.find('#keyboard');
+                keys     = keyboard.find('li');
+                $('button[data-dismiss]', modal).on('click', function(e) {
+                    var timeout = null;
+                    setTimeout(function() {
+                        keys.off('click', activateKey);
+                        modal.remove();
+                        clearTimeout(timeout);
+                        timeout = null;
+                    }, 500);
+                });
+                modal.modal();
+
+                // Bind key activation events
+                keys.on('click', activateKey);
+                $(document).on('keydown', activateKey);
+            }
+
+            return false;
+
+            function findKey(key) {
+                if (key) {
+                    for (var i = 0; i < keys.length; i++) {
+                        var $key = $(keys[i]);
+                        if ($key.hasClass('symbol')) {
+                            var spans = $key.find('span');
+                            for (var j = 0; j < spans.length; j++) {
+                                var $span = $(spans[j]);
+                                if ($span.text() === key.name.toLowerCase()) {
+                                    return $key;
+                                }
+                            }
+                        }
+                        else if ($key.text() === key.name.toLowerCase()) {
+                            return $key;
+                        }
+                    }
+                }
+
+                return null;
+            }
+
+            function activateKey(e) {
+                var key = null;
+                if (e.type === 'click')
+                    key = $(this);
+                else if (e.type === 'keydown')
+                    key = findKey(Key.fromCode(e.which));
+                if (key) {
+                    // Toggle active state if already activated
+                    if (key.hasClass('active'))
+                        key.removeClass('active');
+                    else
+                        key.addClass('active');
+                }
+            }
+        },
+
+        onResetBinding: function(element, e) {
+            var bindingName = element.data('reset');
+            var currentBinding = this.elements.view.find('.current-binding');
+            var defaultBinding = getDefaultBinding(bindingName);
+            if (defaultBinding) {
+                currentBinding.text(defaultBinding.binding.toString());
+            }
+            else {
+                currentBinding.text('');
+            }
+        },
+
+        onSaveBinding: function(element, e) {
 
         },
 
-        loadSettings: function() {
+        getDefaultBinding: function(name) {
+            var binding = this.state.settings.bindings.inbox.pick('name', name);
+            if (binding) {
+                return binding;
+            }
+            else {
+                binding = this.state.settings.bindings.settings.pick('name', name);
+                if (binding)
+                    return binding;
+                else return null;
+            }
 
+            return null;
         }
     };
 
