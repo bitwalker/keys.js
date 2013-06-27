@@ -401,7 +401,16 @@
         if (result && result instanceof Key) {
             return result;
         }
-        else return null;
+        else {
+            // Fallback to manual iteration in case the key name is the wrong case
+            for (var keyName in Key.internals.keymap) {
+                if (keyName.toLowerCase() === name.toLowerCase()) {
+                    // Only return a non-null value if it is an instance of Key
+                    return Key[keyName] instanceof Key ? Key[keyName] : null;
+                }
+            }
+        }
+        return null;
     };
 
     /**
