@@ -92,6 +92,14 @@ div.editbinding-modal .form-horizontal .control-label {
 	line-height: 36px;
 }
 
+div.modal-body {
+    overflow: visible;
+}
+
+.control-group.error .input-xlarge {
+    border-color: #e74c3c;
+}
+
 .keyboard-container {
 	height: 250px;
 }
@@ -116,6 +124,11 @@ div.editbinding-modal .form-horizontal .control-label {
 	border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
+}
+
+#keyboard li.active {
+    background-color: #1dccaa;
+    background-image: linear-gradient(top bottom,#18bc9c,#24e3be);
 }
 
 .capslock, .tab, .left-shift {
@@ -165,4 +178,12 @@ div.editbinding-modal .form-horizontal .control-label {
 	left: 1px;
 	border-color: #e5e5e5;
 	cursor: pointer;
+}
+
+.keybinding-list code {
+    margin-right: 10px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    position: relative;
+    top: 1px;
 }
