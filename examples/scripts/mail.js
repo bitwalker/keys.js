@@ -48,6 +48,34 @@
         return this.indexOf(s) === this.length - s.length;
     };
 
+    /**
+     * Selects the first element from an array which has a value matching
+     * the provided property/value pair, or if the property name is omitted,
+     * the first element where the value matches the provided value.
+     * @param  {string} prop
+     * @param  {Object} value
+     * @return {Object}
+     */
+    Array.prototype.pick = function(prop, value) {
+        if (typeof prop === 'undefined' && typeof value === 'undefined') return null;
+        if (typeof prop !== 'undefined' && typeof value === 'undefined') {
+            value = prop;
+            prop  = null;
+        }
+        for (var i = 0; i < this.length; i++) {
+            var item = this[i];
+            if (prop) {
+                if (Object.prototype.hasOwnProperty.call(item, prop) && item[prop] === value) {
+                    return item;
+                }
+            }
+            else if (item === value) {
+                return item;
+            }
+        }
+        return null;
+    };
+
     // Data Classes
     function SidebarItem(page, name, isActive) {
         this.name = name;
