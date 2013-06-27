@@ -268,6 +268,10 @@
                     settings: [
                         { name: 'goToSettings', description: 'Go To Settings', binding: new Combo(Key.S, Key.CTRL) }
                     ]
+                },
+                virtualKeyboard: {
+                    metaKeys: [],
+                    primaryKey: null
                 }
             }
         },
