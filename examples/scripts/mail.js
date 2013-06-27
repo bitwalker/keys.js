@@ -596,57 +596,177 @@
                 keys     = keyboard.find('li');
                 $('button[data-dismiss]', modal).on('click', function(e) {
                     var timeout = null;
-                    setTimeout(function() {
+                    delay(function() {
                         keys.off('click', activateKey);
                         modal.remove();
-                        clearTimeout(timeout);
-                        timeout = null;
                     }, 500);
                 });
                 modal.modal();
 
                 // Bind key activation events
-                keys.on('click', activateKey);
-                $(document).on('keydown', activateKey);
+                keys.on('click', eventHandler(activateKey, this));
+                $(document).on('keydown', eventHandler(activateKey, this));
             }
 
             return false;
 
-            function findKey(key) {
-                if (key) {
-                    for (var i = 0; i < keys.length; i++) {
-                        var $key = $(keys[i]);
-                        if ($key.hasClass('symbol')) {
-                            var spans = $key.find('span');
-                            for (var j = 0; j < spans.length; j++) {
-                                var $span = $(spans[j]);
-                                if ($span.text() === key.name.toLowerCase()) {
-                                    return $key;
+
+            /**
+             * On a given click or keydown event, toggle the activated state of the targeted key
+             * if valid, and add the key to the current combo state. If the key is not valid,
+             * render a timed alert which tells the user why their selection was not valid and was
+             * ignored.
+             *
+             * @param  {Event} e  - The click or keydown event object
+             */
+            function activateKey(element, e) {
+                // The key object
+                var key  = e.type === 'click'
+                                  ? Key.fromName(extractKeyName(element))
+                                  : Key.fromCode(e.which);
+                // The key element
+                var $key = e.type === 'click'
+                                  ? element
+                                  : findKey(key);
+
+                if ($key && key) {
+                    // If this key is already activated...
+                    if ($key.hasClass('active')) {
+                        if (key.isMeta()) {
+                            // If this is a meta key, remove it from the selected meta keys
+                            var filtered = this.state.settings.virtualKeyboard.metaKeys.filter(function(k){
+                                if (k.eq(key)) {
+                                    return false;
+                                }
+                                return true;
+                            });
+                            this.state.settings.virtualKeyboard.metaKeys = filtered || [];
+                            // Highlight all instances of the same key
+                            var others = findKey(key, true);
+                            others.forEach(function($k) { $k.removeClass('active'); });
+                        }
+                        else {
+                            // Otherwise, if this is the current primary key, set the primary key to null
+                            if (this.state.settings.virtualKeyboard.primaryKey.eq(key)) {
+                                this.state.settings.virtualKeyboard.primaryKey = null;
+                            }
+                            // Toggle active state
+                            $key.removeClass('active');
+                        }
+                    }
+                    else {
+                        // If this is a meta key, add it to the selected meta keys
+                        if (key.isMeta()) {
+                            // Add key to current state
+                            this.state.settings.virtualKeyboard.metaKeys.push(key);
+                            // Highlight other instances of the same key (if meta)
+                            var others = findKey(key, true);
+                            others.forEach(function($k) { $k.addClass('active'); });
+                        }
+                        else {
+                            // If the primaryKey has already been set, replace it, and deactivate the old one
+                            if (this.state.settings.virtualKeyboard.primaryKey) {
+                                var $old = findKey(this.state.settings.virtualKeyboard.primaryKey);
+                                if ($old) {
+                                    $old.removeClass('active');
                                 }
                             }
-                        }
-                        else if ($key.text() === key.name.toLowerCase()) {
-                            return $key;
+                            this.state.settings.virtualKeyboard.primaryKey = key;
+                            // Make active
+                            $key.addClass('active');
                         }
                     }
                 }
 
+                // Update the current binding
+                if (this.state.settings.virtualKeyboard.primaryKey) {
+                    var combo = new Combo(this.state.settings.virtualKeyboard.primaryKey, this.state.settings.virtualKeyboard.metaKeys);
+                    this.elements.view.find('.current-binding').text(combo.toString());
+                }
+                else if (this.state.settings.virtualKeyboard.metaKeys.length) {
+                    var combo = this.state.settings.virtualKeyboard.metaKeys.map(function(k) {
+                        return k.name;
+                    }).join('+');
+                    this.elements.view.find('.current-binding').text(combo);
+                }
+                else {
+                    this.elements.view.find('.current-binding').text('');
+                }
+
+                if (key && Key.Backspace.eq(key)) {
+                    e.preventDefault();
+                    return false;
+                }
+            }
+
+            /**
+             * Finds a key (or keys) as elements on the virtual keyboard.
+             * Setting `findAll` to true will return all keys that match
+             * the name of the provided key, otherwise it will return the first
+             * result.
+             * @param  {Key} key         - A Key object describing the key to find
+             * @param  {Boolean} findAll - True to find all instances of a key, false to find the first
+             * @return {jQuery|array}    - The results of the search, either a single jQuery element, or an array of jQuery elements
+             */
+            function findKey(key, findAll) {
+                // Results is used only if we're searching for all instances `findAll == true`
+                var results = [];
+                if (key) {
+                    for (var i = 0; i < keys.length; i++) {
+                        var $key   = $(keys[i]);
+                        var found  = compareKey($key, key.name);
+                        if (found) {
+                            if (findAll) results.push(found);
+                            else return found;
+                        }
+                    }
+                }
+
+                return findAll ? results : null;
+            }
+
+            /**
+             * Compares the name of the key element to the provided key name. 
+             * If it matches, return the key element, if it doesn't, return null
+             * @param  {jQuery} $key - The key element
+             * @param  {string} name - The name of the key we're looking for
+             * @return {jQuery}      - If the comparison is true, returns $key, otherwise returns null
+             */
+            function compareKey($key, name) {
+                var keyName = extractKeyName($key);
+                if (keyName && name.toLowerCase() === keyName) {
+                    return $key;
+                }
+                else return null;
+
                 return null;
             }
 
-            function activateKey(e) {
-                var key = null;
-                if (e.type === 'click')
-                    key = $(this);
-                else if (e.type === 'keydown')
-                    key = findKey(Key.fromCode(e.which));
-                if (key) {
-                    // Toggle active state if already activated
-                    if (key.hasClass('active'))
-                        key.removeClass('active');
-                    else
-                        key.addClass('active');
+            /**
+             * Extracts the key name from the provided key element.
+             * @param  {jQuery} $key - The key element
+             * @return {string} The name of the key
+             */
+            function extractKeyName($key) {
+                if ($key) {
+                    if ($key.hasClass('symbol')) {
+                        var span = $key.find('span.off');
+                        return span && span.text();
+                    }
+                    else {
+                        return $key.text();
+                    }
                 }
+                else {
+                    return null;
+                }
+            }
+
+            function validationError(message) {
+                var $controlGroup = this.elements.view.find('.current-binding').parents('.control-group');
+                var $errorMessage = this.elements.view.find('.current-binding').siblings('.help-inline');
+                $controlGroup.addClass('error').delay(1000).removeClass('error');
+                $errorMessage.hide().text(message).fadeIn('fast').delay(1000).fadeOut('fast');
             }
         },
 
