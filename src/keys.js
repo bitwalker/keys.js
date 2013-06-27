@@ -824,12 +824,6 @@
      * @param  {Event} e - An instance of Event specific to the input type
      */
     Bindings.prototype.onInputEvent = function (e) {
-        // IE<9 doesn't have stopImmediatePropagation
-        if (typeof e.stopImmediatePropagation !== 'undefined')
-            e.stopImmediatePropagation();
-        else
-            e.cancelBubble = true;
-
         var combo = Combo.fromEvent(e);
         if (!combo)
             return;
@@ -841,8 +835,6 @@
         tap(eventHandlers, debug, true /* only tap if Keys.debug == true */);
         // Execute them
         eventHandlers.forEach(execute);
-
-        return false;
 
         function isType (h) {
             return h.eventType === e.type;
@@ -875,9 +867,9 @@
             var onInputEvent = this.onInputEvent.bind(this);
             // IE<9 doesn't have addEventListener
             if (typeof globals.document.addEventListener !== 'undefined') {
-                globals.document.addEventListener('keydown',  onInputEvent, true);
-                globals.document.addEventListener('keyup',    onInputEvent, true);
-                globals.document.addEventListener('keypress', onInputEvent, true);
+                globals.document.addEventListener('keydown',  onInputEvent, false);
+                globals.document.addEventListener('keyup',    onInputEvent, false);
+                globals.document.addEventListener('keypress', onInputEvent, false);
             }
             else {
                 globals.document.attachEvent('onkeydown',  onInputEvent);
@@ -924,9 +916,9 @@
             var onInputEvent = this.onInputEvent.bind(this);
             // IE<9 doesn't have addEventListener
             if (typeof globals.document.removeEventListener !== 'undefined') {
-                globals.document.removeEventListener('keydown',  onInputEvent, true);
-                globals.document.removeEventListener('keyup',    onInputEvent, true);
-                globals.document.removeEventListener('keypress', onInputEvent, true);
+                globals.document.removeEventListener('keydown',  onInputEvent, false);
+                globals.document.removeEventListener('keyup',    onInputEvent, false);
+                globals.document.removeEventListener('keypress', onInputEvent, false);
             }
             else {
                 globals.document.detachEvent('onkeydown',  onInputEvent);
