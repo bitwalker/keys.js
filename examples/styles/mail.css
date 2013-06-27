@@ -166,6 +166,7 @@ div.modal-body {
 #keyboard .space {
 	clear: left;
 	width: 681px;
+	color: transparent;
 }
 
 .on {
