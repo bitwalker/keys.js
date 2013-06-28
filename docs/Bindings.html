@@ -290,7 +290,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 1052
+        keys.js, line 1068
     </li></ul></dd>
     
     
@@ -407,7 +407,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 1278
+        keys.js, line 1326
     </li></ul></dd>
     
     
@@ -527,7 +527,7 @@ each of the bindings matched by the names provided.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 918
+        keys.js, line 932
     </li></ul></dd>
     
     
@@ -647,7 +647,7 @@ each of the bindings matched by the names provided.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 869
+        keys.js, line 883
     </li></ul></dd>
     
     
@@ -764,7 +764,7 @@ each of the bindings matched by the names provided.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 963
+        keys.js, line 977
     </li></ul></dd>
     
     
@@ -903,7 +903,7 @@ each of the bindings matched by the names provided.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 1306
+        keys.js, line 1354
     </li></ul></dd>
     
     
@@ -931,7 +931,7 @@ each of the bindings matched by the names provided.</p>
         
             
 <dt>
-    <h4 class="name" id="registerHandler"><span class="type-signature"></span>registerHandler<span class="signature">(bindingName, eventType, handler)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="registerHandler"><span class="type-signature"></span>registerHandler<span class="signature">(bindingName, eventType, handler, isGlobal)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -989,7 +989,7 @@ each of the bindings matched by the names provided.</p>
             
             
             
-            <td class="description last"><p>The name of the binding to watch, can be inferred when handler is a named function and bindingName is omitted</p></td>
+            <td class="description last"><p>The name of the binding to watch, is optional when handler is a named function.</p></td>
         </tr>
 	
 	
@@ -1012,7 +1012,7 @@ each of the bindings matched by the names provided.</p>
             
             
             
-            <td class="description last"><p>Either keyup or keydown, depending on needs. Defaults to keydown.</p></td>
+            <td class="description last"><p>(optional) Either keyup or keydown, depending on needs. Defaults to keydown.</p></td>
         </tr>
 	
 	
@@ -1036,6 +1036,29 @@ each of the bindings matched by the names provided.</p>
             
             
             <td class="description last"><p>The function to call when the Combo is executed.</p></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>isGlobal</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>(optional) True to execute the handler regardless of context, false to prevent execution when in the context of an input control. Defaults to false.</p></td>
         </tr>
 	
 	
@@ -1066,7 +1089,7 @@ each of the bindings matched by the names provided.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 1110
+        keys.js, line 1129
     </li></ul></dd>
     
     
@@ -1093,12 +1116,14 @@ each of the bindings matched by the names provided.</p>
         
     <pre class="prettyprint"><code>     function displayAlert() { alert('Hello!'); }
      // Full specification syntax
-     bindings.registerHandler('displayAlert', 'keyup', function() { alert('Hello!'); });
-     // Partial specification, with inferred eventType syntax
-     bindings.registerHandler('displayAlert', function() { alert('Hello!'); });
-     // Partial specification, with inferred bindingName syntax
-     bindings.registerHandler('keyup', displayAlert);
-     // Minimal specification, with inferred bindingName and eventType syntax, using a named function
+     bindings.registerHandler('displayAlert', 'keyup', function() { alert('Hello!'); }, true);
+     // Partial specification, inferred eventType
+     bindings.registerHandler('displayAlert', function() { alert('Hello!'); }, true);
+     // Partial specification, inferred bindingName (must use named function)
+     bindings.registerHandler('keyup', displayAlert, true);
+     // Partial specification, inferred eventType and bindingName
+     bindings.registerHandler(displayAlert, true);
+     // Minimal specification, inferred eventType and bindingName, isGlobal defaults to false
      bindings.registerHandler(displayAlert);</code></pre>
 
     
@@ -1224,7 +1249,7 @@ each of the bindings matched by the names provided.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 1174
+        keys.js, line 1219
     </li></ul></dd>
     
     
@@ -1255,7 +1280,8 @@ each of the bindings matched by the names provided.</p>
      bindings.registerHandlers({
          displayAlert: {
              eventType: 'keyup',
-             handler: displayAlert
+             handler:   displayAlert,
+             isGlobal:  true
          },
          logEvent: logEvent
      });
@@ -1270,7 +1296,7 @@ each of the bindings matched by the names provided.</p>
         
             
 <dt>
-    <h4 class="name" id="registerToggle"><span class="type-signature"></span>registerToggle<span class="signature">(bindingName, toggleOn, toggleOff)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="registerToggle"><span class="type-signature"></span>registerToggle<span class="signature">(bindingName, toggleOn, toggleOff, isGlobal)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -1378,6 +1404,29 @@ each of the bindings matched by the names provided.</p>
         </tr>
 	
 	
+	
+        <tr>
+            
+                <td class="name"><code>isGlobal</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>(optional) True to execute the toggle regardless of context, false to prevent execution when in the context of an input control. Defaults to false.</p></td>
+        </tr>
+	
+	
 	</tbody>
 </table>
     
@@ -1405,7 +1454,7 @@ each of the bindings matched by the names provided.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 1229
+        keys.js, line 1276
     </li></ul></dd>
     
     
@@ -1474,7 +1523,7 @@ each of the bindings matched by the names provided.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 1265
+        keys.js, line 1313
     </li></ul></dd>
     
     
@@ -1543,7 +1592,7 @@ each of the bindings matched by the names provided.</p>
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a> on Fri Jun 28 2013 00:53:21 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a> on Fri Jun 28 2013 13:32:45 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>
