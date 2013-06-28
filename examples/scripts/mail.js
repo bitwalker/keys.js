@@ -233,18 +233,18 @@
             },
             settings: {
                 view: null,
-                editBinding: null,
+                editBinding: null
             }
         },
 
         keybindings: new Bindings(),
 
         elements: {
-            navInbox: $('.nav .nav-inbox'),
-            navSettings: $('.nav .nav-settings'),
-            query: $('input.search-query'),
-            sidebar: $('.sidebar'),
-            view: $('.view'),
+            navInbox:       $('.nav .nav-inbox'),
+            navSettings:    $('.nav .nav-settings'),
+            query:          $('input.search-query'),
+            sidebar:        $('.sidebar'),
+            view:           $('.view')
         },
 
         state: {
@@ -379,6 +379,10 @@
         refresh: function() {
             $(window).trigger('hashchange');
         },
+
+        /**
+         * Inbox Page
+         */
 
         showInbox: function(inboxType, emailId) {
             // If no inbox type was selected, but a message id was passed in, rearrange the params
@@ -837,7 +841,6 @@
 
 
     App.init();
-
 
 
 })(jQuery, Mustache, Keys);
