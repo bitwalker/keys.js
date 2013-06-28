@@ -26,7 +26,8 @@
      */
     var delay = function(fn, ms) {
         ms = ms || 100;
-        setTimeout(function() {
+        var timeout = null;
+        timeout = setTimeout(function() {
             fn.call(null);
             clearTimeout(timeout);
             timeout = null;
@@ -595,7 +596,6 @@
                 keyboard = modal.find('#keyboard');
                 keys     = keyboard.find('li');
                 $('button[data-dismiss]', modal).on('click', function(e) {
-                    var timeout = null;
                     delay(function() {
                         keys.off('click', activateKey);
                         modal.remove();
