@@ -336,11 +336,15 @@
             this.keybindings.add('goToSettings', 'Go To Settings',  new Combo(Key.S, Key.CTRL));
             // Configure bindings with default values
             // Bind behavior to bindings
-            this.keybindings.registerHandler('goToInbox',    partial(this.showInbox, this));
-            this.keybindings.registerHandler('goToSettings', partial(this.showSettings, this));
+            this.keybindings.registerHandler('goToInbox',    partial(this.route, this, '#/inbox'));
+            this.keybindings.registerHandler('goToSettings', partial(this.route, this, '#/settings'));
 
 
             this.refresh();
+        },
+
+        route: function(hash) {
+            window.location.hash = hash;
         },
 
         router: function(hash) {
