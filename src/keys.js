@@ -806,7 +806,7 @@
      *   var bindings = new Bindings();
      *
      *   bindings.add('displayAlert', new Combo(Key.A, [ Key.CTRL, Key.SHIFT ]));
-     *   bindings.add('toggleFlag', new Combo(Key.F, [ Key.CTRL, Key.META ]));
+     *   bindings.add('toggleFlag', 'Optional description text.', new Combo(Key.F, [ Key.CTRL, Key.META ]));
      *
      *   // Map behavior to the displayAlert
      *   bindings.registerHandler('displayAlert', function() { alert('Hello!'); });
@@ -975,6 +975,10 @@
      *     bindings.load({
      *         // Simplest example
      *         displayAlert: {
+     *             // `description` is an optional attribute, in case you wish to programmatically
+     *             // list bindings in your application's UI. Just use description instead of the
+     *             // less UI-friendly binding name!
+     *             description: 'Displays an alert dialog.',
      *             bind: new Combo(Key.A, Key.SHIFT),
      *             handler: displayAlert
      *         },
@@ -1004,6 +1008,7 @@
                     warn(invalidWarning + 'invalid value type.');
                 else {
                     var bindingName = key;
+                    var desc        = specs[key].description || '';
                     var bind        = specs[key].bind;
                     var handler     = specs[key].handler;
                     var eventType   = specs[key].eventType;
@@ -1020,7 +1025,7 @@
                     }
                     else {
                         // Add the binding
-                        var addArgs = [ bindingName ].concat(bind);
+                        var addArgs = [ bindingName, desc ].concat(bind);
                         self.add.apply(self, addArgs);
                         // Register the handler
                         if (eventType) {
@@ -1040,12 +1045,22 @@
      *
      * @memberOf Bindings
      * @instance
-     * @param  {string} name  - The name of the binding.
-     * @param  {Combo} combos - One or more Keys or Combos which trigger this binding
+     * @param  {string} name        - The name of the binding.
+     * @param  {string} description - A description of the binding's purpose (optional)
+     * @param  {Combo} combos       - One or more Keys or Combos which trigger this binding
      */
-    Bindings.prototype.add = function(name /* combo1, ..comboN */) {
-        var combos = Array.prototype.slice.call(arguments, 1);
-        if (arguments.length < 2 || !name || !combos.length)
+    Bindings.prototype.add = function(name, description /*, combo1, ..comboN */) {
+        var combos = [];
+        // For simplicity
+        var desc   = description && typeof description === 'string' ? description : '';
+        // If description is a function, then we know it was not provided
+        if (description && typeof description !== 'string')
+            combos = Array.prototype.slice.call(arguments, 1);
+        else
+            combos = Array.prototype.slice.call(arguments, 2);
+
+        var validArgCount = desc ? arguments.length < 3 : arguments.length < 2;
+        if (validArgCount || !name || !combos.length)
             throw new Error('Keybindings.add: Invalid arguments provided');
         // Validate combos
         combos.forEach(function(combo) {
@@ -1056,13 +1071,18 @@
         // If the binding name already exists, overwrite it
         var binding = find(this.bindings, function(b) { return b.name === name; });
         if (binding) {
+            // If no description was provided, leave the previous value alone
+            if (desc) {
+                binding.description = desc;
+            }
             binding.combos = combos;
             log('Bindings.add: Updated existing binding - `' + name + '` with ' + combos.length + ' combos');
         } else {
             this.bindings.push({
-                name:  name,
-                combos: combos,
-                enabled: true
+                name:        name,
+                description: desc,
+                combos:      combos,
+                enabled:     true
             });
             log('Bindings.add: New binding - `' + name + '` with ' + combos.length + ' combos');
         }
