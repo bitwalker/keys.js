@@ -791,28 +791,25 @@
         },
 
         onCancelEdit: function(element, e) {
-            console.log('oncancel');
             // Reset virtual keyboard state
             this.state.settings.virtualKeyboard.primaryKey = null;
-            this.state.settings.virtualKeyboard.metaKeys = [];
+            this.state.settings.virtualKeyboard.metaKeys   = [];
         },
 
         onResetBinding: function(element, e) {
-            console.log('onreset');
             var bindingName    = element.data('reset');
             var currentBinding = this.elements.view.find('.current-binding');
             var defaultBinding = this.keybindings.get(bindingName);
-            if (defaultBinding) {
+            if (defaultBinding && currentBinding.text() !== defaultBinding.combos[0].toString()) {
                 currentBinding.text(defaultBinding.combos[0].toString());
                 this.elements.view.find('.current-binding').trigger('reactivate');
             }
-            else {
+            else if (!defaultBinding) {
                 currentBinding.text('');
             }
         },
 
         onSaveBinding: function(element, e) {
-            console.log('onsave');
             var self = this;
             // Determine if Combo is valid
             var bindingName    = element.data('save');
@@ -821,20 +818,22 @@
                 var combo = Combo.fromString(currentBinding.text());
                 // `add` overrides the previous binding if it exists (which it will)
                 this.keybindings.add(bindingName, combo);
-                console.log('saved');
                 // Hide modal and refresh page
                 this.elements.view.find('#editbinding').modal('hide');
             }
             else {
-                console.log('error');
                 validationError('You cannot create an empty binding.');
             }
 
             function validationError(message) {
-                var $controlGroup = this.elements.view.find('.current-binding').parents('.control-group');
-                var $errorMessage = this.elements.view.find('.current-binding').siblings('.help-inline');
-                $controlGroup.addClass('error').delay(1000).removeClass('error');
-                $errorMessage.hide().text(message).fadeIn('fast').delay(1000).fadeOut('fast');
+                var $controlGroup = self.elements.view.find('.current-binding').parents('.control-group');
+                var $errorMessage = self.elements.view.find('.current-binding').siblings('.help-inline');
+                $controlGroup.addClass('error');
+                $errorMessage.hide().text(message).fadeIn('fast');
+                delay(function() {
+                    $controlGroup.removeClass('error');
+                    $errorMessage.fadeOut('fast').text('');
+                }, 2000);
             }
         }
     };
