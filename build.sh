@@ -51,6 +51,7 @@ fi
 
 if [ $gen_docs == true ]; then
     # Regenerate Documentation
-    jsdoc -c ./conf.json
+    jsdoc=./node_modules/jsdoc/jsdoc
+    $jsdoc -c ./conf.json
     echo "Documentation rebuilt."
 fi
