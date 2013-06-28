@@ -332,8 +332,15 @@
             /**
              * Keyboard Shortcuts
              */
-            this.keybindings.add('goToInbox',    'Go To Inbox',     new Combo(Key.I, Key.CTRL));
-            this.keybindings.add('goToSettings', 'Go To Settings',  new Combo(Key.S, Key.CTRL));
+            this.keybindings.add('goToInbox',     'Navigation: Go To Inbox',     new Combo(Key.I, Key.SHIFT));
+            this.keybindings.add('goToArchive',   'Navigation: Go To Archive',   new Combo(Key.A, Key.SHIFT));
+            this.keybindings.add('goToTrash',     'Navigation: Go To Trash',     new Combo(Key.T, Key.SHIFT));
+            this.keybindings.add('goToSettings',  'Navigation: Go To Settings',  new Combo(Key.S, Key.SHIFT));
+            this.keybindings.add('moveUp',        'Inbox: Select Next',          new Combo(Key.Down));
+            this.keybindings.add('moveDown',      'Inbox: Select Previous',      new Combo(Key.Up));
+            this.keybindings.add('trash',         'Inbox: Send To Trash',        new Combo(Key.Backspace));
+            this.keybindings.add('archive',       'Inbox: Send To Archive',      new Combo(Key.A, Key.CTRL));
+            this.keybindings.add('spam',          'Inbox: Mark As Spam',         new Combo(Key.S, Key.CTRL));
             // Configure bindings with default values
             // Bind behavior to bindings
             this.keybindings.registerHandler('goToInbox',    partial(this.route, this, '#/inbox'));
