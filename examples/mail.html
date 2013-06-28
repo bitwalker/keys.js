@@ -82,30 +82,17 @@
         </script>
 
         <script type="text/template" id="settings">
-            {{#bindings}}
-                <h3>Inbox</h3>
-                <hr />
-                <dl class="dl-horizontal keybinding-list">
-                    {{#inbox}}
-                        <dt>{{description}}</dt>
-                        <dd>
-                            <code>{{binding}}</code>
-                            <a class="btn btn-success btn-small edit-binding" data-binding-category="inbox" data-binding="{{name}}">Edit</a>
-                        </dd>
-                    {{/inbox}}
-                </dl>
-                <h3>Settings</h3>
-                <hr />
-                <dl class="dl-horizontal keybinding-list">
-                    {{#settings}}
-                        <dt>{{description}}</dt>
-                        <dd>
-                            <code>{{binding}}</code>
-                            <a class="btn btn-success btn-small edit-binding" data-binding-category="settings" data-binding="{{name}}">Edit</a>
-                        </dd>
-                    {{/settings}}
-                </dl>
-            {{/bindings}}
+            <h3>Configure Your Shortcuts!</h3>
+            <hr />
+            <dl class="dl-horizontal keybinding-list">
+                {{#bindings}}
+                    <dt>{{description}}</dt>
+                    <dd>
+                        <code>{{#combos}}{{.}}{{/combos}}</code>
+                        <a class="btn btn-success btn-small edit-binding" data-binding="{{name}}">Edit</a>
+                    </dd>
+                {{/bindings}}
+            </dl>
         </script>
 
         <script type="text/template" id="edit-binding">
@@ -181,7 +168,7 @@
                             <div class="control-group">
                                 <label class="control-label">Current Binding:</label>
                                 <div class="controls">
-                                  <span class="input-xlarge uneditable-input current-binding">{{binding}}</span>
+                                  <span class="input-xlarge uneditable-input current-binding">{{#combos}}{{.}}{{/combos}}</span>
                                   <span class="help-inline"></span>
                                 </div>
                             </div>

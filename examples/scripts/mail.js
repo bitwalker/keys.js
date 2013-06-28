@@ -237,7 +237,7 @@
             }
         },
 
-        bindings: new Bindings(),
+        keybindings: new Bindings(),
 
         elements: {
             navInbox: $('.nav .nav-inbox'),
@@ -260,16 +260,6 @@
                 ]
             },
             settings: {
-                // These are the default bindings, once edited, user preferences are saved and will
-                // override the ones defined here.
-                bindings: {
-                    inbox: [
-                        { name: 'goToInbox',    description: 'Go To Inbox',    binding: new Combo(Key.I, Key.CTRL) }
-                    ],
-                    settings: [
-                        { name: 'goToSettings', description: 'Go To Settings', binding: new Combo(Key.S, Key.CTRL) }
-                    ]
-                },
                 virtualKeyboard: {
                     metaKeys: [],
                     primaryKey: null
@@ -332,10 +322,21 @@
              */
             // Open edit binding modal
             this.elements.view.on('click', '.edit-binding', eventHandler(this.onEditKeybinding, this));
+            // Reset virtual keyboard state on cancel
+            this.elements.view.on('click', '#editbinding button[data-dismiss]', eventHandler(this.onCancelEdit, this));
             // Reset binding selection during edit
-            this.elements.view.on('click', '#editbindings button[data-reset]', eventHandler(this.onResetBinding, this));
+            this.elements.view.on('click', '#editbinding button[data-reset]', eventHandler(this.onResetBinding, this));
             // Save binding selection during edit
-            this.elements.view.on('click', '#editbindings button[data-save]', eventHandler(this.onSaveBinding, this));
+            this.elements.view.on('click', '#editbinding button[data-save]', eventHandler(this.onSaveBinding, this));
+
+            /**
+             * Keyboard Shortcuts
+             */
+            this.keybindings.add('goToInbox',    'Go To Inbox',     new Combo(Key.I, Key.CTRL));
+            this.keybindings.add('goToSettings', 'Go To Settings',  new Combo(Key.S, Key.CTRL));
+            // Configure bindings with default values
+            // Bind behavior to bindings
+
 
             this.refresh();
         },
@@ -517,22 +518,6 @@
             return false;
         },
 
-        showSettings: function(settingsType) {
-            // Render content
-            this.elements.view.html(this.templates.settings.view(this.state.settings));
-
-            // Render sidebar
-            this.renderSidebar({
-                items: [
-                    new SidebarItem('settings', 'Keybindings', true)
-                ]
-            });
-
-            // Change active nav item
-            this.elements.navSettings.addClass('active');
-            this.elements.navInbox.removeClass('active');
-        },
-
         showWelcome: function() {
             this.state.showWelcomePopup = false;
             var welcome = 'Demo Mail is an entirely keyboard driven mail application. Menus can be navigated by mouse or keyboard. To get started, CTRL+SHIFT+K!';
@@ -573,14 +558,36 @@
             this.elements.sidebar.html(this.templates.sidebar(data));
         },
 
-        /** Settings Actions **/
+        /** 
+         * Settings Page
+         **/
+
+        showSettings: function(settingsType) {
+            // Render content
+            var viewModel = {
+                virtualKeyboard: this.state.settings.virtualKeyboard,
+                bindings:        this.keybindings.bindings
+            };
+            this.elements.view.html(this.templates.settings.view(viewModel));
+
+            // Render sidebar
+            this.renderSidebar({
+                items: [
+                    new SidebarItem('settings', 'Keybindings', true)
+                ]
+            });
+
+            // Change active nav item
+            this.elements.navSettings.addClass('active');
+            this.elements.navInbox.removeClass('active');
+        },
 
         onEditKeybinding: function(element, e) {
             e.preventDefault();
 
-            var category    = element.data('binding-category');
+            var self = this;
             var bindingName = element.data('binding');
-            var binding     = this.state.settings.bindings[category].pick('name', bindingName);
+            var binding     = this.keybindings.get(bindingName);
 
             // Elements
             var modal    = null;
@@ -595,17 +602,33 @@
                 modal    = this.elements.view.find('#editbinding');
                 keyboard = modal.find('#keyboard');
                 keys     = keyboard.find('li');
-                $('button[data-dismiss]', modal).on('click', function(e) {
-                    delay(function() {
-                        keys.off('click', activateKey);
-                        modal.remove();
-                    }, 500);
+                // When the modal is hidden, refresh the page to capture data changes
+                modal.on('hidden', function() {
+                    // Unwire events
+                    keys.off('click', activateKey);
+                    // Destroy the modal once hidden
+                    modal.remove();
+                    self.refresh();
                 });
+                // Show the modal
                 modal.modal();
 
                 // Bind key activation events
                 keys.on('click', eventHandler(activateKey, this));
                 $(document).on('keydown', eventHandler(activateKey, this));
+
+                // Activate current combo's keys
+                this.elements.view.find('.current-binding').on('reactivate', function() {
+                    var parts = $(this).text().split('+');
+                    parts.forEach(function(keyName) {
+                        var el = findKey(Key.fromName(keyName));
+                        if (el) {
+                            // Trigger the click event to piggyback on existing activation code
+                            el.trigger('click');
+                        }
+                    });
+                });
+                this.elements.view.find('.current-binding').trigger('reactivate');
             }
 
             return false;
@@ -761,21 +784,23 @@
                     return null;
                 }
             }
+        },
 
-            function validationError(message) {
-                var $controlGroup = this.elements.view.find('.current-binding').parents('.control-group');
-                var $errorMessage = this.elements.view.find('.current-binding').siblings('.help-inline');
-                $controlGroup.addClass('error').delay(1000).removeClass('error');
-                $errorMessage.hide().text(message).fadeIn('fast').delay(1000).fadeOut('fast');
-            }
+        onCancelEdit: function(element, e) {
+            console.log('oncancel');
+            // Reset virtual keyboard state
+            this.state.settings.virtualKeyboard.primaryKey = null;
+            this.state.settings.virtualKeyboard.metaKeys = [];
         },
 
         onResetBinding: function(element, e) {
-            var bindingName = element.data('reset');
+            console.log('onreset');
+            var bindingName    = element.data('reset');
             var currentBinding = this.elements.view.find('.current-binding');
-            var defaultBinding = getDefaultBinding(bindingName);
+            var defaultBinding = this.keybindings.get(bindingName);
             if (defaultBinding) {
-                currentBinding.text(defaultBinding.binding.toString());
+                currentBinding.text(defaultBinding.combos[0].toString());
+                this.elements.view.find('.current-binding').trigger('reactivate');
             }
             else {
                 currentBinding.text('');
@@ -783,22 +808,30 @@
         },
 
         onSaveBinding: function(element, e) {
-
-        },
-
-        getDefaultBinding: function(name) {
-            var binding = this.state.settings.bindings.inbox.pick('name', name);
-            if (binding) {
-                return binding;
+            console.log('onsave');
+            var self = this;
+            // Determine if Combo is valid
+            var bindingName    = element.data('save');
+            var currentBinding = this.elements.view.find('.current-binding');
+            if (currentBinding.text()) {
+                var combo = Combo.fromString(currentBinding.text());
+                // `add` overrides the previous binding if it exists (which it will)
+                this.keybindings.add(bindingName, combo);
+                console.log('saved');
+                // Hide modal and refresh page
+                this.elements.view.find('#editbinding').modal('hide');
             }
             else {
-                binding = this.state.settings.bindings.settings.pick('name', name);
-                if (binding)
-                    return binding;
-                else return null;
+                console.log('error');
+                validationError('You cannot create an empty binding.');
             }
 
-            return null;
+            function validationError(message) {
+                var $controlGroup = this.elements.view.find('.current-binding').parents('.control-group');
+                var $errorMessage = this.elements.view.find('.current-binding').siblings('.help-inline');
+                $controlGroup.addClass('error').delay(1000).removeClass('error');
+                $errorMessage.hide().text(message).fadeIn('fast').delay(1000).fadeOut('fast');
+            }
         }
     };
 
