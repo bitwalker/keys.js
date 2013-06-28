@@ -31,7 +31,7 @@
     </h2>
     
         <div class="class-description"><p>Bindings is responsible for managing the mapping of behavior to Combos. In addition,
-           it is responsible for listening in on keyup/keydown events document-wide, and if a
+           it is responsible for listening in on keyup/keydown/keypress events document-wide, and if a
            Combo is matched, execute any associated handlers while also preventing the default
            behavior. It allows for persistance or transport by serializing the bindings currently
            managed, <strong>but not the handlers</strong>. Deserializing an instance of Bindings requires you
@@ -87,7 +87,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 746
+        keys.js, line 782
     </li></ul></dd>
     
     
@@ -119,7 +119,7 @@
   var bindings = new Bindings();
 
   bindings.add('displayAlert', new Combo(Key.A, [ Key.CTRL, Key.SHIFT ]));
-  bindings.add('toggleFlag', new Combo(Key.F, [ Key.CTRL, Key.META ]));
+  bindings.add('toggleFlag', 'Optional description text.', new Combo(Key.F, [ Key.CTRL, Key.META ]));
 
   // Map behavior to the displayAlert
   bindings.registerHandler('displayAlert', function() { alert('Hello!'); });
@@ -155,7 +155,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="add"><span class="type-signature"></span>add<span class="signature">(name, combos)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="add"><span class="type-signature"></span>add<span class="signature">(name, description, combos)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -220,6 +220,29 @@
 	
         <tr>
             
+                <td class="name"><code>description</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>A description of the binding&#39;s purpose (optional)</p></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
                 <td class="name"><code>combos</code></td>
             
             
@@ -236,7 +259,7 @@
             
             
             
-            <td class="description last"><p>One or more Combos which trigger this binding</p></td>
+            <td class="description last"><p>One or more Keys or Combos which trigger this binding</p></td>
         </tr>
 	
 	
@@ -267,7 +290,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 845
+        keys.js, line 1043
     </li></ul></dd>
     
     
@@ -384,7 +407,247 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 1056
+        keys.js, line 1269
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="disable"><span class="type-signature"></span>disable<span class="signature">(bindingNames*)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Disable Keys.js or a specific binding or bindings,
+depending on the number of arguments. None will disable
+Key.js if it is currently disabled. One or more will disable
+each of the bindings matched by the names provided.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>bindingNames*</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>One or more binding names to disable</p></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        keys.js, line 909
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="enable"><span class="type-signature"></span>enable<span class="signature">(bindingNames*)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Re-enable Keys.js or a specific binding or bindings,
+depending on the number of arguments. None will re-enable
+Key.js if it is currently disabled. One or more will re-enable
+each of the bindings matched by the names provided.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>bindingNames*</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>One or more binding names to re-enable</p></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        keys.js, line 860
     </li></ul></dd>
     
     
@@ -501,7 +764,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 833
+        keys.js, line 954
     </li></ul></dd>
     
     
@@ -640,7 +903,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 1079
+        keys.js, line 1297
     </li></ul></dd>
     
     
@@ -803,7 +1066,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 888
+        keys.js, line 1101
     </li></ul></dd>
     
     
@@ -961,7 +1224,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 952
+        keys.js, line 1165
     </li></ul></dd>
     
     
@@ -1142,7 +1405,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 1007
+        keys.js, line 1220
     </li></ul></dd>
     
     
@@ -1211,7 +1474,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 1043
+        keys.js, line 1256
     </li></ul></dd>
     
     
@@ -1280,7 +1543,7 @@
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Sun Jun 23 2013 11:25:46 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a> on Fri Jun 28 2013 00:46:41 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>
