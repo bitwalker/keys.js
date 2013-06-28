@@ -839,14 +839,28 @@
 
         // Gather event handlers
         var eventHandlers = this.getHandlersForCombo(combo)
-                                .filter(isType);
+                                .filter(validateHandler);
         // Log them
         tap(eventHandlers, debug, true /* only tap if Keys.debug == true */);
         // Execute them
         eventHandlers.forEach(execute);
 
-        function isType (h) {
-            return h.eventType === e.type;
+        // A handler is valid if it handles the current event type and is either a global handler, 
+        // or the current context is valid for a non-global handler
+        function validateHandler (h) {
+            return h.eventType === e.type && (h.isGlobal || isValidContext());
+        }
+        // Determine if this is a valid context for non-global handlers to execute (essentially not within any non-input element)
+        function isValidContext() {
+            if (e.target && e.target.nodeName) {
+                var name = e.target.nodeName.toLowerCase();
+                return [
+                    'input'    === name,
+                    'textarea' === name,
+                    'select'   === name
+                ].indexOf(true) === -1;
+            }
+            return true;
         }
         function debug(h) {
             log('Bindings.handleEvent called for Combo: ' + combo.toString() + '. Handler `' + h.name + '` was called.');
@@ -980,7 +994,8 @@
      *             // less UI-friendly binding name!
      *             description: 'Displays an alert dialog.',
      *             bind: new Combo(Key.A, Key.SHIFT),
-     *             handler: displayAlert
+     *             handler: displayAlert,
+     *             isGlobal: true // optional
      *         },
      *         // Customize eventType
      *         doStuff: {
@@ -1012,6 +1027,7 @@
                     var bind        = specs[key].bind;
                     var handler     = specs[key].handler;
                     var eventType   = specs[key].eventType;
+                    var isGlobal    = specs[key].isGlobal || false;
 
                     // A binding spec is not valid if bind and handler are not defined
                     if (!areDefined(bind, handler)) {
@@ -1029,10 +1045,10 @@
                         self.add.apply(self, addArgs);
                         // Register the handler
                         if (eventType) {
-                            self.registerHandler.call(self, bindingName, eventType, handler);
+                            self.registerHandler.call(self, bindingName, eventType, handler, isGlobal);
                         }
                         else {
-                            self.registerHandler.call(self, bindingName, handler);
+                            self.registerHandler.call(self, bindingName, handler, isGlobal);
                         }
                     }
                 }
@@ -1093,27 +1109,38 @@
      *
      * @memberOf Bindings
      * @instance
-     * @param  {string} bindingName - The name of the binding to watch, can be inferred when handler is a named function and bindingName is omitted
-     * @param  {string} eventType - Either keyup or keydown, depending on needs. Defaults to keydown.
-     * @param  {function} handler - The function to call when the Combo is executed.
+     * @param  {string} bindingName - The name of the binding to watch, is optional when handler is a named function.
+     * @param  {string} eventType   - (optional) Either keyup or keydown, depending on needs. Defaults to keydown.
+     * @param  {function} handler   - The function to call when the Combo is executed.
+     * @param  {Boolean} isGlobal   - (optional) True to execute the handler regardless of context, false to prevent execution when in the context of an input control. Defaults to false.
      * @example
      *      function displayAlert() { alert('Hello!'); }
      *      // Full specification syntax
-     *      bindings.registerHandler('displayAlert', 'keyup', function() { alert('Hello!'); });
-     *      // Partial specification, with inferred eventType syntax
-     *      bindings.registerHandler('displayAlert', function() { alert('Hello!'); });
-     *      // Partial specification, with inferred bindingName syntax
-     *      bindings.registerHandler('keyup', displayAlert);
-     *      // Minimal specification, with inferred bindingName and eventType syntax, using a named function
+     *      bindings.registerHandler('displayAlert', 'keyup', function() { alert('Hello!'); }, true);
+     *      // Partial specification, inferred eventType
+     *      bindings.registerHandler('displayAlert', function() { alert('Hello!'); }, true);
+     *      // Partial specification, inferred bindingName (must use named function)
+     *      bindings.registerHandler('keyup', displayAlert, true);
+     *      // Partial specification, inferred eventType and bindingName
+     *      bindings.registerHandler(displayAlert, true);
+     *      // Minimal specification, inferred eventType and bindingName, isGlobal defaults to false
      *      bindings.registerHandler(displayAlert);
      */
-    Bindings.prototype.registerHandler = function(bindingName, eventType, handler) {
-        // Inferred bindingName and eventType
+    Bindings.prototype.registerHandler = function(bindingName, eventType, handler, isGlobal) {
+        // registerHandler(displayAlert)
         if (arguments.length === 1 && typeof bindingName === 'function') {
             handler     = bindingName;
             bindingName = handler.name;
             eventType   = 'keydown';
         }
+        // registerHandler(displayAlert, true)
+        if (arguments.length === 2 && typeof bindingName === 'function') {
+            handler     = bindingName;
+            bindingName = handler.name;
+            isGlobal    = eventType || false;
+            eventType   = 'keydown';
+        }
+        // registerHandler('keyup', displayAlert) or registerHandler('showAlert', function() { .. });
         else if (arguments.length === 2 && typeof eventType === 'function') {
             // Inferred bindingName
             if (bindingName === 'keyup' || bindingName === 'keydown' || bindingName === 'keypress') {
@@ -1123,6 +1150,22 @@
             }
             // Inferred eventType
             else {
+                handler   = eventType;
+                eventType = 'keydown';
+            }
+        }
+        // registerHandler('displayAlert', function() { .. }, true|false) or registerHandler('keyup', displayAlert, true|false)
+        else if (arguments.length === 3 && typeof eventType === 'function') {
+            // Inferred bindingName
+            if (bindingName === 'keyup' || bindingName === 'keydown' || bindingName === 'keypress') {
+                isGlobal    = handler || false;
+                handler     = eventType;
+                eventType   = bindingName;
+                bindingName = handler.name;
+            }
+            // Inferred eventType
+            else {
+                isGlobal  = handler || false;
                 handler   = eventType;
                 eventType = 'keydown';
             }
@@ -1141,9 +1184,10 @@
         this.handlers.push({
             name:      bindingName,
             eventType: eventType,
-            handler:   handler
+            handler:   handler,
+            isGlobal:  isGlobal || false
         });
-        log('Bindings.registerHandler: Handler `' + bindingName + '` registered for `' + eventType + '` events.');
+        log('Bindings.registerHandler: Handler `' + bindingName + '` ' + (isGlobal ? 'globally' : '') + ' registered for `' + eventType + '` events.');
     };
 
     /**
@@ -1162,7 +1206,8 @@
      *      bindings.registerHandlers({
      *          displayAlert: {
      *              eventType: 'keyup',
-     *              handler: displayAlert
+     *              handler:   displayAlert,
+     *              isGlobal:  true
      *          },
      *          logEvent: logEvent
      *      });
@@ -1201,15 +1246,16 @@
                         self.registerHandler(bindingName, handler);
                     }
                     else if (typeof handler === 'object') {
-                        var evType = handler.eventType || eventType;
-                        var fn     = handler.handler;
+                        var evType   = handler.eventType || eventType;
+                        var fn       = handler.handler;
+                        var isGlobal = handler.isGlobal || false;
                         if (!fn || typeof fn !== 'function')
                             throw new Error('Bindings.registerHandlers: Invalid handler specification, must define the handler property as a function.');
                         if (evType) {
-                            self.registerHandler(bindingName, evType, fn);
+                            self.registerHandler(bindingName, evType, fn, isGlobal);
                         }
                         else {
-                            self.registerHandler(bindingName, fn);
+                            self.registerHandler(bindingName, fn, isGlobal);
                         }
                     }
                 }
@@ -1225,15 +1271,17 @@
      * @param  {string} bindingName - The name of the binding to watch
      * @param  {function} toggleOn  - The function to execute when toggling on
      * @param  {function} toggleOff - The function to execute when toggling off
+     * @param  {Boolean} isGlobal   - (optional) True to execute the toggle regardless of context, false to prevent execution when in the context of an input control. Defaults to false.
      */
-    Bindings.prototype.registerToggle = function(bindingName, toggleOn, toggleOff) {
-        if (arguments.length !== 3) {
-            throw new Error('Keybindings.registerToggle: You must provide all three arguments to this function.');
+    Bindings.prototype.registerToggle = function(bindingName, toggleOn, toggleOff, isGlobal) {
+        if (arguments.length < 3) {
+            throw new Error('Keybindings.registerToggle: Missing arguments.');
         }
 
         this.handlers.push({
             name: bindingName,
             eventType: 'keydown',
+            isGlobal: isGlobal || false,
             // Wrap the toggle handlers in a closure that allows us 
             // to track the current state of the toggle, and call
             // the appropriate toggle handler. Assumes 'off' state
@@ -1252,7 +1300,7 @@
                 };
             })()
         });
-        log('Bindings.registerToggle: Toggle `' + bindingName + '` registered.');
+        log('Bindings.registerToggle: Toggle `' + bindingName + '` ' + (isGlobal ? 'globally' : '') + ' registered.');
     };
 
     /**
