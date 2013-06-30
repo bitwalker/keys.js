@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Demo Mail</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="styles/bootstrap.min.css" rel="stylesheet" media="screen">
+        <link href="styles/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+        <link href="styles/mail.css" rel="stylesheet" media="screen" />
+        <!--[if lt IE 9]>
+        <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+        <div class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="brand" href="#">Demo Mail</a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav">
+                            <li class="nav-inbox active"><a href="#/inbox">Inbox</a></li>
+                            <li class="nav-settings"><a href="#/settings">Settings</a></li>
+                        </ul>
+                    </div><!--/.nav-collapse -->
+                    <form class="navbar-search pull-right">
+                      <input type="text" class="search-query" placeholder="Search">
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span2">
+                    <ul class="nav nav-pills nav-stacked sidebar">
+                        <!-- Sidebar -->
+                    </ul>
+                </div>
+                <div class="span10 view">
+                    <!-- Main Content -->
+                </div>
+            </div>
+        </div>
+
+        <script type="text/template" id="alert">
+            <div class="alert alert-info">
+                <button type="button" class="close" data-dismiss="alert">x</button>
+                <strong>Attention!</strong>
+                {{message}}
+            </div> 
+        </script>
+
+        <script type="text/template" id="inbox">
+            <table class="table table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th class="inbox-from">From</th>
+                        <th>Subject</th>
+                        <th>Received</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#emails}}
+                    <tr class="email" data-id="{{id}}">
+                        <td>{{from}}</td>
+                        <td>
+                            {{#labels}}
+                                <span class="label label-{{type}}">{{name}}</span>
+                            {{/labels}}
+                            {{subject}}
+                        </td>
+                        <td>{{received}}</td>
+                    </tr>
+                    {{/emails}}
+                </tbody>
+            </table>
+            <hr />
+            <div id="read">
+            </div>
+        </script>
+
+        <script type="text/template" id="settings">
+            <h3>Configure Your Shortcuts!</h3>
+            {{#categories}}
+                <h4>{{name}}</h4>
+                <hr />
+                <dl class="dl-horizontal keybinding-list">
+                    {{#bindings}}
+                        <dt>{{strippedDescription}}:</dt>
+                        <dd>
+                            <code>{{#combos}}{{.}}{{/combos}}</code>
+                            <a class="btn btn-success btn-small edit-binding" data-binding="{{name}}">Edit</a>
+                        </dd>
+                    {{/bindings}}
+                </dl>
+            {{/categories}}
+        </script>
+
+        <script type="text/template" id="edit-binding">
+            <!-- Modal -->
+            <div id="editbinding" class="editbinding-modal modal hide fade" tabindex="-1" role="dialog" aria-labelledby="editbindingLabel" aria-hidden="true">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                    <h3 id="editbindingLabel">Edit Binding - {{description}}</h3>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Build a combination to bind by clicking the keys (or typing them!)</strong></p>
+                    <div class="keyboard-container">
+                        <ul id="keyboard">
+                            <li class="symbol"><span class="off">`</span><span class="on">~</span></li>
+                            <li class="symbol"><span class="off">1</span><span class="on">!</span></li>
+                            <li class="symbol"><span class="off">2</span><span class="on">@</span></li>
+                            <li class="symbol"><span class="off">3</span><span class="on">#</span></li>
+                            <li class="symbol"><span class="off">4</span><span class="on">$</span></li>
+                            <li class="symbol"><span class="off">5</span><span class="on">%</span></li>
+                            <li class="symbol"><span class="off">6</span><span class="on">^</span></li>
+                            <li class="symbol"><span class="off">7</span><span class="on">&amp;</span></li>
+                            <li class="symbol"><span class="off">8</span><span class="on">*</span></li>
+                            <li class="symbol"><span class="off">9</span><span class="on">(</span></li>
+                            <li class="symbol"><span class="off">0</span><span class="on">)</span></li>
+                            <li class="symbol"><span class="off">-</span><span class="on">_</span></li>
+                            <li class="symbol"><span class="off">=</span><span class="on">+</span></li>
+                            <li class="delete lastitem">backspace</li>
+                            <li class="tab">tab</li>
+                            <li class="letter">q</li>
+                            <li class="letter">w</li>
+                            <li class="letter">e</li>
+                            <li class="letter">r</li>
+                            <li class="letter">t</li>
+                            <li class="letter">y</li>
+                            <li class="letter">u</li>
+                            <li class="letter">i</li>
+                            <li class="letter">o</li>
+                            <li class="letter">p</li>
+                            <li class="symbol"><span class="off">[</span><span class="on">{</span></li>
+                            <li class="symbol"><span class="off">]</span><span class="on">}</span></li>
+                            <li class="symbol lastitem"><span class="off">\</span><span class="on">|</span></li>
+                            <li class="ctrl">ctrl</li>
+                            <li class="letter">a</li>
+                            <li class="letter">s</li>
+                            <li class="letter">d</li>
+                            <li class="letter">f</li>
+                            <li class="letter">g</li>
+                            <li class="letter">h</li>
+                            <li class="letter">j</li>
+                            <li class="letter">k</li>
+                            <li class="letter">l</li>
+                            <li class="symbol"><span class="off">;</span><span class="on">:</span></li>
+                            <li class="symbol"><span class="off">&#39;</span><span class="on">&quot;</span></li>
+                            <li class="return lastitem">return</li>
+                            <li class="left-shift">shift</li>
+                            <li class="letter">z</li>
+                            <li class="letter">x</li>
+                            <li class="letter">c</li>
+                            <li class="letter">v</li>
+                            <li class="letter">b</li>
+                            <li class="letter">n</li>
+                            <li class="letter">m</li>
+                            <li class="symbol"><span class="off">,</span><span class="on">&lt;</span></li>
+                            <li class="symbol"><span class="off">.</span><span class="on">&gt;</span></li>
+                            <li class="symbol"><span class="off">/</span><span class="on">?</span></li>
+                            <li class="right-shift lastitem">shift</li>
+                            <li class="left-meta">meta</li>
+                            <li class="space">spacebar</li>
+                            <li class="right-meta lastitem">meta</li>
+                        </ul>
+                    </div>
+
+                    <form class="form-horizontal well">
+                        <fieldset>
+                            <div class="control-group">
+                                <label class="control-label">Current Binding:</label>
+                                <div class="controls">
+                                  <span class="input-xlarge uneditable-input current-binding">{{#combos}}{{.}}{{/combos}}</span>
+                                  <span class="help-inline"></span>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                    <button class="btn btn-info" data-reset="{{name}}">Reset</button>
+                    <button class="btn btn-success" data-save="{{name}}">Save</button>
+                </div>
+            </div>
+        </script>
+
+        <script type="text/template" id="sidebar">
+            {{#items}}
+            <li class="{{className}}"><a href="{{url}}">{{name}}</a></li>
+            {{/items}}
+        </script>
+
+        <script type="text/template" id="email">
+            <tr class="email" data-id="{{id}}">
+                <td>{{from}}</td>
+                <td>
+                    {{#labels}}
+                        <span class="label label-{{type}}">{{name}}</span>
+                    {{/labels}}
+                    {{subject}}
+                </td>
+                <td>{{received}}
+            </tr>
+        </script>
+
+        <script type="text/template" id="reading-pane">
+            <div class="well reading-pane">
+                <div class="subnav subnav-inverse">
+                    <ul class="nav nav-pills">
+                        {{! Only show Archive option if not archived and not deleted }}
+                        {{^archived}}{{^deleted}}
+                        <li><a class="archive" data-id="{{id}}"><i class="icon-white icon-inbox"></i>Archive</a></li>
+                        {{/deleted}}{{/archived}}
+                        {{#archived}}
+                        <li><a class="archive" data-id="{{id}}"><i class="icon-white icon-inbox"></i>Show In Inbox</a></li>
+                        {{/archived}}
+                        {{^deleted}}
+                        <li><a class="delete" data-id="{{id}}"><i class="icon-white icon-remove"></i>Delete</a></li>
+                        {{/deleted}}
+                        {{#deleted}}
+                        <li><a class="delete" data-id="{{id}}"><i class="icon-white icon-remove"></i>Restore</a></li>
+                        {{/deleted}}
+                        {{^isSpam}}
+                        <li><a class="spam" data-id="{{id}}"><i class="icon-white icon-warning-sign"></i>Mark As Spam</a></li>
+                        {{/isSpam}}
+                        {{#isSpam}}
+                        <li><a class="spam" data-id="{{id}}"><i class="icon-white icon-warning-sign"></i>Not Spam</a></li>
+                        {{/isSpam}}
+                    </ul>
+                </div>
+                <h5 class="pull-left">{{from}}</h5>
+                <h5 class="pull-right">{{received}}</h5>
+                <div class="clearfix"></div>
+                <h4>{{subject}}</h4>
+                {{#labels}}
+                    <span class="label label-{{type}}">{{name}}</span>
+                {{/labels}}
+                <hr />
+                <p>{{body}}</p>
+            </div>
+        </script>
+
+        <!-- jQuery -->
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+        <!-- Bootstrap -->
+        <script src="scripts/bootstrap.min.js"></script>
+        <!-- Keys.js -->
+        <script src="scripts/keys.min.js"></script>
+        <!-- Mustache -->
+        <script src="scripts/mustache.js"></script>
+        <!-- App -->
+        <script src="scripts/mail.js"></script>
+    </body>
+</html>
