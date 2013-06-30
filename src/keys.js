@@ -842,8 +842,15 @@
                                 .filter(validateHandler);
         // Log them
         tap(eventHandlers, debug, true /* only tap if Keys.debug == true */);
+        // If this event has handled, we will prevent the default behavior for this input event
+        var isHandled = eventHandlers.length > 0;
         // Execute them
         eventHandlers.forEach(execute);
+
+        if (isHandled) {
+            e.preventDefault();
+            return false;
+        }
 
         // A handler is valid if it handles the current event type and is either a global handler, 
         // or the current context is valid for a non-global handler
