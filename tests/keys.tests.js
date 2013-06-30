@@ -472,6 +472,7 @@ vows.describe('Keys.js').addBatch({
                         ctrlKey: false,
                         metaKey: false,
                         altKey: false,
+                        preventDefault: function() {},
                         stopImmediatePropagation: function() {}
                     });
                     return promise;
@@ -495,6 +496,7 @@ vows.describe('Keys.js').addBatch({
                         ctrlKey: false,
                         metaKey: false,
                         altKey: false,
+                        preventDefault: function() {},
                         stopImmediatePropagation: function() {}
                     });
                     return promise;
@@ -546,6 +548,7 @@ vows.describe('Keys.js').addBatch({
                             ctrlKey: true,
                             metaKey: true,
                             altKey: false,
+                            preventDefault: function() {},
                             stopImmediatePropagation: function() {}
                         });
                     };
