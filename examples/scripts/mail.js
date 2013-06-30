@@ -75,16 +75,6 @@
     };
 
     /**
-     * Determine if this string ends with the provided string
-     * @param  {string} s The string to test for
-     * @return {Boolean}
-     */
-    String.prototype.endsWith = function(s) {
-        if (!s || typeof s !== 'string') return false;
-        return this.indexOf(s) === this.length - s.length;
-    };
-
-    /**
      * Selects the first element from an array which has a value matching
      * the provided property/value pair, or if the property name is omitted,
      * the first element where the value matches the provided value.
