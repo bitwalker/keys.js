@@ -20,6 +20,27 @@
     };
 
     /**
+     *  Curry allows you to compose two functions into one monolithic function.
+     *  The arguments to the final function are applied from right to left.
+     *  
+     *  Example:
+     *      curry(f, g)(2) => f(g(2))
+     *
+     *  @param {function} f - The outer function
+     *  @param {function} g - The inner function
+     */
+    var curry = function(f, g) {
+        if (f && g) {
+            return function() {
+                var args   = Array.prototype.slice(arguments);
+                var result = g.apply(null, args);
+                return f.apply(null, [ result ]);
+            };
+        }
+        else throw new Error('Curry only accepts two functions.');
+    };
+
+    /**
      * Delay execution of a function by `ms` milliseconds.
      * @param  {Function} fn - The function to delay
      * @param  {[type]}   ms - The number of milliseconds to delay
@@ -257,7 +278,8 @@
                     new Email('Acme Company', [ Label.important, Label.work ], "We're going public!", '8:37 PM'),
                     new Email('Mom', [ Label.family ], "You haven't called in two weeks!!", '5:43 PM'),
                     new Email('Super Important Guy', [ Label.spam ], 'You really have to read this right away!', '5:00 PM')
-                ]
+                ],
+                currentItemId: -1
             },
             settings: {
                 virtualKeyboard: {
@@ -292,13 +314,13 @@
             };
 
             // Compile templates
-            this.templates.sidebar              = Mustache.compile($('#sidebar').html());
-            this.templates.alert                = Mustache.compile($('#alert').html());
-            this.templates.inbox.view           = Mustache.compile($('#inbox').html());
-            this.templates.inbox.email          = Mustache.compile($('#email').html());
-            this.templates.inbox.readingPane    = Mustache.compile($('#reading-pane').html());
-            this.templates.settings.view        = Mustache.compile($('#settings').html());
-            this.templates.settings.editBinding = Mustache.compile($('#edit-binding').html());
+            this.templates.sidebar                  = Mustache.compile($('#sidebar').html());
+            this.templates.alert                    = Mustache.compile($('#alert').html());
+            this.templates.inbox.view               = Mustache.compile($('#inbox').html());
+            this.templates.inbox.email              = Mustache.compile($('#email').html());
+            this.templates.inbox.readingPane        = Mustache.compile($('#reading-pane').html());
+            this.templates.settings.view            = Mustache.compile($('#settings').html());
+            this.templates.settings.editBinding     = Mustache.compile($('#edit-binding').html());
 
             // Handle hashchange for routing
             $(window).on('hashchange', function() { self.router(location.hash); });
@@ -332,20 +354,26 @@
             /**
              * Keyboard Shortcuts
              */
+            // Configure bindings with default values
             this.keybindings.add('goToInbox',     'Navigation: Go To Inbox',     new Combo(Key.I, Key.SHIFT));
             this.keybindings.add('goToArchive',   'Navigation: Go To Archive',   new Combo(Key.A, Key.SHIFT));
             this.keybindings.add('goToTrash',     'Navigation: Go To Trash',     new Combo(Key.T, Key.SHIFT));
             this.keybindings.add('goToSettings',  'Navigation: Go To Settings',  new Combo(Key.S, Key.SHIFT));
-            this.keybindings.add('moveUp',        'Inbox: Select Next',          new Combo(Key.Down));
-            this.keybindings.add('moveDown',      'Inbox: Select Previous',      new Combo(Key.Up));
+            this.keybindings.add('moveUp',        'Inbox: Select Previous',      new Combo(Key.Up));
+            this.keybindings.add('moveDown',      'Inbox: Select Next',          new Combo(Key.Down));
             this.keybindings.add('trash',         'Inbox: Send To Trash',        new Combo(Key.Backspace));
             this.keybindings.add('archive',       'Inbox: Send To Archive',      new Combo(Key.A, Key.CTRL));
             this.keybindings.add('spam',          'Inbox: Mark As Spam',         new Combo(Key.S, Key.CTRL));
-            // Configure bindings with default values
             // Bind behavior to bindings
             this.keybindings.registerHandler('goToInbox',    partial(this.route, this, '#/inbox'));
+            this.keybindings.registerHandler('goToArchive',  partial(this.route, this, '#/inbox/archived'));
+            this.keybindings.registerHandler('goToTrash',    partial(this.route, this, '#/inbox/trash'));
             this.keybindings.registerHandler('goToSettings', partial(this.route, this, '#/settings'));
-
+            this.keybindings.registerHandler('moveUp',       partial(this.selectPreviousItem, this));
+            this.keybindings.registerHandler('moveDown',     partial(this.selectNextItem, this));
+            this.keybindings.registerHandler('trash',        curry(partial(this.deleteMail, this),  partial(this.getCurrentItem, this)));
+            this.keybindings.registerHandler('archive',      curry(partial(this.archiveMail, this), partial(this.getCurrentItem, this)));
+            this.keybindings.registerHandler('spam',         curry(partial(this.markAsSpam, this),  partial(this.getCurrentItem, this)));
 
             this.refresh();
         },
@@ -356,6 +384,11 @@
 
         router: function(hash) {
             var self  = this;
+
+            // Reset currently selected item
+            this.state.inbox.currentItemId = -1;
+
+            // Parse hash for a matching route
             var route = null;
             for (var rule in this.routes) {
                 var rx = new RegExp('^' + rule + '$');
@@ -464,6 +497,47 @@
             return false;
         },
 
+        selectMail: function(id) {
+            if (id) {
+                this.state.inbox.currentItemId = id;
+                $('tr.email[data-id="' + id + '"]').trigger('click');
+            }
+        },
+
+        selectNextItem: function() {
+            if (this.state.inbox.currentItemId > -1) {
+                var current = $('tr.email[data-id="' + this.state.inbox.currentItemId + '"]');
+                var next = current.next();
+                if (next) {
+                    var id = next.data('id');
+                    this.selectMail(id);
+                }
+            }
+            else {
+                var id = $('tr.email').eq(0).data('id');
+                this.selectMail(id);
+            }
+        },
+
+        selectPreviousItem: function() {
+            if (this.state.inbox.currentItemId > -1) {
+                var current = $('tr.email[data-id="' + this.state.inbox.currentItemId + '"]');
+                var previous = current.prev();
+                if (previous) {
+                    var id = previous.data('id');
+                    this.selectMail(id);
+                }
+            }
+            else {
+                var id = $('tr.email').eq(0).data('id');
+                this.selectMail(id);
+            }
+        },
+
+        getCurrentItem: function() {
+            return this.state.inbox.currentItemId || -1;
+        },
+
         onMailSelected: function(element, e) {
             var id = element.data('id');
             // If there is no page specified
@@ -491,48 +565,54 @@
             e.preventDefault();
 
             var id = element.data('id');
+            this.deleteMail(id);
 
+            return false;
+        },
+
+        deleteMail: function(id) {
             this.state.inbox.emails.forEach(function(email) {
                 if (email.id == id) {
                     email.trash();
                 }
             });
-
             this.refresh();
-
-            return false;
         },
 
         onArchiveMail: function(element, e) {
             e.preventDefault();
 
             var id = element.data('id');
+            this.archiveMail(id);
 
+            return false;
+        },
+
+        archiveMail: function(id) {
             this.state.inbox.emails.forEach(function(email) {
                 if (email.id == id) {
                     email.archive();
                 }
             });
-
             this.refresh();
-
-            return false;
         },
 
         onMarkAsSpam: function(element, e) {
             e.preventDefault();
 
             var id = element.data('id');
+            this.markAsSpam(id);
 
+            return false;
+        },
+
+        markAsSpam: function(id) {
             this.state.inbox.emails.forEach(function(email) {
                 if (email.id == id) {
                     email.markSpam();
                 }
             });
-
             this.refresh();
-
-            return false;
         },
 
         showWelcome: function() {
@@ -583,7 +663,22 @@
             // Render content
             var viewModel = {
                 virtualKeyboard: this.state.settings.virtualKeyboard,
-                bindings:        this.keybindings.bindings
+                categories: [
+                    {
+                        name: 'Navigation',
+                        bindings: this.keybindings.bindings.filter(function(b) { return b.description.indexOf('Navigation:') > -1; }),
+                        strippedDescription: function() {
+                            return this.description.replace('Navigation: ', '');
+                        }
+                    },
+                    {
+                        name: 'Inbox',
+                        bindings: this.keybindings.bindings.filter(function(b) { return b.description.indexOf('Inbox:') > -1; }),
+                        strippedDescription: function() {
+                            return this.description.replace('Inbox: ', '');
+                        }
+                    }
+                ]
             };
             this.elements.view.html(this.templates.settings.view(viewModel));
 

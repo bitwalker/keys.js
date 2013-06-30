@@ -83,16 +83,19 @@
 
         <script type="text/template" id="settings">
             <h3>Configure Your Shortcuts!</h3>
-            <hr />
-            <dl class="dl-horizontal keybinding-list">
-                {{#bindings}}
-                    <dt>{{description}}</dt>
-                    <dd>
-                        <code>{{#combos}}{{.}}{{/combos}}</code>
-                        <a class="btn btn-success btn-small edit-binding" data-binding="{{name}}">Edit</a>
-                    </dd>
-                {{/bindings}}
-            </dl>
+            {{#categories}}
+                <h4>{{name}}</h4>
+                <hr />
+                <dl class="dl-horizontal keybinding-list">
+                    {{#bindings}}
+                        <dt>{{strippedDescription}}:</dt>
+                        <dd>
+                            <code>{{#combos}}{{.}}{{/combos}}</code>
+                            <a class="btn btn-success btn-small edit-binding" data-binding="{{name}}">Edit</a>
+                        </dd>
+                    {{/bindings}}
+                </dl>
+            {{/categories}}
         </script>
 
         <script type="text/template" id="edit-binding">
@@ -159,7 +162,9 @@
                             <li class="symbol"><span class="off">.</span><span class="on">&gt;</span></li>
                             <li class="symbol"><span class="off">/</span><span class="on">?</span></li>
                             <li class="right-shift lastitem">shift</li>
-                            <li class="space lastitem">spacebar</li>
+                            <li class="left-meta">meta</li>
+                            <li class="space">spacebar</li>
+                            <li class="right-meta lastitem">meta</li>
                         </ul>
                     </div>
 

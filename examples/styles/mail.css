@@ -74,8 +74,35 @@ div.subnav-inverse .nav > .active > a:hover {
   	}
 }
 
+.keybinding-list > dd {
+    position: relative;
+    top: -3px;
+    margin-left: 225px;
+}
+
+.keybinding-list > dt {
+    width: 200px;
+}
+
 .keybinding-list > dd, .keybinding-list > dt {
     margin-bottom: 15px;
+}
+
+.keybinding-list > dd > * {
+    float: left;
+}
+
+.keybinding-list > dd > .edit-binding {
+    line-height: 24px;
+}
+
+.keybinding-list > dd > code {
+    margin-right: 10px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    position: relative;
+    text-align: center;
+    min-width: 150px;
 }
 
 span.label-inverse {
@@ -155,6 +182,14 @@ div.modal-body {
 	width: 95px;
 }
 
+#keyboard .left-meta {
+    width: 100px;
+}
+
+#keyboard .right-meta {
+    width: 117px;
+}
+
 #keyboard .right-shift {
 	width: 109px;
 }
@@ -168,8 +203,7 @@ div.modal-body {
 }
 
 #keyboard .space {
-	clear: left;
-	width: 681px;
+	width: 450px;
 	color: transparent;
 }
 
@@ -183,12 +217,4 @@ div.modal-body {
 	left: 1px;
 	border-color: #e5e5e5;
 	cursor: pointer;
-}
-
-.keybinding-list code {
-    margin-right: 10px;
-    padding-top: 3px;
-    padding-bottom: 3px;
-    position: relative;
-    top: 1px;
 }
