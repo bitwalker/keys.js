@@ -3,6 +3,10 @@ layout: default
 title: Introduction
 ---
 
+## Demo
+
+For a quick view of the kind of functionality that Keys.js is intended to provide, check out the [demo application](examples/mail.html). It is a simulated web mail application with configurable keyboard shortcuts.
+
 ## Features
 
 - Define bindings with a name, and assign one or more keys or combinations of keys

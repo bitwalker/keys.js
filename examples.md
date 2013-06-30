@@ -5,6 +5,15 @@ title: Examples
 
 ## Examples
 
+#### Full Demo Application
+
+The full demo is a simulated web mail application with configurable keyboard shortcuts. View the source of mail.js to
+see how it was constructed. It should be noted that the architecture of the demo is simplistic and unscalable, but provides
+an easier environment to connect all the dots in one place. The code is fairly well documented, but if you have any questions,
+create an issue on GitHub and I will address it as soon as possible!
+
+[View Demo](examples/mail.html)
+
 #### Basic
 
 [View Demo](examples/basic.html)
