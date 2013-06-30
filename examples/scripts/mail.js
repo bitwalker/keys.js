@@ -528,7 +528,7 @@
 
         showWelcome: function() {
             this.state.showWelcomePopup = false;
-            var welcome = 'Demo Mail is an entirely keyboard driven mail application. Menus can be navigated by mouse or keyboard. To get started, CTRL+SHIFT+K!';
+            var welcome = 'Demo Mail is a keyboard-friendly mail application. Actions can all be peformed by mouse or keyboard. To get started, head to the Settings page to configure your shortcuts!';
             this.elements.view.prepend(this.templates.alert({ message: welcome }));
         },
 
