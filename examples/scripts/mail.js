@@ -74,7 +74,21 @@
         };
     };
 
-    // Data Classes
+    /**
+     * Generates an N-length random ID string composed of digits
+     * @param  {number} limit - The max length of the id
+     * @return {string}
+     */
+    function generateId(limit) {
+        limit = limit || 32;
+        var result = '';
+        while (result.length < limit) {
+            result = result + Math.random().toString(10).slice(2);
+        }
+        return result.slice(0, limit);
+    }
+
+    // View Model Classes
     function SidebarItem(page, name, isActive) {
         this.name = name;
         // If the page and the section name are the same, drop it from the url
@@ -90,33 +104,12 @@
         this.from       = from;
         this.labels     = labels || [];
         this.subject    = subject;
-        this.body       = loremIpsum();
+        this.body       = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum mauris. Maecenas congue ligula ac quam viverra nec consectetur ante hendrerit. Donec et mollis dolor. Praesent et diam eget libero egestas mattis sit amet vitae augue. Nam tincidunt congue enim, ut porta lorem lacinia consectetur. Donec ut libero sed arcu vehicula ultricies a non tortor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ut gravida lorem. Ut turpis felis, pulvinar a semper sed, adipiscing id dolor. Pellentesque auctor nisi id magna consequat sagittis. Curabitur dapibus enim sit amet elit pharetra tincidunt feugiat nisl imperdiet. Ut convallis libero in urna ultrices accumsan. Donec sed odio eros. Donec viverra mi quis quam pulvinar at malesuada arcu rhoncus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In rutrum accumsan ultricies. Mauris vitae nisi at sem facilisis semper ac in est.";
         this.received   = received;
         // These flags represent special email states
         this.archived   = false;
         this.deleted    = false;
         this.isSpam     = this.hasLabel(Label.spam);
-
-        // These flags represent the logical opposite of current state,
-        // and are there primarily to provide Mustache with a way to render
-        // conditional elements of related templates. This state is managed
-        // entirely by the Email class.
-        this.archivable = !this.archived && !this.deleted;
-        this.deletable  = !this.deleted;
-        this.markable   = !this.isSpam;
-
-        function generateId(limit) {
-            limit = limit || 32;
-            var result = '';
-            while (result.length < limit) {
-                result = result + Math.random().toString(10).slice(2);
-            }
-            return result.slice(0, limit);
-        }
-
-        function loremIpsum() {
-            return "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum mauris. Maecenas congue ligula ac quam viverra nec consectetur ante hendrerit. Donec et mollis dolor. Praesent et diam eget libero egestas mattis sit amet vitae augue. Nam tincidunt congue enim, ut porta lorem lacinia consectetur. Donec ut libero sed arcu vehicula ultricies a non tortor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ut gravida lorem. Ut turpis felis, pulvinar a semper sed, adipiscing id dolor. Pellentesque auctor nisi id magna consequat sagittis. Curabitur dapibus enim sit amet elit pharetra tincidunt feugiat nisl imperdiet. Ut convallis libero in urna ultrices accumsan. Donec sed odio eros. Donec viverra mi quis quam pulvinar at malesuada arcu rhoncus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In rutrum accumsan ultricies. Mauris vitae nisi at sem facilisis semper ac in est.";
-        }
     }
     Email.prototype.hasLabel = function(label) {
         for (var i = 0; i < this.labels.length; i++) {
@@ -138,33 +131,21 @@
     Email.prototype.trash = function() {
         if (this.deleted) {
             this.deleted = false;
-            this.deletable = true;
             this.archived = false;
-            this.archivable = true;
             this.removeLabel(Label.trash);
         }
         else {
             this.deleted = true;
-            this.deletable = false;
             this.archived = false;
-            this.archivable = false;
             this.addLabel(Label.trash);
         }
     };
     Email.prototype.archive = function() {
-        if (this.archived) {
-            this.archived = false;
-            this.archivable = true;
-        }
-        else {
-            this.archived = true;
-            this.archivable = false;
-        }
+        this.archived = !this.archived;
     };
     Email.prototype.markSpam = function() {
         if (this.hasLabel(Label.spam)) {
             this.removeLabel(Label.spam);
-            this.markable = true;
             this.isSpam = false;
             if (this.deleted) {
                 this.trash();
@@ -172,7 +153,6 @@
         }
         else {
             this.addLabel(Label.spam);
-            this.markable = false;
             this.isSpam = true;
             if (!this.deleted) {
                 this.trash();
@@ -196,10 +176,6 @@
     Label.work      = new Label('Work', 'default');
     Label.spam      = new Label('Spam', 'warning');
     Label.trash     = new Label('Trash', 'inverse');
-
-    function Alert(message) {
-        this.message = message;
-    }
 
     var App = {
 
@@ -290,25 +266,25 @@
             // Handle inbox search
             $('form.navbar-search').on('submit', eventHandler(this.onSearch, this));
             // Handle inbox item selection
-            this.elements.view.on('click', '.email', eventHandler(this.onMailSelected, this));
+            this.elements.view.on('click', '.email',                 eventHandler(this.onMailSelected, this));
             // Handle deletion
-            this.elements.view.on('click', '.reading-pane .delete', eventHandler(this.onDeleteMail, this));
+            this.elements.view.on('click', '.reading-pane .delete',  eventHandler(this.onDeleteMail, this));
             // Handle archival
             this.elements.view.on('click', '.reading-pane .archive', eventHandler(this.onArchiveMail, this));
             // Handle mark as spam
-            this.elements.view.on('click', '.reading-pane .spam', eventHandler(this.onMarkAsSpam, this));
+            this.elements.view.on('click', '.reading-pane .spam',    eventHandler(this.onMarkAsSpam, this));
 
             /**
              * Settings Behavior
              */
             // Open edit binding modal
-            this.elements.view.on('click', '.edit-binding', eventHandler(this.onEditKeybinding, this));
+            this.elements.view.on('click', '.edit-binding',                     eventHandler(this.onEditKeybinding, this));
             // Reset virtual keyboard state on cancel
             this.elements.view.on('click', '#editbinding button[data-dismiss]', eventHandler(this.onCancelEdit, this));
             // Reset binding selection during edit
-            this.elements.view.on('click', '#editbinding button[data-reset]', eventHandler(this.onResetBinding, this));
+            this.elements.view.on('click', '#editbinding button[data-reset]',   eventHandler(this.onResetBinding, this));
             // Save binding selection during edit
-            this.elements.view.on('click', '#editbinding button[data-save]', eventHandler(this.onSaveBinding, this));
+            this.elements.view.on('click', '#editbinding button[data-save]',    eventHandler(this.onSaveBinding, this));
 
             /**
              * Keyboard Shortcuts
@@ -444,6 +420,11 @@
             return false;
         },
 
+        onMailSelected: function(element, e) {
+            var id = element.data('id').toString();
+            this.selectMail(id);
+        },
+
         selectMail: function(id) {
             if (id) {
                 this.state.inbox.currentItemId = id;
@@ -486,11 +467,6 @@
 
         getCurrentItem: function() {
             return this.state.inbox.currentItemId || -1;
-        },
-
-        onMailSelected: function(element, e) {
-            var id = element.data('id').toString();
-            this.selectMail(id);
         },
 
         onDeleteMail: function(element, e) {
@@ -553,7 +529,7 @@
         showWelcome: function() {
             this.state.showWelcomePopup = false;
             var welcome = 'Demo Mail is an entirely keyboard driven mail application. Menus can be navigated by mouse or keyboard. To get started, CTRL+SHIFT+K!';
-            this.elements.view.prepend(this.templates.alert(new Alert(welcome)));
+            this.elements.view.prepend(this.templates.alert({ message: welcome }));
         },
 
         readMail: function(id) {

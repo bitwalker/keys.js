@@ -213,21 +213,22 @@
             <div class="well reading-pane">
                 <div class="subnav subnav-inverse">
                     <ul class="nav nav-pills">
-                        {{#archivable}}
+                        {{! Only show Archive option if not archived and not deleted }}
+                        {{^archived}}{{^deleted}}
                         <li><a class="archive" data-id="{{id}}"><i class="icon-white icon-inbox"></i>Archive</a></li>
-                        {{/archivable}}
+                        {{/deleted}}{{/archived}}
                         {{#archived}}
                         <li><a class="archive" data-id="{{id}}"><i class="icon-white icon-inbox"></i>Show In Inbox</a></li>
                         {{/archived}}
-                        {{#deletable}}
+                        {{^deleted}}
                         <li><a class="delete" data-id="{{id}}"><i class="icon-white icon-remove"></i>Delete</a></li>
-                        {{/deletable}}
+                        {{/deleted}}
                         {{#deleted}}
                         <li><a class="delete" data-id="{{id}}"><i class="icon-white icon-remove"></i>Restore</a></li>
                         {{/deleted}}
-                        {{#markable}}
+                        {{^isSpam}}
                         <li><a class="spam" data-id="{{id}}"><i class="icon-white icon-warning-sign"></i>Mark As Spam</a></li>
-                        {{/markable}}
+                        {{/isSpam}}
                         {{#isSpam}}
                         <li><a class="spam" data-id="{{id}}"><i class="icon-white icon-warning-sign"></i>Not Spam</a></li>
                         {{/isSpam}}
