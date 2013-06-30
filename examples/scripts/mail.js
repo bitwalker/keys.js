@@ -279,7 +279,7 @@
                     new Email('Mom', [ Label.family ], "You haven't called in two weeks!!", '5:43 PM'),
                     new Email('Super Important Guy', [ Label.spam ], 'You really have to read this right away!', '5:00 PM')
                 ],
-                currentItemId: -1
+                currentItemId: null
             },
             settings: {
                 virtualKeyboard: {
@@ -305,11 +305,8 @@
             this.routes = {
                 'default':               this.showInbox,
                 '#/inbox':               this.showInbox,
-                '#/inbox/\\d+':          this.showInbox,
                 '#/inbox/\\w+':          this.showInbox,
-                '#/inbox/\\w+/\\d+':     this.showInbox,
-                '#/search/read/.+/\\d+': this.searchInbox,
-                '#/search/.+':           partial(this.searchInbox, this, 'search'),
+                '#/search/.+':           this.searchInbox,
                 '#/settings':            this.showSettings
             };
 
@@ -379,14 +376,14 @@
         },
 
         route: function(hash) {
+            // Reset currently selected item
+            this.state.inbox.currentItemId = null;
+            // Route to new location
             window.location.hash = hash;
         },
 
         router: function(hash) {
             var self  = this;
-
-            // Reset currently selected item
-            this.state.inbox.currentItemId = -1;
 
             // Parse hash for a matching route
             var route = null;
@@ -430,12 +427,8 @@
          * Inbox Page
          */
 
-        showInbox: function(inboxType, emailId) {
-            // If no inbox type was selected, but a message id was passed in, rearrange the params
-            if (/[\d]+/.test(inboxType)) {
-                emailId = inboxType;
-                inboxType = '';
-            }
+        showInbox: function(inboxType) {
+            if (!inboxType) inboxType = '';
 
             // Render Inbox
             var emails = this.getMail(inboxType);
@@ -444,11 +437,6 @@
             // Show welcome popup
             if (this.state.showWelcomePopup) {
                 this.showWelcome();
-            }
-
-            // Display an email if an email id was provided
-            if (emailId) {
-                this.readMail(emailId);
             }
 
             // Render sidebar
@@ -465,16 +453,12 @@
             this.elements.navSettings.removeClass('active');
         },
 
-        searchInbox: function(action, query, emailId) {
+        searchInbox: function(query) {
             // Render Inbox
             var emails = this.getMail(function(email) {
                 return email.subject.indexOf(query) > -1 || email.body.indexOf(query) > -1 || email.from.indexOf(query) > -1;
             });
             this.elements.view.html(this.templates.inbox.view(emails));
-
-            if (action === 'read' && emailId) {
-                this.readMail(emailId);
-            }
 
             // Render sidebar
             this.renderSidebar({
@@ -492,6 +476,7 @@
 
         onSearch: function(element, e) {
             e.preventDefault();
+            this.state.inbox.currentItemId = null;
             var query = this.elements.query.val();
             location.hash = '#/search/' + encodeURIComponent(query);
             return false;
@@ -500,36 +485,39 @@
         selectMail: function(id) {
             if (id) {
                 this.state.inbox.currentItemId = id;
-                $('tr.email[data-id="' + id + '"]').trigger('click');
+                $('tr.email[data-id="' + id + '"]').addClass('selected');
+                this.readMail(id);
             }
         },
 
         selectNextItem: function() {
-            if (this.state.inbox.currentItemId > -1) {
+            if (this.state.inbox.currentItemId) {
                 var current = $('tr.email[data-id="' + this.state.inbox.currentItemId + '"]');
                 var next = current.next();
-                if (next) {
-                    var id = next.data('id');
+                if (next.length) {
+                    current.removeClass('selected');
+                    var id = next.data('id').toString();
                     this.selectMail(id);
                 }
             }
             else {
-                var id = $('tr.email').eq(0).data('id');
+                var id = $('tr.email').eq(0).data('id').toString();
                 this.selectMail(id);
             }
         },
 
         selectPreviousItem: function() {
-            if (this.state.inbox.currentItemId > -1) {
+            if (this.state.inbox.currentItemId) {
                 var current = $('tr.email[data-id="' + this.state.inbox.currentItemId + '"]');
                 var previous = current.prev();
-                if (previous) {
-                    var id = previous.data('id');
+                if (previous.length) {
+                    var id = previous.data('id').toString();
+                    current.removeClass('selected');
                     this.selectMail(id);
                 }
             }
             else {
-                var id = $('tr.email').eq(0).data('id');
+                var id = $('tr.email').eq(0).data('id').toString();
                 this.selectMail(id);
             }
         },
@@ -539,26 +527,8 @@
         },
 
         onMailSelected: function(element, e) {
-            var id = element.data('id');
-            // If there is no page specified
-            if (!location.hash.split('/').slice(1).length) {
-                location.hash = '#/inbox/' + id;
-            }
-            else {
-                // If we're already reading an email
-                if (/[\d]+$/.test(location.hash)) {
-                    location.hash = location.hash.replace(/[\d]+$/, id);
-                }
-                else {
-                    // If we're searching, then change the action to read
-                    if (/#\/search/.test(location.hash)) {
-                        location.hash = location.hash.replace(/#\/search\//, '#/search/read/') + '/' + id;
-                    }
-                    else {
-                        location.hash = location.hash + '/' + id;
-                    }
-                }
-            }
+            var id = element.data('id').toString();
+            this.selectMail(id);
         },
 
         onDeleteMail: function(element, e) {
@@ -576,6 +546,7 @@
                     email.trash();
                 }
             });
+            this.state.inbox.currentItemId = null;
             this.refresh();
         },
 
@@ -594,6 +565,7 @@
                     email.archive();
                 }
             });
+            this.state.inbox.currentItemId = null;
             this.refresh();
         },
 
@@ -612,6 +584,7 @@
                     email.markSpam();
                 }
             });
+            this.state.inbox.currentItemId = null;
             this.refresh();
         },
 
@@ -627,7 +600,7 @@
                 else return false;
             });
             if (email.length) {
-                this.elements.view.append(this.templates.inbox.readingPane(email[0]));
+                this.elements.view.find('#read').html(this.templates.inbox.readingPane(email[0]));
             }
         },
 
