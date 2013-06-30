@@ -1,5 +1,7 @@
 # Keys.js
 
+For a quick look at the kind of solution that Keys.js is intended to provide, check out the [demo application](http://bitwalker.github.io/keys.js/examples/mail.html).
+
 This project spawned out of a Chrome extension I was working on where I kept handling more and more key combinations for shortcut actions, until it eventually became an unmaintainable rats nest. Obviously I needed a solution, and Keys.js was born.
 
 ## Status
