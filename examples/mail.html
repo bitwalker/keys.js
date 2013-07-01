@@ -21,14 +21,14 @@
                     </button>
                     <a class="brand" href="#">Demo Mail</a>
                     <div class="nav-collapse collapse">
+                        <form class="navbar-search pull-right">
+                          <input type="text" class="search-query" placeholder="Search">
+                        </form>
                         <ul class="nav">
                             <li class="nav-inbox active"><a href="#/inbox">Inbox</a></li>
                             <li class="nav-settings"><a href="#/settings">Settings</a></li>
                         </ul>
                     </div><!--/.nav-collapse -->
-                    <form class="navbar-search pull-right">
-                      <input type="text" class="search-query" placeholder="Search">
-                    </form>
                 </div>
             </div>
         </div>
@@ -60,7 +60,7 @@
                     <tr>
                         <th class="inbox-from">From</th>
                         <th>Subject</th>
-                        <th>Received</th>
+                        <th class="hidden-phone">Received</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -71,9 +71,9 @@
                             {{#labels}}
                                 <span class="label label-{{type}}">{{name}}</span>
                             {{/labels}}
-                            {{subject}}
+                            <p>{{subject}}</p>
                         </td>
-                        <td>{{received}}</td>
+                        <td class="hidden-phone">{{received}}</td>
                     </tr>
                     {{/emails}}
                 </tbody>
