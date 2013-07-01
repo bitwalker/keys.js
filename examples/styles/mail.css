@@ -17,8 +17,12 @@ th.inbox-from {
     width: 200px;
 }
 
+tr.selected {
+    border-left: solid 1px;
+}
+
 tr.selected > td {
-    background-color: rgba(150, 255, 150, 0.5);
+    background-color: #eee !important;
 }
 
 td > p {
