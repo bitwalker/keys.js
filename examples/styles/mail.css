@@ -17,6 +17,10 @@ th.inbox-from {
     width: 200px;
 }
 
+tr.selected > td {
+    background-color: rgba(150, 255, 150, 0.5);
+}
+
 td > p {
 	display: inline-block;
 	margin-left: 10px;
