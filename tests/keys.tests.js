@@ -458,6 +458,30 @@ vows.describe('Keys.js').addBatch({
                     }
                 }
             },
+            "Handlers are passed the event object": {
+                topic: function(context) {
+                    var promise = new(events.EventEmitter);
+                    context.bindings.add('shiftA', new Combo(Key.A, Key.SHIFT));
+                    context.bindings.registerHandler('shiftA', function(event) {
+                      if (event && event.keyCode == Key.A.code) promise.emit('success');
+                      else promise.emit('error')
+                    });
+                    context.document.keydown({
+                        type: 'keydown',
+                        which: Key.A.code,
+                        shiftKey: true,
+                        ctrlKey: false,
+                        metaKey: false,
+                        altKey: false,
+                        preventDefault: function() {},
+                        stopImmediatePropagation: function() {}
+                    });
+                    return promise;
+                },
+                "The event object was passed to the handler": function(result, err) {
+                  assert.isTrue(typeof err === 'undefined' || err === null);
+                }
+            },
             "Registering a handler with no eventType, defaults to keydown": {
                 topic: function(context) {
                     var promise = new(events.EventEmitter);

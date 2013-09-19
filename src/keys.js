@@ -845,7 +845,10 @@
         // If this event has handled, we will prevent the default behavior for this input event
         var isHandled = eventHandlers.length > 0;
         // Execute them
-        eventHandlers.forEach(execute);
+
+        eventHandlers.forEach(function (h) {
+            h.handler.call(null, e); // pass along the event to the handler
+        });
 
         if (isHandled) {
             e.preventDefault();
