@@ -464,10 +464,9 @@ vows.describe('Keys.js').addBatch({
                     context.bindings.add('shiftA', new Combo(Key.A, Key.SHIFT));
                     context.bindings.registerHandler('shiftA', function(event) {
                       if (event && event.keyCode == Key.A.code) promise.emit('success');
-                      else promise.emit('error')
+                      else promise.emit('error', event)
                     });
                     context.document.keydown({
-                        type: 'keydown',
                         which: Key.A.code,
                         shiftKey: true,
                         ctrlKey: false,
@@ -529,6 +528,80 @@ vows.describe('Keys.js').addBatch({
                     assert.isTrue(typeof err === 'undefined' || err === null);
                 }
             },
+            "Can unregister a handler": {
+                topic: function(context) {
+                    context.bindings.add('shiftB', new Combo(Key.B, Key.SHIFT));
+                    context.bindings.registerHandler('shiftB', 'keyup', function() {  });
+                    return context
+                },
+                "with the same arguments as registration": {
+                  topic: function(context) {
+                    context.bindings.unregisterHandler('shiftB', 'keyup', function() { } );
+                    
+                    return context;
+                  },
+                  "successfully": function(context) {
+                    var matches = [];
+                    context.bindings.handlers.forEach(function(h) { 
+                      if (h.name == 'shiftB') matches.push(h);
+                    })
+                    
+                    assert.isEmpty(matches);
+                  }
+                },
+                "with just the name and event arguments": {
+                  topic: function(context) {
+                    context.bindings.unregisterHandler('shiftB', 'keyup');
+                    return context;
+                  },
+                  "successfully": function(context) {
+                    var matches = [];
+                    context.bindings.handlers.forEach(function(h) { 
+                      if (h.name == 'shiftB') matches.push(h);
+                    })
+                    
+                    assert.isEmpty(matches);
+                  }
+                },
+                "with just the name": {
+                  topic: function(context) {
+                    var old = context.bindings.length;
+                    context.bindings.unregisterHandler('shiftB');
+                    return context;
+                  },
+                  "successfully": function(context) {
+                    var matches = [];
+                    context.bindings.handlers.forEach(function(h) { 
+                      if (h.name == 'shiftB') matches.push(h);
+                    })
+                    
+                    assert.isEmpty(matches);
+                  }
+                }
+            },
+            
+            "Handler registration is preserved": {
+                topic: function(context) {
+                    context.bindings.add('shiftA', new Combo(Key.A, Key.SHIFT));
+                    context.bindings.registerHandler('shiftA', 'keyup', function() {  });
+                    return context
+                },
+                "if arguments are slightly different": {
+                  topic: function(context) {
+                    context.bindings.unregisterHandler('shiftA', 'keydown', function() { } );
+                    return context;
+                  },
+                  "successfully": function(context) {
+                    var matches = [];
+                    context.bindings.handlers.forEach(function(h) { 
+                      if (h.name == 'shiftA') matches.push(h);
+                    })
+                    
+                    assert.isNotEmpty(matches);
+                  }
+                }
+            },
+            
             "Can register a toggle": {
                 topic: function(context) {
                     var promise = new(events.EventEmitter);
