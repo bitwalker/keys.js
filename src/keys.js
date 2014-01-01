@@ -845,7 +845,10 @@
         // If this event has handled, we will prevent the default behavior for this input event
         var isHandled = eventHandlers.length > 0;
         // Execute them
-        eventHandlers.forEach(execute);
+
+        eventHandlers.forEach(function (h) {
+            h.handler.call(null, e); // pass along the event to the handler
+        });
 
         if (isHandled) {
             e.preventDefault();
@@ -880,7 +883,7 @@
     /**
      * Re-enable Keys.js or a specific binding or bindings,
      * depending on the number of arguments. None will re-enable
-     * Key.js if it is currently disabled. One or more will re-enable
+     * Key.js if it is currently matched. One or more will re-enable
      * each of the bindings matched by the names provided.
      *
      * @memberOf Bindings
@@ -1196,6 +1199,121 @@
         });
         log('Bindings.registerHandler: Handler `' + bindingName + '` ' + (isGlobal ? 'globally' : '') + ' registered for `' + eventType + '` events.');
     };
+
+
+    /**
+     * Unregister a handler for for a combo
+     *
+     * @memberOf Bindings
+     * @instance
+     * @param  {string} bindingName - The name of the binding to unregister
+     * @param  {string} eventType   - (optional) Either keyup or keydown, depending on needs
+     * @param  {function} handler   - The function to call when the Combo is executed.
+     * @param  {Boolean} isGlobal   - (optional) True to execute the handler regardless of context, false to prevent execution when in the context of an input control. Defaults to false.
+     * @example
+     *      function displayAlert() { alert('Hello!'); }
+     *      bindings.unregisterHandler('displayAlert', displayAlert);
+     *      // unregister displayAlert handler with that function
+     *      bindings.unregisterHandler('keyup', 'displayAlert');
+     *      // unregister all handlers with this name
+     *      bindings.unregisterHandler('displayAlert');
+     */
+    Bindings.prototype.unregisterHandler = function(bindingName, eventType, handler, isGlobal) {
+        var matches = [];
+      
+        // unregisterHandler(displayAlert)
+        if (arguments.length === 1 && typeof bindingName === 'function') {
+            handler     = bindingName;
+            bindingName = handler.name;
+            eventType   = 'keydown';
+            
+            this.handlers.forEach(function(handler) {
+                if (handler.name === bindingName && handler.handler == handler) matches.push(handler);
+            });
+            
+        }
+        else if (arguments.length === 1 && typeof bindingName === 'string') {
+            this.handlers.forEach(function(handler) {
+                if (handler.name === bindingName) matches.push(handler);
+            });
+        }
+        
+        // unregisterHandler(displayAlert, true)
+        if (arguments.length === 2 && typeof bindingName === 'function') {
+            handler     = bindingName;
+            bindingName = handler.name;
+            isGlobal    = eventType || false;
+            eventType   = 'keydown';
+            
+            this.handlers.forEach(function(handler) {
+                if ((handler.name === bindingName) && (handler.eventType == eventType) && (handler.handler == handler) && (handler.isGlobal == (isGlobal || false))) {
+                  matches.push(handler);
+                }
+            });
+        }
+        // unregisterHandler('keyup', displayAlert) or registerHandler('showAlert', function() { .. });
+        else if (arguments.length === 2 && typeof eventType === 'function') {
+            // Inferred bindingName
+            if (bindingName === 'keyup' || bindingName === 'keydown' || bindingName === 'keypress') {
+                handler     = eventType;
+                eventType   = bindingName;
+                bindingName = handler.name;
+            }
+            // Inferred eventType
+            else {
+                handler   = eventType;
+                eventType = 'keydown';
+            }
+            this.handlers.forEach(function(handler) {
+                if ((handler.name === bindingName) && (handler.eventType == eventType) && (handler.handler.name == handler.name) && (handler.isGlobal == (isGlobal || false))) {
+                  matches.push(handler);
+                }
+            });
+            
+        }
+        // registerHandler('displayAlert', function() { .. }, true|false) or registerHandler('keyup', displayAlert, true|false)
+        else if (arguments.length === 3 && typeof eventType === 'function') {
+            // Inferred bindingName
+            if (bindingName === 'keyup' || bindingName === 'keydown' || bindingName === 'keypress') {
+                isGlobal    = handler || false;
+                handler     = eventType;
+                eventType   = bindingName;
+                bindingName = handler.name;
+            }
+            // Inferred eventType
+            else {
+                isGlobal  = handler || false;
+                handler   = eventType;
+                eventType = 'keydown';
+            }
+            this.handlers.forEach(function(handler) {
+                if ((handler.name === bindingName) && (handler.eventType === eventType) && (handler.handler.name === handler.name) && (handler.isGlobal === (isGlobal || false))) {
+                  matches.push(handler);
+                }
+            });
+        }
+        
+        else if (arguments.length === 3 && typeof handler === 'function') {
+          this.handlers.forEach(function(handler) {
+              if ( (handler.name === bindingName) && (handler.eventType === eventType) && (handler.handler.name === handler.name) ) {
+                matches.push(handler);
+              }
+          });
+        }
+
+        var found;
+        var _this = this;
+        
+        matches.forEach(function(handler) {
+          _this.handlers.splice(_this.handlers.indexOf(handler), 1);
+          log('Bindings.registerHandler: Handler `' + handler.name + '` ' + (handler.isGlobal ? 'globally' : '') + ' unregistered for `' + handler.eventType + '` events.');
+        });
+        
+        return (matches.length > 0);
+    };
+    
+    
+    
 
     /**
      * For easier initialization, allow binding a group of handlers at one time using object notation
