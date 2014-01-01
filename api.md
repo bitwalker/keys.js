@@ -54,9 +54,20 @@ var displayAlert = function() { alert('Hello!'); };
 // Inferred binding name and eventType syntax
 bindings.registerHandler(displayAlert);
 // Inferred eventType syntax
-bindings.registerHandler('displayAlert', function() { alert('Hello!'); });
+bindings.registerHandler('displayAlert', function(ev) { alert('Hello!'); });
 // Full syntax
-bindings.registerHandler('displayAlert', 'keypress', function() { alert('Hello!'); });
+bindings.registerHandler('displayAlert', 'keypress', function(ev) { alert('Hello!'); });
+{% endhighlight %}
+
+You can unregister a handler using `Bindings.unregisterHandler`.
+
+{% highlight javascript %}
+// Unregister handler for a given name/function pair
+bindings.unregisterHandler('displayAlert', displayAlert);
+// Unregister handler for a specific event
+bindings.unregisterHandler('keyup', 'displayAlert');
+// Unregister all handlers with a given name
+bindings.unregisterHandler('displayAlert');
 {% endhighlight %}
 
 If you have toggle-like behavior you'd like to implement, you are in luck! Register your toggle using `registerToggle`:
