@@ -290,7 +290,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 1068
+        keys.js, line 1078
     </li></ul></dd>
     
     
@@ -407,7 +407,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 1326
+        keys.js, line 1451
     </li></ul></dd>
     
     
@@ -527,7 +527,7 @@ each of the bindings matched by the names provided.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 932
+        keys.js, line 942
     </li></ul></dd>
     
     
@@ -565,7 +565,7 @@ each of the bindings matched by the names provided.</p>
     <div class="description">
         <p>Re-enable Keys.js or a specific binding or bindings,
 depending on the number of arguments. None will re-enable
-Key.js if it is currently disabled. One or more will re-enable
+Key.js if it is currently matched. One or more will re-enable
 each of the bindings matched by the names provided.</p>
     </div>
     
@@ -647,7 +647,7 @@ each of the bindings matched by the names provided.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 883
+        keys.js, line 893
     </li></ul></dd>
     
     
@@ -764,7 +764,7 @@ each of the bindings matched by the names provided.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 977
+        keys.js, line 987
     </li></ul></dd>
     
     
@@ -903,7 +903,7 @@ each of the bindings matched by the names provided.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 1354
+        keys.js, line 1479
     </li></ul></dd>
     
     
@@ -1089,7 +1089,7 @@ each of the bindings matched by the names provided.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 1129
+        keys.js, line 1139
     </li></ul></dd>
     
     
@@ -1249,7 +1249,7 @@ each of the bindings matched by the names provided.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 1219
+        keys.js, line 1344
     </li></ul></dd>
     
     
@@ -1454,7 +1454,7 @@ each of the bindings matched by the names provided.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 1276
+        keys.js, line 1401
     </li></ul></dd>
     
     
@@ -1523,7 +1523,7 @@ each of the bindings matched by the names provided.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 1313
+        keys.js, line 1438
     </li></ul></dd>
     
     
@@ -1570,6 +1570,202 @@ each of the bindings matched by the names provided.</p>
     
 </dd>
 
+        
+            
+<dt>
+    <h4 class="name" id="unregisterHandler"><span class="type-signature"></span>unregisterHandler<span class="signature">(bindingName, eventType, handler, isGlobal)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Unregister a handler for for a combo</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>bindingName</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>The name of the binding to unregister</p></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>eventType</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>(optional) Either keyup or keydown, depending on needs</p></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>handler</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>The function to call when the Combo is executed.</p></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>isGlobal</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>(optional) True to execute the handler regardless of context, false to prevent execution when in the context of an input control. Defaults to false.</p></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        keys.js, line 1221
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>     function displayAlert() { alert('Hello!'); }
+     bindings.unregisterHandler('displayAlert', displayAlert);
+     // unregister displayAlert handler with that function
+     bindings.unregisterHandler('keyup', 'displayAlert');
+     // unregister all handlers with this name
+     bindings.unregisterHandler('displayAlert');</code></pre>
+
+    
+</dd>
+
         </dl>
     
     
@@ -1592,7 +1788,7 @@ each of the bindings matched by the names provided.</p>
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a> on Fri Jun 28 2013 13:32:45 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a> on Wed Jan 01 2014 13:01:26 GMT-0600 (CST)
 </footer>
 
 <script> prettyPrint(); </script>
