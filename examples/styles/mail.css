@@ -3,14 +3,14 @@ body {
 }
 
 @media (max-width: 979px) {
-	body {
-		padding-top: 0;
-	}
+  body {
+    padding-top: 0;
+  }
 }
 
 form.navbar-search {
-	border: none !important;
-	box-shadow: none !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 th.inbox-from {
@@ -30,87 +30,88 @@ tr.selected > td {
 }
 
 td > p {
-	display: inline-block;
-	margin-left: 10px;
+  display: inline-block;
+  margin-left: 10px;
 }
 
 @media (max-width: 767px) {
-	th.inbox-from {
-		width: 50px;
-	}
-	td > p {
-		display: block;
-		margin-left: 0;
-		margin-bottom: 0;
-		margin-top: 10px;
-	}
+  th.inbox-from {
+    width: 50px;
+  }
+  td > p {
+    display: block;
+    margin-left: 0;
+    margin-bottom: 0;
+    margin-top: 10px;
+  }
+}
 
 td > span.label:last-child {
     margin-right: 10px;
 }
 
 .reading-pane {
-	padding-top: 60px;
-	position: relative;
+  padding-top: 60px;
+  position: relative;
 }
 
 .reading-pane h4 {
-	margin-top: 0;
-	margin-bottom: 15px;
+  margin-top: 0;
+  margin-bottom: 15px;
 }
 
 .reading-pane h5 {
-	margin-top: 0;
+  margin-top: 0;
 }
 
 .reading-pane hr {
-	margin-top: 10px;
-	margin-bottom: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .reading-pane .subnav {
-	padding-left: 0px;
-	padding-right: 0px;
-	position: absolute;
-	top: 15px;
-	left: 0;
-	height: 36px;
-	width: 100%;
+  padding-left: 0px;
+  padding-right: 0px;
+  position: absolute;
+  top: 15px;
+  left: 0;
+  height: 36px;
+  width: 100%;
 }
 
 .reading-pane .subnav i {
-	padding-right: 5px;
-	position: relative;
-	top: 1px;
+  padding-right: 5px;
+  position: relative;
+  top: 1px;
 }
 
 div.subnav-inverse {
-  	background-color: #45a1de;
-  	background-image: linear-gradient(to bottom,#3498db,#5faee3);
-  	border-radius: 0px;
+    background-color: #45a1de;
+    background-image: linear-gradient(to bottom,#3498db,#5faee3);
+    border-radius: 0px;
 }
 
 div.subnav-inverse .nav > li > a {
-	color: #ecf0f1;
-	border-radius: 0px;
+  color: #ecf0f1;
+  border-radius: 0px;
 }
 
 div.subnav-inverse .nav > li > a:hover {
-  	color: #ecf0f1;
-  	background-color: #45a1de;
+    color: #ecf0f1;
+    background-color: #45a1de;
 }
 
 div.subnav-inverse .nav > .active > a,
 div.subnav-inverse .nav > .active > a:hover {
-  	color: #ecf0f1;
-  	background-color: #45a1de;
+    color: #ecf0f1;
+    background-color: #45a1de;
 }
 
 @media (max-width: 767px) {
-  	div.subnav-inverse .nav > li:first-child > a:hover,
-  	div.subnav-inverse .nav > li + li > a:hover {
-	  	background-color: #45a1de;
-  	}
+    div.subnav-inverse .nav > li:first-child > a:hover,
+    div.subnav-inverse .nav > li + li > a:hover {
+      background-color: #45a1de;
+    }
 }
 
 .keybinding-list > dd {
@@ -145,35 +146,35 @@ div.subnav-inverse .nav > .active > a:hover {
 }
 
 @media (max-width: 767px) {
-	.keybinding-list > dt {
-		width: 150px;
-		float: left;
-		clear: left;
-	}
-	.keybinding-list > dd {
-		margin-left: 0px;
-	}
-	.keybinding-list > dd > .edit-binding {
-		display: none !important;
-	}
+  .keybinding-list > dt {
+    width: 150px;
+    float: left;
+    clear: left;
+  }
+  .keybinding-list > dd {
+    margin-left: 0px;
+  }
+  .keybinding-list > dd > .edit-binding {
+    display: none !important;
+  }
 }
 
 span.label-inverse {
-	background-color: #2c2c2c;
+  background-color: #2c2c2c;
 }
 
 div.editbinding-modal {
-	width: 718px;
-	margin-left: -359px;
+  width: 718px;
+  margin-left: -359px;
 }
 
 div.editbinding-modal .form-horizontal .control-group {
-	margin-bottom: 0px;
+  margin-bottom: 0px;
 }
 
 div.editbinding-modal .form-horizontal .control-label {
-	padding-top: 0px;
-	line-height: 36px;
+  padding-top: 0px;
+  line-height: 36px;
 }
 
 div.modal-body {
@@ -185,29 +186,29 @@ div.modal-body {
 }
 
 .keyboard-container {
-	height: 250px;
+  height: 250px;
 }
 
 #keyboard {
-	margin: 0;
-	padding: 0;
-	list-style: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 #keyboard li {
-	color: #fff;
-	float: left;
-	margin: 0 5px 5px 0;
-	width: 40px;
-	height: 40px;
-	line-height: 40px;
-	text-align: center;
-	background-color: #33485d;
-	background-image: linear-gradient(top bottom,#2c3e50,#3e5771);
-	border: 1px solid #000;
-	border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
+  color: #fff;
+  float: left;
+  margin: 0 5px 5px 0;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  background-color: #33485d;
+  background-image: linear-gradient(top bottom,#2c3e50,#3e5771);
+  border: 1px solid #000;
+  border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
 }
 
 #keyboard li.active {
@@ -216,23 +217,23 @@ div.modal-body {
 }
 
 .capslock, .tab, .left-shift {
-	clear: left;
+  clear: left;
 }
 
 #keyboard .tab, #keyboard .delete {
-	width: 70px;
+  width: 70px;
 }
 
 #keyboard .ctrl {
-	width: 80px;
+  width: 80px;
 }
 
 #keyboard .return {
-	width: 77px;
+  width: 77px;
 }
 
 #keyboard .left-shift {
-	width: 95px;
+  width: 95px;
 }
 
 #keyboard .left-meta {
@@ -244,30 +245,30 @@ div.modal-body {
 }
 
 #keyboard .right-shift {
-	width: 109px;
+  width: 109px;
 }
 
 .lastitem {
-	margin-right: 0;
+  margin-right: 0;
 }
 
 .uppercase {
-	text-transform: uppercase;
+  text-transform: uppercase;
 }
 
 #keyboard .space {
-	width: 450px;
-	color: transparent;
+  width: 450px;
+  color: transparent;
 }
 
 .on {
-	display: none;
+  display: none;
 }
 
 #keyboard li:hover {
-	position: relative;
-	top: 1px;
-	left: 1px;
-	border-color: #e5e5e5;
-	cursor: pointer;
+  position: relative;
+  top: 1px;
+  left: 1px;
+  border-color: #e5e5e5;
+  cursor: pointer;
 }
