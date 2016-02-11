@@ -1,6 +1,6 @@
 {
     "name": "keys.js",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "license": "MIT",
     "description": "Easy keybindings for browser applications!",
     "author": "Paul Schoenfelder",
