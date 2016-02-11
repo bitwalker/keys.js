@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>JSDoc: Class: Combo</title>
-    
+
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
     <!--[if lt IE 9]>
@@ -16,78 +16,82 @@
 <body>
 
 <div id="main">
-    
+
     <h1 class="page-title">Class: Combo</h1>
+
     
-    
+
 
 
 
 <section>
-    
+
 <header>
-    <h2>
-    Combo
-    </h2>
     
-        <div class="class-description"><p>Combo represents the physical combination of a single key and any meta keys
+        <h2>Combo</h2>
+        
+            <div class="class-description"><p>Combo represents the physical combination of a single key and any meta keys
            that ultimately are used to trigger a keybinding. It is at the Combo level
            that we match a configured keybinding with the current set of pressed keys.</p></div>
+        
     
-</header>  
+</header>
 
 <article>
     <div class="container-overview">
     
-    
-    
         
-<dt>
-    <h4 class="name" id="Combo"><span class="type-signature"></span>new Combo<span class="signature">(key, meta)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Creates a new Combo from a key code and array of meta key codes</p>
-    </div>
-    
 
     
+    <h2>Constructor</h2>
     
+
+    <h4 class="name" id="Combo"><span class="type-signature"></span>new Combo<span class="signature">(key, meta)</span><span class="type-signature"></span></h4>
+
     
+
+
+
+<div class="description">
+    <p>Creates a new Combo from a key code and array of meta key codes</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-    
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>key</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -96,21 +100,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>The primary Key for this Combo.</p></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>meta</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -119,138 +123,152 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>An array of meta Keys needed for this Combo to be activated. {optional}</p></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 481
+        <a href="keys.js.html">keys.js</a>, <a href="keys.js.html#line481">line 481</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    
-    
-        <h5>Example</h5>
-        
-    <pre class="prettyprint"><code> var combo = new Combo(Key.A, [ Key.CTRL, Key.SHIFT ]);</code></pre>
 
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
     
-</dd>
+    <pre class="prettyprint"><code>var combo = new Combo(Key.A, [ Key.CTRL, Key.SHIFT ]);</code></pre>
+
+
 
     
     </div>
+
     
+
     
+
     
+
+     
+
     
+
     
-    
-    
-    
-    
-    
-    
-    
-    
+
     
         <h3 class="subsection-title">Methods</h3>
+
         
-        <dl>
             
-<dt>
-    <h4 class="name" id="deserialize"><span class="type-signature">&lt;static> </span>deserialize<span class="signature">(serialized)</span><span class="type-signature"> &rarr; {object}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Deserialize a Combo object from a JSON string.</p>
-    </div>
-    
 
     
+
+    <h4 class="name" id=".deserialize"><span class="type-signature">(static) </span>deserialize<span class="signature">(serialized)</span><span class="type-signature"> &rarr; {object}</span></h4>
+
     
+
+
+
+<div class="description">
+    <p>Deserialize a Combo object from a JSON string.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-    
-    
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>serialized</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -259,137 +277,153 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>A serialized Combo object (JSON string)</p></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 581
+        <a href="keys.js.html">keys.js</a>, <a href="keys.js.html#line581">line 581</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 <div class="param-desc">
-    <ul><li>The deserialized Combo as a regular object</li></ul>
+    <ul>
+<li>The deserialized Combo as a regular object</li>
+</ul>
 </div>
 
 
 
 <dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
 <span class="param-type">object</span>
 
 
-	</dd>
+    </dd>
 </dl>
 
-        
     
-    
-</dd>
+
+
 
         
             
-<dt>
-    <h4 class="name" id="fromEvent"><span class="type-signature">&lt;static> </span>fromEvent<span class="signature">(e)</span><span class="type-signature"> &rarr; {<a href="Combo.html">Combo</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Given a keypress event, create a Combo that represents the set of pressed keys</p>
-    </div>
-    
 
     
+
+    <h4 class="name" id=".fromEvent"><span class="type-signature">(static) </span>fromEvent<span class="signature">(e)</span><span class="type-signature"> &rarr; {<a href="Combo.html">Combo</a>}</span></h4>
+
     
+
+
+
+<div class="description">
+    <p>Given a keypress event, create a Combo that represents the set of pressed keys</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-    
-    
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>e</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -398,135 +432,149 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>The keypress event (could be keyup, keydown, or keypress)</p></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 660
+        <a href="keys.js.html">keys.js</a>, <a href="keys.js.html#line660">line 660</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 
 
 <dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
 <span class="param-type"><a href="Combo.html">Combo</a></span>
 
 
-	</dd>
+    </dd>
 </dl>
 
-        
     
-    
-</dd>
+
+
 
         
             
-<dt>
-    <h4 class="name" id="fromObject"><span class="type-signature">&lt;static> </span>fromObject<span class="signature">(obj)</span><span class="type-signature"> &rarr; {<a href="Combo.html">Combo</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Create a Combo from an arbitrary object, primarily meant to be used in
- conjunction with Bindings.deserialize to properly reify a serialized Combo
- object. Called directly from Combo.deserialize for this reason as well.</p>
-    </div>
-    
 
     
+
+    <h4 class="name" id=".fromObject"><span class="type-signature">(static) </span>fromObject<span class="signature">(obj)</span><span class="type-signature"> &rarr; {<a href="Combo.html">Combo</a>}</span></h4>
+
     
+
+
+
+<div class="description">
+    <p>Create a Combo from an arbitrary object, primarily meant to be used in
+ conjunction with Bindings.deserialize to properly reify a serialized Combo
+ object. Called directly from Combo.deserialize for this reason as well.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-    
-    
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>obj</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -535,135 +583,149 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>The anonymous object to create a Combo instance from.</p></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 639
+        <a href="keys.js.html">keys.js</a>, <a href="keys.js.html#line639">line 639</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 
 
 <dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
 <span class="param-type"><a href="Combo.html">Combo</a></span>
 
 
-	</dd>
+    </dd>
 </dl>
 
-        
     
-    
-</dd>
+
+
 
         
             
-<dt>
-    <h4 class="name" id="fromString"><span class="type-signature">&lt;static> </span>fromString<span class="signature">(str)</span><span class="type-signature"> &rarr; {<a href="Combo.html">Combo</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Reverse of toString, you should get the original combo if you call Combo.fromString(combo.toString()).
- Useful for converting text inputs with Combo.toString() populated values back into actual Combo
- objects.</p>
-    </div>
-    
 
     
+
+    <h4 class="name" id=".fromString"><span class="type-signature">(static) </span>fromString<span class="signature">(str)</span><span class="type-signature"> &rarr; {<a href="Combo.html">Combo</a>}</span></h4>
+
     
+
+
+
+<div class="description">
+    <p>Reverse of toString, you should get the original combo if you call Combo.fromString(combo.toString()).
+ Useful for converting text inputs with Combo.toString() populated values back into actual Combo
+ objects.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-    
-    
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>str</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -672,220 +734,247 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>A string which represents a valid Combo</p></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 684
+        <a href="keys.js.html">keys.js</a>, <a href="keys.js.html#line684">line 684</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 
 
 <dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
 <span class="param-type"><a href="Combo.html">Combo</a></span>
 
 
-	</dd>
+    </dd>
 </dl>
 
-        
     
-    
-</dd>
+
+
 
         
             
-<dt>
+
+    
+
     <h4 class="name" id="clone"><span class="type-signature"></span>clone<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="Combo.html">Combo</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Deep clone this Combo instance.</p>
-    </div>
-    
 
     
-    
-    
-    
-    
-    
-    
+
+
+
+<div class="description">
+    <p>Deep clone this Combo instance.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 598
+        <a href="keys.js.html">keys.js</a>, <a href="keys.js.html#line598">line 598</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 
 
 <dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
 <span class="param-type"><a href="Combo.html">Combo</a></span>
 
 
-	</dd>
+    </dd>
 </dl>
 
-        
     
-    
-</dd>
+
+
 
         
             
-<dt>
-    <h4 class="name" id="eq"><span class="type-signature"></span>eq<span class="signature">(combo)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Determine if this Combo is exactly equivalent to another Combo</p>
-    </div>
-    
 
     
+
+    <h4 class="name" id="eq"><span class="type-signature"></span>eq<span class="signature">(combo)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+
     
+
+
+
+<div class="description">
+    <p>Determine if this Combo is exactly equivalent to another Combo</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-    
-    
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>combo</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -894,244 +983,282 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>The Combo to compare</p></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 716
+        <a href="keys.js.html">keys.js</a>, <a href="keys.js.html#line716">line 716</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 
 
 <dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
 <span class="param-type">boolean</span>
 
 
-	</dd>
+    </dd>
 </dl>
 
-        
     
-    
-</dd>
+
+
 
         
             
-<dt>
+
+    
+
     <h4 class="name" id="isMatch"><span class="type-signature"></span>isMatch<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+
     
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>A looser version of equality checking. Whereas <code>eq</code> checks for strict value equality,
+
+
+
+<div class="description">
+    <p>A looser version of equality checking. Whereas <code>eq</code> checks for strict value equality,
  <code>isMatch</code> checks for equality of intent. Does the user really care if the Combo is not
  strictly equal even if the same keys are pressed? No. <code>isMatch</code> is used when matching
  the Combo generated from a keypress event to Combos stored as keybindings, which might
  be equal in intent, but not equal in the strictest sense.</p>
-    </div>
-    
+</div>
 
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 742
+        <a href="keys.js.html">keys.js</a>, <a href="keys.js.html#line742">line 742</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 
 
 <dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
 <span class="param-type">boolean</span>
 
 
-	</dd>
+    </dd>
 </dl>
 
-        
     
-    
-</dd>
+
+
 
         
             
-<dt>
+
+    
+
     <h4 class="name" id="metaKeys"><span class="type-signature"></span>metaKeys<span class="signature">()</span><span class="type-signature"> &rarr; {array}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Get this Combo&#39;s meta keys as an array of Key instances</p>
-    </div>
-    
 
     
-    
-    
-    
-    
-    
-    
+
+
+
+<div class="description">
+    <p>Get this Combo's meta keys as an array of Key instances</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 779
+        <a href="keys.js.html">keys.js</a>, <a href="keys.js.html#line779">line 779</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 <div class="param-desc">
     <p>An array of Key</p>
 </div>
@@ -1139,90 +1266,103 @@
 
 
 <dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
 <span class="param-type">array</span>
 
 
-	</dd>
+    </dd>
 </dl>
 
-        
     
-    
-</dd>
+
+
 
         
             
-<dt>
+
+    
+
     <h4 class="name" id="serialize"><span class="type-signature"></span>serialize<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Serialize the Combo for persistance or transport.</p>
-    </div>
-    
 
     
-    
-    
-    
-    
-    
-    
+
+
+
+<div class="description">
+    <p>Serialize the Combo for persistance or transport.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 568
+        <a href="keys.js.html">keys.js</a>, <a href="keys.js.html#line568">line 568</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 <div class="param-desc">
     <p>The Combo as a JSON string</p>
 </div>
@@ -1230,90 +1370,103 @@
 
 
 <dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
 <span class="param-type">string</span>
 
 
-	</dd>
+    </dd>
 </dl>
 
-        
     
-    
-</dd>
+
+
 
         
             
-<dt>
+
+    
+
     <h4 class="name" id="toString"><span class="type-signature"></span>toString<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Pretty print the Combo</p>
-    </div>
-    
 
     
-    
-    
-    
-    
-    
-    
+
+
+
+<div class="description">
+    <p>Pretty print the Combo</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 552
+        <a href="keys.js.html">keys.js</a>, <a href="keys.js.html#line552">line 552</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 <div class="param-desc">
     <p>A string representation of the Combo</p>
 </div>
@@ -1321,31 +1474,30 @@
 
 
 <dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
 <span class="param-type">string</span>
 
 
-	</dd>
+    </dd>
 </dl>
+
+    
+
+
 
         
     
-    
-</dd>
 
-        </dl>
     
-    
-    
-    
+
     
 </article>
 
-</section>  
+</section>
 
 
 
@@ -1353,13 +1505,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Bindings.html">Bindings</a></li><li><a href="Combo.html">Combo</a></li><li><a href="Key.html">Key</a></li></ul><h3>Global</h3><ul><li><a href="global.html#debug">debug</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Bindings.html">Bindings</a></li><li><a href="Combo.html">Combo</a></li><li><a href="Key.html">Key</a></li></ul>
 </nav>
 
-<br clear="both">
+<br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a> on Wed Jan 01 2014 13:01:26 GMT-0600 (CST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Feb 11 2016 12:26:56 GMT-0600 (CST)
 </footer>
 
 <script> prettyPrint(); </script>

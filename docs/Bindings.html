@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>JSDoc: Class: Bindings</title>
-    
+
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
     <!--[if lt IE 9]>
@@ -16,103 +16,118 @@
 <body>
 
 <div id="main">
-    
+
     <h1 class="page-title">Class: Bindings</h1>
+
     
-    
+
 
 
 
 <section>
-    
+
 <header>
-    <h2>
-    Bindings
-    </h2>
     
-        <div class="class-description"><p>Bindings is responsible for managing the mapping of behavior to Combos. In addition,
+        <h2>Bindings</h2>
+        
+            <div class="class-description"><p>Bindings is responsible for managing the mapping of behavior to Combos. In addition,
            it is responsible for listening in on keyup/keydown/keypress events document-wide, and if a
            Combo is matched, execute any associated handlers while also preventing the default
            behavior. It allows for persistance or transport by serializing the bindings currently
            managed, <strong>but not the handlers</strong>. Deserializing an instance of Bindings requires you
            to re-register all handlers.</p></div>
+        
     
-</header>  
+</header>
 
 <article>
     <div class="container-overview">
     
-    
-    
         
-<dt>
+
+    
+    <h2>Constructor</h2>
+    
+
     <h4 class="name" id="Bindings"><span class="type-signature"></span>new Bindings<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Creates a new instance of the Bindings manager</p>
-    </div>
-    
 
     
-    
-    
-    
-    
-    
-    
+
+
+
+<div class="description">
+    <p>Creates a new instance of the Bindings manager</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 791
+        <a href="keys.js.html">keys.js</a>, <a href="keys.js.html#line791">line 791</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
     
-    
-    
-    
-    
-    
-    
-        <h5>Example</h5>
-        
-    <pre class="prettyprint"><code>  // Toggle variable
+    <pre class="prettyprint"><code>// Toggle variable
   var toggled = false;
 
   // Initialize manager
@@ -131,75 +146,77 @@
 
   See `examples/example.html` for a live demonstration of these concepts.</code></pre>
 
-    
-</dd>
+
 
     
     </div>
+
     
+
     
+
     
+
+     
+
     
+
     
-    
-    
-    
-    
-    
-    
-    
-    
+
     
         <h3 class="subsection-title">Methods</h3>
+
         
-        <dl>
             
-<dt>
-    <h4 class="name" id="add"><span class="type-signature"></span>add<span class="signature">(name, description, combos)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Adds a new binding.</p>
-    </div>
-    
 
     
+
+    <h4 class="name" id="add"><span class="type-signature"></span>add<span class="signature">(name, description, combos)</span><span class="type-signature"></span></h4>
+
     
+
+
+
+<div class="description">
+    <p>Adds a new binding.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-    
-    
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>name</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -208,21 +225,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>The name of the binding.</p></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>description</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -231,21 +248,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
-            <td class="description last"><p>A description of the binding&#39;s purpose (optional)</p></td>
+
+            <td class="description last"><p>A description of the binding's purpose (optional)</p></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>combos</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -254,115 +271,129 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>One or more Keys or Combos which trigger this binding</p></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 1078
+        <a href="keys.js.html">keys.js</a>, <a href="keys.js.html#line1078">line 1078</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    
-    
-</dd>
+
+
+
+
+
+
+
+
+
+
+
+
 
         
             
-<dt>
-    <h4 class="name" id="deserialize"><span class="type-signature"></span>deserialize<span class="signature">(serialized)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Deserialize a set of bindings into the current Bindings instance</p>
-    </div>
-    
 
     
+
+    <h4 class="name" id="deserialize"><span class="type-signature"></span>deserialize<span class="signature">(serialized)</span><span class="type-signature"></span></h4>
+
     
+
+
+
+<div class="description">
+    <p>Deserialize a set of bindings into the current Bindings instance</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-    
-    
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>serialized</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -371,118 +402,132 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>The JSON object to deserialize</p></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 1451
+        <a href="keys.js.html">keys.js</a>, <a href="keys.js.html#line1451">line 1451</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    
-    
-</dd>
+
+
+
+
+
+
+
+
+
+
+
+
 
         
             
-<dt>
+
+    
+
     <h4 class="name" id="disable"><span class="type-signature"></span>disable<span class="signature">(bindingNames*)</span><span class="type-signature"></span></h4>
+
     
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Disable Keys.js or a specific binding or bindings,
+
+
+
+<div class="description">
+    <p>Disable Keys.js or a specific binding or bindings,
 depending on the number of arguments. None will disable
 Key.js if it is currently disabled. One or more will disable
 each of the bindings matched by the names provided.</p>
-    </div>
-    
+</div>
 
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>bindingNames*</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -491,118 +536,132 @@ each of the bindings matched by the names provided.</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>One or more binding names to disable</p></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 942
+        <a href="keys.js.html">keys.js</a>, <a href="keys.js.html#line942">line 942</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    
-    
-</dd>
+
+
+
+
+
+
+
+
+
+
+
+
 
         
             
-<dt>
+
+    
+
     <h4 class="name" id="enable"><span class="type-signature"></span>enable<span class="signature">(bindingNames*)</span><span class="type-signature"></span></h4>
+
     
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Re-enable Keys.js or a specific binding or bindings,
+
+
+
+<div class="description">
+    <p>Re-enable Keys.js or a specific binding or bindings,
 depending on the number of arguments. None will re-enable
 Key.js if it is currently matched. One or more will re-enable
 each of the bindings matched by the names provided.</p>
-    </div>
-    
+</div>
 
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>bindingNames*</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -611,115 +670,129 @@ each of the bindings matched by the names provided.</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>One or more binding names to re-enable</p></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 893
+        <a href="keys.js.html">keys.js</a>, <a href="keys.js.html#line893">line 893</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    
-    
-</dd>
+
+
+
+
+
+
+
+
+
+
+
+
 
         
             
-<dt>
-    <h4 class="name" id="get"><span class="type-signature"></span>get<span class="signature">(name)</span><span class="type-signature"> &rarr; {object}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Fetches a binding by it&#39;s name.</p>
-    </div>
-    
 
     
+
+    <h4 class="name" id="get"><span class="type-signature"></span>get<span class="signature">(name)</span><span class="type-signature"> &rarr; {object}</span></h4>
+
     
+
+
+
+<div class="description">
+    <p>Fetches a binding by it's name.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-    
-    
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>name</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -728,66 +801,78 @@ each of the bindings matched by the names provided.</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>Name of the binding</p></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 987
+        <a href="keys.js.html">keys.js</a>, <a href="keys.js.html#line987">line 987</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 <div class="param-desc">
     <p>The binding, if found, otherwise null</p>
 </div>
@@ -795,70 +880,72 @@ each of the bindings matched by the names provided.</p>
 
 
 <dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
 <span class="param-type">object</span>
 
 
-	</dd>
+    </dd>
 </dl>
 
-        
     
-    
-</dd>
+
+
 
         
             
-<dt>
-    <h4 class="name" id="getHandlersForCombo"><span class="type-signature"></span>getHandlersForCombo<span class="signature">(combo)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Gets the set of handlers for the given Combo</p>
-    </div>
-    
 
     
+
+    <h4 class="name" id="getHandlersForCombo"><span class="type-signature"></span>getHandlersForCombo<span class="signature">(combo)</span><span class="type-signature"></span></h4>
+
     
+
+
+
+<div class="description">
+    <p>Gets the set of handlers for the given Combo</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-    
-    
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>combo</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -867,115 +954,129 @@ each of the bindings matched by the names provided.</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>The Combo to match handlers to.</p></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 1479
+        <a href="keys.js.html">keys.js</a>, <a href="keys.js.html#line1479">line 1479</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    
-    
-</dd>
+
+
+
+
+
+
+
+
+
+
+
+
 
         
             
-<dt>
-    <h4 class="name" id="registerHandler"><span class="type-signature"></span>registerHandler<span class="signature">(bindingName, eventType, handler, isGlobal)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Register a handler for when a Combo is executed.</p>
-    </div>
-    
 
     
+
+    <h4 class="name" id="registerHandler"><span class="type-signature"></span>registerHandler<span class="signature">(bindingName, eventType, handler, isGlobal)</span><span class="type-signature"></span></h4>
+
     
+
+
+
+<div class="description">
+    <p>Register a handler for when a Combo is executed.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-    
-    
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>bindingName</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -984,21 +1085,21 @@ each of the bindings matched by the names provided.</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>The name of the binding to watch, is optional when handler is a named function.</p></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>eventType</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1007,21 +1108,21 @@ each of the bindings matched by the names provided.</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>(optional) Either keyup or keydown, depending on needs. Defaults to keydown.</p></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>handler</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1030,21 +1131,21 @@ each of the bindings matched by the names provided.</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>The function to call when the Combo is executed.</p></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>isGlobal</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1053,68 +1154,80 @@ each of the bindings matched by the names provided.</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>(optional) True to execute the handler regardless of context, false to prevent execution when in the context of an input control. Defaults to false.</p></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 1139
+        <a href="keys.js.html">keys.js</a>, <a href="keys.js.html#line1139">line 1139</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
     
-    
-    
-    
-    
-    
-    
-        <h5>Example</h5>
-        
-    <pre class="prettyprint"><code>     function displayAlert() { alert('Hello!'); }
+    <pre class="prettyprint"><code>function displayAlert() { alert('Hello!'); }
      // Full specification syntax
      bindings.registerHandler('displayAlert', 'keyup', function() { alert('Hello!'); }, true);
      // Partial specification, inferred eventType
@@ -1126,57 +1239,59 @@ each of the bindings matched by the names provided.</p>
      // Minimal specification, inferred eventType and bindingName, isGlobal defaults to false
      bindings.registerHandler(displayAlert);</code></pre>
 
-    
-</dd>
+
 
         
             
-<dt>
-    <h4 class="name" id="registerHandlers"><span class="type-signature"></span>registerHandlers<span class="signature">(handlers, eventType)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>For easier initialization, allow binding a group of handlers at one time using object notation</p>
-    </div>
-    
 
     
+
+    <h4 class="name" id="registerHandlers"><span class="type-signature"></span>registerHandlers<span class="signature">(handlers, eventType)</span><span class="type-signature"></span></h4>
+
     
+
+
+
+<div class="description">
+    <p>For easier initialization, allow binding a group of handlers at one time using object notation</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-    
-    
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>handlers</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1188,23 +1303,23 @@ each of the bindings matched by the names provided.</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>Either an object defining the handlers to register, using the schema shown in the example,
-                                 or an array of named functions, which will all use either &#39;keydown&#39; or the provided default
+                                 or an array of named functions, which will all use either 'keydown' or the provided default
                                  eventType.</p></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>eventType</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1213,68 +1328,80 @@ each of the bindings matched by the names provided.</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>The default eventType to use for handlers provided {optional}</p></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 1344
+        <a href="keys.js.html">keys.js</a>, <a href="keys.js.html#line1344">line 1344</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
     
-    
-    
-    
-    
-    
-    
-        <h5>Example</h5>
-        
-    <pre class="prettyprint"><code>     function displayAlert() { alert('Hello!'); }
+    <pre class="prettyprint"><code>function displayAlert() { alert('Hello!'); }
      function logEvent() { console.log('logEvent triggered!'); }
      // Object notation
      bindings.registerHandlers({
@@ -1290,57 +1417,59 @@ each of the bindings matched by the names provided.</p>
      // Array notation with default eventType
      bindings.registerHandlers([ displayAlert, logEvent ], 'keyup');</code></pre>
 
-    
-</dd>
+
 
         
             
-<dt>
-    <h4 class="name" id="registerToggle"><span class="type-signature"></span>registerToggle<span class="signature">(bindingName, toggleOn, toggleOff, isGlobal)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Register a toggle for when a Combo is executed.</p>
-    </div>
-    
 
     
+
+    <h4 class="name" id="registerToggle"><span class="type-signature"></span>registerToggle<span class="signature">(bindingName, toggleOn, toggleOff, isGlobal)</span><span class="type-signature"></span></h4>
+
     
+
+
+
+<div class="description">
+    <p>Register a toggle for when a Combo is executed.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-    
-    
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>bindingName</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1349,21 +1478,21 @@ each of the bindings matched by the names provided.</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>The name of the binding to watch</p></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>toggleOn</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1372,21 +1501,21 @@ each of the bindings matched by the names provided.</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>The function to execute when toggling on</p></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>toggleOff</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1395,21 +1524,21 @@ each of the bindings matched by the names provided.</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>The function to execute when toggling off</p></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>isGlobal</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1418,206 +1547,235 @@ each of the bindings matched by the names provided.</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>(optional) True to execute the toggle regardless of context, false to prevent execution when in the context of an input control. Defaults to false.</p></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 1401
+        <a href="keys.js.html">keys.js</a>, <a href="keys.js.html#line1401">line 1401</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    
-    
-</dd>
+
+
+
+
+
+
+
+
+
+
+
+
 
         
             
-<dt>
+
+    
+
     <h4 class="name" id="serialize"><span class="type-signature"></span>serialize<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Serialize the current set of bindings (not the handlers)</p>
-    </div>
-    
 
     
-    
-    
-    
-    
-    
-    
+
+
+
+<div class="description">
+    <p>Serialize the current set of bindings (not the handlers)</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 1438
+        <a href="keys.js.html">keys.js</a>, <a href="keys.js.html#line1438">line 1438</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 <div class="param-desc">
-    <ul><li>The Bindings instance as a JSON encoded string</li></ul>
+    <ul>
+<li>The Bindings instance as a JSON encoded string</li>
+</ul>
 </div>
 
 
 
 <dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
 <span class="param-type">string</span>
 
 
-	</dd>
+    </dd>
 </dl>
 
-        
     
-    
-</dd>
+
+
 
         
             
-<dt>
-    <h4 class="name" id="unregisterHandler"><span class="type-signature"></span>unregisterHandler<span class="signature">(bindingName, eventType, handler, isGlobal)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Unregister a handler for for a combo</p>
-    </div>
-    
 
     
+
+    <h4 class="name" id="unregisterHandler"><span class="type-signature"></span>unregisterHandler<span class="signature">(bindingName, eventType, handler, isGlobal)</span><span class="type-signature"></span></h4>
+
     
+
+
+
+<div class="description">
+    <p>Unregister a handler for for a combo</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-    
-    
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>bindingName</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1626,21 +1784,21 @@ each of the bindings matched by the names provided.</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>The name of the binding to unregister</p></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>eventType</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1649,21 +1807,21 @@ each of the bindings matched by the names provided.</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>(optional) Either keyup or keydown, depending on needs</p></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>handler</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1672,21 +1830,21 @@ each of the bindings matched by the names provided.</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>The function to call when the Combo is executed.</p></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>isGlobal</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1695,86 +1853,97 @@ each of the bindings matched by the names provided.</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>(optional) True to execute the handler regardless of context, false to prevent execution when in the context of an input control. Defaults to false.</p></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        keys.js, line 1221
+        <a href="keys.js.html">keys.js</a>, <a href="keys.js.html#line1221">line 1221</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
     
-    
-    
-    
-    
-    
-    
-        <h5>Example</h5>
-        
-    <pre class="prettyprint"><code>     function displayAlert() { alert('Hello!'); }
+    <pre class="prettyprint"><code>function displayAlert() { alert('Hello!'); }
      bindings.unregisterHandler('displayAlert', displayAlert);
      // unregister displayAlert handler with that function
      bindings.unregisterHandler('keyup', 'displayAlert');
      // unregister all handlers with this name
      bindings.unregisterHandler('displayAlert');</code></pre>
 
-    
-</dd>
 
-        </dl>
+
+        
     
+
     
-    
-    
+
     
 </article>
 
-</section>  
+</section>
 
 
 
@@ -1782,13 +1951,13 @@ each of the bindings matched by the names provided.</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Bindings.html">Bindings</a></li><li><a href="Combo.html">Combo</a></li><li><a href="Key.html">Key</a></li></ul><h3>Global</h3><ul><li><a href="global.html#debug">debug</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Bindings.html">Bindings</a></li><li><a href="Combo.html">Combo</a></li><li><a href="Key.html">Key</a></li></ul>
 </nav>
 
-<br clear="both">
+<br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a> on Wed Jan 01 2014 13:01:26 GMT-0600 (CST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Feb 11 2016 12:26:56 GMT-0600 (CST)
 </footer>
 
 <script> prettyPrint(); </script>
