@@ -2,20 +2,24 @@
  * @author Paul Schoenfelder
  */
 (function (root, builder, undefined) {
-    if (typeof exports === 'object') {
-        // CommonJS Native
-        var globals = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : {});
-        exports = builder(exports, globals);
-    }
-    else if (typeof define === 'function') {
+    if (typeof define === 'function' && define.amd) {
         // CommonJS AMD
         define(function() {
             return builder({}, root);
         });
     }
+    else if (typeof module === 'object' && module.exports) {
+        // CommonJS Native
+        var globals = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : {});
+        module.exports = builder({}, globals);
+    }
+    else if (typeof exports === 'object') {
+        var globals = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : {});
+        exports = builder({}, globals);
+    }
     else {
         // Vanilla environments (browser)
-        root.Keys = builder(root.Keys, window);
+        root.Keys = builder({}, window);
     }
 })(this, function (exports, globals, undefined) {
     'use strict';
