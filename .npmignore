@@ -1,0 +1,5 @@
+build/
+docs/
+tests/
+build.sh
+conf.json

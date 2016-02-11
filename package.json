@@ -1,0 +1,17 @@
+{
+    "name": "keys.js",
+    "version": "1.0.0",
+    "license": "MIT",
+    "description": "Easy keybindings for browser applications!",
+    "author": "Paul Schoenfelder",
+    "homepage": "http://bitwalker.github.io/keys.js/",
+    "repository": "bitwalker/keys.js",
+    "scripts": {
+        "prepublish": "./build.sh -a",
+        "test": "./build.sh -t"
+    },
+    "devDependencies": {
+        "jsdoc": "^3.2.0",
+        "vows": "^0.7.0"
+    }
+}

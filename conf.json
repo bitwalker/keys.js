@@ -6,6 +6,6 @@
         "plugins/markdown"
     ],
     "opts": {
-        "destination": "./docs/",
+        "destination": "./docs/"
     }
 }
