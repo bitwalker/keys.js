@@ -1,0 +1,21 @@
+{
+  "name": "keys.js",
+  "description": "Easy keybindings for browser applications!",
+  "main": "src/keys.js",
+  "authors": [
+    "Paul Schoenfelder"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/bitwalker/keys.js",
+  "moduleType": [
+    "amd",
+    "globals"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
